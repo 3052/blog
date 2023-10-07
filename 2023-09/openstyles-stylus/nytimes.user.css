@@ -1,0 +1,11 @@
+/*
+==userstyle==
+@version 2023.06.12
+@namespace Steven
+@name New York Times
+==/userstyle==
+*/
+@-moz-document domain("nytimes.com") {
+   body { overflow: visible !important }
+   div { position: static !important }
+}

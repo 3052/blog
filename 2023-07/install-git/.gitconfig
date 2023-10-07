@@ -1,0 +1,13 @@
+[color "diff"]
+meta = yellow bold
+
+[core]
+askPass = git-askpass
+pager = slit
+
+[diff]
+wsErrorHighlight = all
+
+[user]
+name = Steven Penny
+email = srpen6+1268@gmail.com

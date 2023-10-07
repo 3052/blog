@@ -1,0 +1,25 @@
+/*
+==userstyle==
+@version 2023.05.12
+@namespace Steven
+@name Reddit
+==/userstyle==
+*/
+@-moz-document domain("reddit.com") {
+   /* 2023-05-12 */
+   .nestedlisting > div > div.midcol {
+      background: blue !important
+   }
+   .nestedlisting > div > div > div > div > div.midcol {
+      background: green !important
+   }
+   .nestedlisting > div > div > div > div > div > div > div > div.midcol {
+      background: orange !important
+   }
+   :visited {
+      color: hsl(270 100% 50%) !important
+   }
+   .arrow {
+      visibility: hidden !important
+   }
+}

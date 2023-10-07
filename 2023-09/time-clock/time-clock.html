@@ -1,0 +1,92 @@
+<!doctype html>
+<form method="post">
+   <table>
+      <tr>
+         <th>Day</th>
+         <th>in day</th>
+         <th>out lunch</th>
+         <th>in lunch</th>
+         <th>out day</th>
+      </tr>
+      <tr>
+         <td>Monday</td>
+         <td>
+            <input type=time name=mon value="{{ index .Monday 0 }}">
+         </td>
+         <td>
+            <input type=time name=mon value="{{ index .Monday 1 }}">
+         </td>
+         <td>
+            <input type=time name=mon value="{{ index .Monday 2 }}">
+         </td>
+         <td>
+            <input type=time name=mon value="{{ index .Monday 3 }}">
+         </td>
+      </tr>
+      <tr>
+         <td>Tuesday</td>
+         <td>
+            <input type=time name=tue value="{{ index .Tuesday 0 }}">
+         </td>
+         <td>
+            <input type=time name=tue value="{{ index .Tuesday 1 }}">
+         </td>
+         <td>
+            <input type=time name=tue value="{{ index .Tuesday 2 }}">
+         </td>
+         <td>
+            <input type=time name=tue value="{{ index .Tuesday 3 }}">
+         </td>
+      </tr>
+      <tr>
+         <td>Wednesday</td>
+         <td>
+            <input type=time name=wed value="{{ index .Wednesday 0 }}">
+         </td>
+         <td>
+            <input type=time name=wed value="{{ index .Wednesday 1 }}">
+         </td>
+         <td>
+            <input type=time name=wed value="{{ index .Wednesday 2 }}">
+         </td>
+         <td>
+            <input type=time name=wed value="{{ index .Wednesday 3 }}">
+         </td>
+      </tr>
+      <tr>
+         <td>Thursday</td>
+         <td>
+            <input type=time name=thu value="{{ index .Thursday 0 }}">
+         </td>
+         <td>
+            <input type=time name=thu value="{{ index .Thursday 1 }}">
+         </td>
+         <td>
+            <input type=time name=thu value="{{ index .Thursday 2 }}">
+         </td>
+         <td>
+            <input type=time name=thu value="{{ index .Thursday 3 }}">
+         </td>
+      </tr>
+      <tr>
+         <td>Friday</td>
+         <td>
+            <input type=time name=fri value="{{ index .Friday 0 }}">
+         </td>
+         <td>
+            <input type=time name=fri value="{{ index .Friday 1 }}">
+         </td>
+         <td>
+            <input type=time name=fri value="{{ index .Friday 2 }}">
+         </td>
+         <td>
+            <input type=time name=fri value="{{ index .Friday 3 }}">
+         </td>
+      </tr>
+   </table>
+   <input type=submit>
+   <dl>
+      <dt>weekly total</dt>
+      <dd>{{ .Total }}</dd>
+   </dl>
+</form>
