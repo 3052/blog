@@ -1,7 +1,7 @@
 package main
 
 import (
-   "154.pages.dev/encoding/zip"
+   "blog/zip"
    "fmt"
    "io"
    "net/http"
