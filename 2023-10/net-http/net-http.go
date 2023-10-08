@@ -9,12 +9,38 @@ import (
    "fmt"
    "io"
    "net/http"
+   "net/http/httputil"
    "net/textproto"
    "net/url"
    "os"
    "strings"
    "text/template"
 )
+
+func write(req *http.Request, dst io.Writer) error {
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if dst != nil {
+      b, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return err
+      }
+      fmt.Println(string(b))
+      if _, err := io.Copy(dst, res.Body); err != nil {
+         return err
+      }
+   } else {
+      b, err := httputil.DumpResponse(res, true)
+      if err != nil {
+         return err
+      }
+      fmt.Println(string(b))
+   }
+   return nil
+}
 
 func (f flags) write(req *http.Request, dst io.Writer) error {
    var v values
@@ -37,8 +63,6 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
                return err
             }
             v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
-         } else if can_backquote(text) {
-            v.Raw_Req_Body = "`" + text + "`"
          } else {
             v.Raw_Req_Body = fmt.Sprintf("%q", text)
          }
