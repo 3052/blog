@@ -13,6 +13,7 @@ import (
    "net/textproto"
    "net/url"
    "os"
+   "strconv"
    "strings"
    "text/template"
 )
@@ -63,6 +64,8 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
                return err
             }
             v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
+         } else if strconv.CanBackquote(text) {
+            v.Raw_Req_Body = "`" + text + "`"
          } else {
             v.Raw_Req_Body = fmt.Sprintf("%q", text)
          }
