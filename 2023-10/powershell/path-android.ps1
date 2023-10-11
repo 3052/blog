@@ -4,6 +4,7 @@ $env:PATH = @(
    'C:\Users\Steven\AppData\Local\Android\Sdk\emulator'
    'C:\Users\Steven\AppData\Local\Android\Sdk\platform-tools'
    'C:\Users\Steven\go\bin'
+   'C:\python\Scripts'
    'D:\go\bin'
    'D:\jadx\bin'
 ) -Join ';'

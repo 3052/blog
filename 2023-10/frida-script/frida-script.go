@@ -13,6 +13,53 @@ import (
    "time"
 )
 
+func (f flags) server() string {
+   var b strings.Builder
+   b.WriteString("https://github.com/frida/frida/releases/download/")
+   b.WriteString(f.version)
+   b.WriteString("/frida-server-")
+   b.WriteString(f.version)
+   b.WriteString("-android-")
+   b.WriteString(f.arch)
+   b.WriteString(".xz")
+   return b.String()
+}
+
+type flags struct {
+   app string
+   script string
+   version string
+   arch string
+}
+
+func main() {
+   var f flags
+   flag.StringVar(&f.app, "a", "", "app")
+   flag.StringVar(&f.arch, "arch", "x86", "architecture")
+   flag.StringVar(&f.script, "s", "", "script")
+   flag.StringVar(&f.version, "v", "16.0.0", "version")
+   flag.Parse()
+   if _, err := exec.LookPath("frida"); err != nil {
+      panic("pip install frida-tools")
+   }
+   if f.app != "" && f.script != "" {
+      home, err := os.UserHomeDir()
+      if err != nil {
+         panic(err)
+      }
+      server := f.server()
+      home += "/Documents/" + stem(server)
+      if err := download_server(server, home); err != nil {
+         panic(err)
+      }
+      if err := f.run(home); err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
+
 func (f flags) run(server string) error {
    commands := []command{
       run("adb", "root"),
@@ -99,45 +146,3 @@ func download_server(in, out string) error {
    return os.WriteFile(out, data, 0777)
 }
 
-type flags struct {
-   app string
-   script string
-   version string
-}
-
-func main() {
-   var f flags
-   flag.StringVar(&f.app, "a", "", "app")
-   flag.StringVar(&f.script, "s", "", "script")
-   flag.StringVar(&f.version, "v", "16.0.0", "version")
-   flag.Parse()
-   if _, err := exec.LookPath("frida"); err != nil {
-      panic("pip install frida-tools")
-   }
-   if f.app != "" && f.script != "" {
-      home, err := os.UserHomeDir()
-      if err != nil {
-         panic(err)
-      }
-      server := f.server()
-      home += "/Documents/" + stem(server)
-      if err := download_server(server, home); err != nil {
-         panic(err)
-      }
-      if err := f.run(home); err != nil {
-         panic(err)
-      }
-   } else {
-      flag.Usage()
-   }
-}
-
-func (f flags) server() string {
-   var b strings.Builder
-   b.WriteString("https://github.com/frida/frida/releases/download/")
-   b.WriteString(f.version)
-   b.WriteString("/frida-server-")
-   b.WriteString(f.version)
-   b.WriteString("-android-x86.xz")
-   return b.String()
-}
