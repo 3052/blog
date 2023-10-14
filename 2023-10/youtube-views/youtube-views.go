@@ -1,12 +1,34 @@
 package main
 
 import (
+   "154.pages.dev/http"
    "154.pages.dev/media/youtube"
    "fmt"
    "os"
    "strconv"
    "time"
 )
+
+func main() {
+   http.No_Location()
+   http.Trace()
+   if len(os.Args) == 2 {
+      var req youtube.Request
+      req.Video_ID = os.Args[1]
+      req.Mobile_Web()
+      play, err := req.Player(nil)
+      if err != nil {
+         panic(err)
+      }
+      views, err := views_per_year(play)
+      if err != nil {
+         panic(err)
+      }
+      fmt.Println(views)
+   } else {
+      fmt.Println("youtube-views [video ID]")
+   }
+}
 
 func views_per_year(play *youtube.Player) (string, error) {
    views, err := func() (float64, error) {
@@ -34,25 +56,6 @@ func views_per_year(play *youtube.Player) (string, error) {
    b = append(b, "   "...)
    b = append(b, play.Video_Details.Video_ID...)
    return string(b), nil
-}
-
-func main() {
-   if len(os.Args) == 2 {
-      var req youtube.Request
-      req.Video_ID = os.Args[1]
-      req.Mobile_Web()
-      play, err := req.Player(nil)
-      if err != nil {
-         panic(err)
-      }
-      views, err := views_per_year(play)
-      if err != nil {
-         panic(err)
-      }
-      fmt.Println(views)
-   } else {
-      fmt.Println("youtube-views [video ID]")
-   }
 }
 
 const (
