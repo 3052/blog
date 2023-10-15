@@ -15,7 +15,7 @@ func main() {
    if len(os.Args) == 2 {
       var req youtube.Request
       req.Video_ID = os.Args[1]
-      req.Mobile_Web()
+      req.Web()
       play, err := req.Player(nil)
       if err != nil {
          panic(err)

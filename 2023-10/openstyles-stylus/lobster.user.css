@@ -1,32 +1,40 @@
 /*
 ==userstyle==
-@version 2023.03.23
+@version 2022-02-27
 @namespace Steven
 @name Lobsters
 ==/userstyle==
 */
 @-moz-document domain("lobste.rs") {
-   .comments1 > .comments_subtree > .comment > .voters {
+   /* 2023-10-15 */
+   .comments1 > .comments_subtree > .comments >
+   .comments_subtree > .comment > .voters {
       background: blue
    }
    .comments1 > .comments_subtree > .comments >
+   .comments_subtree > .comments >
    .comments_subtree > .comment > .voters {
       background: green
    }
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
+   .comments_subtree > .comments >
    .comments_subtree > .comment > .voters {
       background: orange
    }
-   :visited {
-      color: hsl(270 100% 50%) !important
-   }
-   .comments1 > .comments_subtree > .comment > .voters > .score,
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comment > .voters > .score,
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
+   .comments_subtree > .comment > .voters > .score,
+   .comments1 > .comments_subtree > .comments >
+   .comments_subtree > .comments >
+   .comments_subtree > .comments >
    .comments_subtree > .comment > .voters > .score {
       color: white
+   }
+   /* 2023-10-14 */
+   :visited {
+      color: hsl(270 100% 50%) !important
    }
 }
