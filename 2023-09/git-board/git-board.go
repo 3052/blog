@@ -9,6 +9,17 @@ import (
    "time"
 )
 
+func get_then() (string, error) {
+   b, err := exec.Command("git", "log", "-1", "--format=%cI").Output()
+   if err != nil {
+      return "", err
+   }
+   if len(b) >= 11 {
+      b = b[:10]
+   }
+   return string(b), nil
+}
+
 const (
    fail = "\x1b[30;101m Fail \x1b[m"
    pass = "\x1b[30;102m Pass \x1b[m"
@@ -89,16 +100,6 @@ func new_git_board() (*git_board, error) {
    return &board, nil
 }
 
-func get_then() (string, error) {
-   buf, err := exec.Command("git", "log", "-1", "--format=%cI").Output()
-   if err != nil {
-      return "", err
-   }
-   if len(buf) >= 11 {
-      buf = buf[:10]
-   }
-   return string(buf), nil
-}
 func main() {
    board, err := new_git_board()
    if err != nil {
