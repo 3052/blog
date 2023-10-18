@@ -1,7 +1,6 @@
 package main
 
 import (
-   "154.pages.dev/http"
    "154.pages.dev/media/youtube"
    "fmt"
    "os"
@@ -10,8 +9,6 @@ import (
 )
 
 func main() {
-   http.No_Location()
-   http.Trace()
    if len(os.Args) == 2 {
       var req youtube.Request
       req.Video_ID = os.Args[1]

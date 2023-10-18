@@ -1,11 +1,5 @@
 # github
 
-## dead
-
-1268
-
-## new
-
 you cannot use plus variations:
 
 ~~~
