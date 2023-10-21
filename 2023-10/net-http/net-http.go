@@ -42,7 +42,7 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
          } else if strconv.CanBackquote(text) {
             v.Raw_Req_Body = "`" + text + "`"
          } else {
-            v.Raw_Req_Body = fmt.Sprintf("%q", text)
+            v.Raw_Req_Body = fmt.Sprintf("%#q", text)
          }
       }
       v.Req_Body = "io.NopCloser(req_body)"
