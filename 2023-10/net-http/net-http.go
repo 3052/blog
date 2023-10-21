@@ -18,31 +18,6 @@ import (
    "text/template"
 )
 
-func write(req *http.Request, dst io.Writer) error {
-   res, err := new(http.Transport).RoundTrip(req)
-   if err != nil {
-      return err
-   }
-   defer res.Body.Close()
-   if dst != nil {
-      b, err := httputil.DumpResponse(res, false)
-      if err != nil {
-         return err
-      }
-      fmt.Println(string(b))
-      if _, err := io.Copy(dst, res.Body); err != nil {
-         return err
-      }
-   } else {
-      b, err := httputil.DumpResponse(res, true)
-      if err != nil {
-         return err
-      }
-      fmt.Println(string(b))
-   }
-   return nil
-}
-
 func (f flags) write(req *http.Request, dst io.Writer) error {
    var v values
    if req.Body != nil && req.Method != "GET" {
@@ -193,3 +168,28 @@ type flags struct {
    output string
    protobuf bool
 }
+func write(req *http.Request, dst io.Writer) error {
+   res, err := new(http.Transport).RoundTrip(req)
+   if err != nil {
+      return err
+   }
+   defer res.Body.Close()
+   if dst != nil {
+      b, err := httputil.DumpResponse(res, false)
+      if err != nil {
+         return err
+      }
+      fmt.Println(string(b))
+      if _, err := io.Copy(dst, res.Body); err != nil {
+         return err
+      }
+   } else {
+      b, err := httputil.DumpResponse(res, true)
+      if err != nil {
+         return err
+      }
+      fmt.Println(string(b))
+   }
+   return nil
+}
+
