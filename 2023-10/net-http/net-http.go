@@ -13,7 +13,6 @@ import (
    "net/textproto"
    "net/url"
    "os"
-   "strconv"
    "strings"
    "text/template"
 )
@@ -32,17 +31,14 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
          }
          v.Raw_Req_Body = fmt.Sprintf("%#v", m)
       } else {
-         text := string(data)
          if f.form {
-            form, err := url.ParseQuery(text)
+            form, err := url.ParseQuery(string(data))
             if err != nil {
                return err
             }
             v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
-         } else if strconv.CanBackquote(text) {
-            v.Raw_Req_Body = "`" + text + "`"
          } else {
-            v.Raw_Req_Body = fmt.Sprintf("%#q", text)
+            v.Raw_Req_Body = fmt.Sprintf("%#q", data)
          }
       }
       v.Req_Body = "io.NopCloser(req_body)"
