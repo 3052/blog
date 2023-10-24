@@ -9,6 +9,6 @@ require (
 )
 
 require (
-	154.pages.dev/encoding v1.14.6 // indirect
+	154.pages.dev/encoding v1.14.8 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
