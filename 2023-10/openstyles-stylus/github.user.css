@@ -1,32 +1,15 @@
 /*
 ==userstyle==
-@version 2023.04.30
+@version 2023.10.27
 @namespace Steven
 @name GitHub
 ==/userstyle==
 */
 @-moz-document domain("github.com") {
    /*
-   2023-06-17
-   github.com/ziglang/zig/blob/master/build.zig
-   */
-   .pl-v {
-      color: var(--color-fg-default)
-   }
-   /*
-   2023-05-13
-   github.com/ME/umber/blob/main/umber.go
-   */
-   #read-only-cursor-text-area {
-      font-size: 1em !important
-   }
-   /*
-   2023-05-11
+   2023-10-27
    github.com/ME
    */
-   .Layout {
-      --Layout-sidebar-width: 260px
-   }
    .ContributionCalendar-day[data-level="1"] {
       background: hsl(210, 100%, 80%) !important
    }
@@ -38,6 +21,9 @@
    }
    .ContributionCalendar-day[data-level="4"] {
       background: hsl(10, 80%, 50%) !important
+   }
+   .ContributionCalendar-grid {
+      direction: rtl
    }
    .ContributionCalendar-day[data-level="1"] {
       fill: hsl(210, 100%, 80%) !important
@@ -51,9 +37,19 @@
    .ContributionCalendar-day[data-level="4"] {
       fill: hsl(10, 80%, 50%) !important
    }
-   .position-sticky,
-   .user-profile-sticky-bar {
-      position: static !important
+   /*
+   2023-06-17
+   github.com/ziglang/zig/blob/master/build.zig
+   */
+   .pl-v {
+      color: var(--color-fg-default)
+   }
+   /*
+   2023-05-13
+   github.com/ME/umber/blob/main/umber.go
+   */
+   #read-only-cursor-text-area {
+      font-size: 1em !important
    }
    /*
    2023-05-11
