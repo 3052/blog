@@ -9,7 +9,7 @@ install Frida:
 pip install frida-tools
 ~~~
 
-download and extra server:
+download and extract server:
 
 https://github.com/frida/frida/releases
 
@@ -24,7 +24,7 @@ then push:
 ~~~
 adb root
 adb push server /data/app/frida-server
-adb shell chmod 755 /data/app/frida-server
+adb shell chmod +x /data/app/frida-server
 adb shell /data/app/frida-server
 ~~~
 
