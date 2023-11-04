@@ -1,18 +1,16 @@
 package main
 
 import (
-   "154.pages.dev/protobuf"
    "bufio"
    "bytes"
    "embed"
-   "flag"
+   "encoding/json"
    "fmt"
    "io"
    "net/http"
    "net/http/httputil"
    "net/textproto"
    "net/url"
-   "os"
    "strings"
    "text/template"
 )
@@ -20,26 +18,16 @@ import (
 func (f flags) write(req *http.Request, dst io.Writer) error {
    var v values
    if req.Body != nil && req.Method != "GET" {
-      data, err := io.ReadAll(req.Body)
+      src, err := io.ReadAll(req.Body)
       if err != nil {
          return err
       }
-      if f.protobuf {
-         m, err := protobuf.Consume(data)
-         if err != nil {
-            return err
-         }
-         v.Raw_Req_Body = fmt.Sprintf("%#v", m)
+      if req.Header.Get("content-type") == "application/json" {
+         var dst bytes.Buffer
+         json.Indent(&dst, src, "", " ")
+         v.Raw_Req_Body = "`" + dst.String() + "`"
       } else {
-         if f.form {
-            form, err := url.ParseQuery(string(data))
-            if err != nil {
-               return err
-            }
-            v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
-         } else {
-            v.Raw_Req_Body = fmt.Sprintf("%#q", data)
-         }
+         v.Raw_Req_Body = fmt.Sprintf("%#q", src)
       }
       v.Req_Body = "io.NopCloser(req_body)"
    } else {
@@ -53,57 +41,6 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
       return err
    }
    return temp.Execute(dst, v)
-}
-
-func main() {
-   var f flags
-   flag.StringVar(&f.name, "f", "", "input file")
-   flag.BoolVar(&f.form, "form", false, "POST form")
-   flag.BoolVar(&f.golang, "g", false, "request as Go code")
-   flag.StringVar(&f.output, "o", "", "output file")
-   flag.BoolVar(&f.protobuf, "p", false, "ProtoBuf")
-   flag.BoolVar(&f.https, "s", false, "HTTPS")
-   flag.Parse()
-   if f.name == "" {
-      flag.Usage()
-   } else {
-      var create io.WriteCloser
-      if f.output != "" {
-         var err error
-         create, err = os.Create(f.output)
-         if err != nil {
-            panic(err)
-         }
-         defer create.Close()
-      }
-      open, err := os.Open(f.name)
-      if err != nil {
-         panic(err)
-      }
-      defer open.Close()
-      req, err := read_request(bufio.NewReader(open))
-      if err != nil {
-         panic(err)
-      }
-      if req.URL.Scheme == "" {
-         if f.https {
-            req.URL.Scheme = "https"
-         } else {
-            req.URL.Scheme = "http"
-         }
-      }
-      if f.golang {
-         err := f.write(req, create)
-         if err != nil {
-            panic(err)
-         }
-      } else {
-         err := write(req, create)
-         if err != nil {
-            panic(err)
-         }
-      }
-   }
 }
 
 func read_request(r *bufio.Reader) (*http.Request, error) {
@@ -156,14 +93,6 @@ type values struct {
    Raw_Req_Body string
 }
 
-type flags struct {
-   form bool
-   golang bool
-   https bool
-   name string
-   output string
-   protobuf bool
-}
 func write(req *http.Request, dst io.Writer) error {
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
