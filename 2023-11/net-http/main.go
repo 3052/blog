@@ -12,12 +12,14 @@ type flags struct {
    https bool
    name string
    output string
+   form bool
 }
 
 func main() {
    var f flags
-   flag.StringVar(&f.name, "i", "", "input file")
+   flag.BoolVar(&f.form, "f", false, "form")
    flag.BoolVar(&f.golang, "g", false, "request as Go code")
+   flag.StringVar(&f.name, "i", "", "input file")
    flag.StringVar(&f.output, "o", "", "output file")
    flag.BoolVar(&f.https, "s", false, "HTTPS")
    flag.Parse()

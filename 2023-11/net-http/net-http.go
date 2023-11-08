@@ -26,6 +26,12 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
          var dst bytes.Buffer
          json.Indent(&dst, src, "", " ")
          v.Raw_Req_Body = "`" + dst.String() + "`"
+      } else if f.form {
+         form, err := url.ParseQuery(string(src))
+         if err != nil {
+            return err
+         }
+         v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
       } else {
          v.Raw_Req_Body = fmt.Sprintf("%#q", src)
       }
