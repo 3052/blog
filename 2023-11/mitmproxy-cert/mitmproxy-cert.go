@@ -21,7 +21,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   f.cert = filepath.Join(f.cert, "/.mitmproxy/mitmproxy-ca-cert.cer")
+   f.cert = filepath.Join(f.cert, "/.mitmproxy/mitmproxy-ca-cert.pem")
    flag.StringVar(&f.cert, "c", f.cert, "certificate")
    flag.BoolVar(&f.info, "i", false, "information")
    flag.Parse()

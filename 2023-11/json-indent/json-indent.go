@@ -6,6 +6,21 @@ import (
    "os"
 )
 
+func main() {
+   var f flags
+   flag.StringVar(&f.input, "i", "", "input file")
+   flag.StringVar(&f.output, "o", "", "output file")
+   flag.Parse()
+   if f.input != "" {
+      err := f.indent_json()
+      if err != nil {
+         panic(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
+
 func (f flags) indent_json() error {
    file := os.Stdout
    if f.output != "" {
@@ -35,19 +50,4 @@ func (f flags) indent_json() error {
 type flags struct {
    input string
    output string
-}
-
-func main() {
-   var f flags
-   flag.StringVar(&f.input, "f", "", "input file")
-   flag.StringVar(&f.output, "o", "", "output file")
-   flag.Parse()
-   if f.input != "" {
-      err := f.indent_json()
-      if err != nil {
-         panic(err)
-      }
-   } else {
-      flag.Usage()
-   }
 }
