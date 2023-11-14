@@ -15,40 +15,7 @@ import (
    "text/template"
 )
 
-func (f flags) write(req *http.Request, dst io.Writer) error {
-   var v values
-   if req.Body != nil && req.Method != "GET" {
-      src, err := io.ReadAll(req.Body)
-      if err != nil {
-         return err
-      }
-      if req.Header.Get("content-type") == "application/json" {
-         var dst bytes.Buffer
-         json.Indent(&dst, src, "", " ")
-         v.Raw_Req_Body = "`" + dst.String() + "`"
-      } else if f.form {
-         form, err := url.ParseQuery(string(src))
-         if err != nil {
-            return err
-         }
-         v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
-      } else {
-         v.Raw_Req_Body = fmt.Sprintf("%#q", src)
-      }
-      v.Req_Body = "io.NopCloser(req_body)"
-   } else {
-      v.Raw_Req_Body = `""`
-      v.Req_Body = "nil"
-   }
-   v.Query = req.URL.Query()
-   v.Request = req
-   temp, err := template.ParseFS(content, "_template.go")
-   if err != nil {
-      return err
-   }
-   return temp.Execute(dst, v)
-}
-
+// why is this needed?
 func read_request(r *bufio.Reader) (*http.Request, error) {
    var req http.Request
    text := textproto.NewReader(r)
@@ -87,6 +54,40 @@ func read_request(r *bufio.Reader) (*http.Request, error) {
    // .ContentLength
    req.ContentLength = length
    return &req, nil
+}
+
+func (f flags) write(req *http.Request, dst io.Writer) error {
+   var v values
+   if req.Body != nil && req.Method != "GET" {
+      src, err := io.ReadAll(req.Body)
+      if err != nil {
+         return err
+      }
+      if req.Header.Get("content-type") == "application/json" {
+         var dst bytes.Buffer
+         json.Indent(&dst, src, "", " ")
+         v.Raw_Req_Body = "`" + dst.String() + "`"
+      } else if f.form {
+         form, err := url.ParseQuery(string(src))
+         if err != nil {
+            return err
+         }
+         v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
+      } else {
+         v.Raw_Req_Body = fmt.Sprintf("%#q", src)
+      }
+      v.Req_Body = "io.NopCloser(req_body)"
+   } else {
+      v.Raw_Req_Body = `""`
+      v.Req_Body = "nil"
+   }
+   v.Query = req.URL.Query()
+   v.Request = req
+   temp, err := template.ParseFS(content, "_template.go")
+   if err != nil {
+      return err
+   }
+   return temp.Execute(dst, v)
 }
 
 //go:embed _template.go
