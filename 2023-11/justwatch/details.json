@@ -1,0 +1,191 @@
+{
+ "data": {
+  "url": {
+   "node": {
+    "id": "tm175820",
+    "offers": [
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "SD",
+      "standardWebURL": "https://mubi.com/films/enemy"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "HD",
+      "standardWebURL": "https://mubi.com/films/enemy"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "SD",
+      "standardWebURL": "https://player.bfi.org.uk/subscription/film/watch-enemy-2013-online"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "SD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "HD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "HD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.68b56962-c36b-c9f2-926a-bab4f30e0399"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "SD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.68b56962-c36b-c9f2-926a-bab4f30e0399"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "SD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "FLATRATE",
+      "presentationType": "HD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://rakuten.tv/uk/movies/enemy"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://play.google.com/store/movies/details/Enemy?gl=GB\u0026hl=en\u0026id=4dNMSlKOEc4"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://uk.chili.com/content/enemy-2013/f2105a16-3503-4d8a-abdf-739e942b0d28?utm_campaign=buy_box\u0026utm_medium=affiliation\u0026utm_source=justwatch"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://www.youtube.com/results?search_query=Enemy%2Bmovie"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://rakuten.tv/uk/movies/enemy"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://tv.apple.com/gb/movie/enemy/umc.cmc.4mwcqdlueqd8cyepsudiiiqto?playableId=tvs.sbd.9001%3A952388934"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "SD",
+      "standardWebURL": "https://tv.apple.com/gb/movie/enemy/umc.cmc.4mwcqdlueqd8cyepsudiiiqto?playableId=tvs.sbd.9001%3A952388934"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://play.google.com/store/movies/details/Enemy?gl=GB\u0026hl=en\u0026id=4dNMSlKOEc4"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://www.skystore.com/product/enemy/977c2d6c-7f42-465d-8c29-cfcc086b64d6"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://uk.chili.com/content/enemy-2013/f2105a16-3503-4d8a-abdf-739e942b0d28?utm_campaign=buy_box\u0026utm_medium=affiliation\u0026utm_source=justwatch"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://www.youtube.com/results?search_query=Enemy%2Bmovie"
+     },
+     {
+      "monetizationType": "RENT",
+      "presentationType": "HD",
+      "standardWebURL": "https://homecinema.curzon.com/film/enemy/"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://play.google.com/store/movies/details/Enemy?gl=GB\u0026hl=en\u0026id=4dNMSlKOEc4"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://www.youtube.com/results?search_query=Enemy%2Bmovie"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://watch.amazon.co.uk/detail?gti=amzn1.dv.gti.e8a9f65f-4cc3-9475-99c3-a0ef086276d6"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://tv.apple.com/gb/movie/enemy/umc.cmc.4mwcqdlueqd8cyepsudiiiqto?playableId=tvs.sbd.9001%3A952388934"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://www.skystore.com/product/enemy/977c2d6c-7f42-465d-8c29-cfcc086b64d6"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://uk.chili.com/content/enemy-2013/f2105a16-3503-4d8a-abdf-739e942b0d28?utm_campaign=buy_box\u0026utm_medium=affiliation\u0026utm_source=justwatch"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://tv.apple.com/gb/movie/enemy/umc.cmc.4mwcqdlueqd8cyepsudiiiqto?playableId=tvs.sbd.9001%3A952388934"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://play.google.com/store/movies/details/Enemy?gl=GB\u0026hl=en\u0026id=4dNMSlKOEc4"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://uk.chili.com/content/enemy-2013/f2105a16-3503-4d8a-abdf-739e942b0d28?utm_campaign=buy_box\u0026utm_medium=affiliation\u0026utm_source=justwatch"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://www.youtube.com/results?search_query=Enemy%2Bmovie"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "SD",
+      "standardWebURL": "https://rakuten.tv/uk/movies/enemy"
+     },
+     {
+      "monetizationType": "BUY",
+      "presentationType": "HD",
+      "standardWebURL": "https://rakuten.tv/uk/movies/enemy"
+     }
+    ]
+   }
+  }
+ }
+}
