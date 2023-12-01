@@ -3,7 +3,6 @@ package main
 import (
    "io"
    "net/http"
-   "net/http/httputil"
    "net/url"
    "os"
    "strings"
@@ -34,11 +33,7 @@ func main() {
       panic(err)
    }
    defer res.Body.Close()
-   res_body, err := httputil.DumpResponse(res, true)
-   if err != nil {
-      panic(err)
-   }
-   os.Stdout.Write(res_body)
+   res.Write(os.Stdout)
 }
 
-var req_body = strings.NewReader({{ .Raw_Req_Body }})
+var body = strings.NewReader({{ .Raw_Req_Body }})

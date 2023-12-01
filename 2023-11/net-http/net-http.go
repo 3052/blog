@@ -8,9 +8,9 @@ import (
    "fmt"
    "io"
    "net/http"
-   "net/http/httputil"
    "net/textproto"
    "net/url"
+   "os"
    "strings"
    "text/template"
 )
@@ -107,20 +107,14 @@ func write(req *http.Request, dst io.Writer) error {
    }
    defer res.Body.Close()
    if dst != nil {
-      b, err := httputil.DumpResponse(res, false)
+      fmt.Println(res.Status)
+      fmt.Println(res.Header)
+      _, err := io.Copy(dst, res.Body)
       if err != nil {
-         return err
-      }
-      fmt.Println(string(b))
-      if _, err := io.Copy(dst, res.Body); err != nil {
          return err
       }
    } else {
-      b, err := httputil.DumpResponse(res, true)
-      if err != nil {
-         return err
-      }
-      fmt.Println(string(b))
+      res.Write(os.Stdout)
    }
    return nil
 }
