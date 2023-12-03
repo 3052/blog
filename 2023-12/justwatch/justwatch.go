@@ -3,14 +3,12 @@ package justwatch
 import (
    "bytes"
    "encoding/json"
-   "fmt"
    "net/http"
    "strings"
 )
 
 func New_URLs(ref string) (*URLs, error) {
    ref = "https://apis.justwatch.com/content/urls?path=" + ref
-   fmt.Println("GET", ref)
    res, err := http.Get(ref)
    if err != nil {
       return nil, err
@@ -118,11 +116,6 @@ type Details struct {
 type Lang_Tag struct {
    Href string // fullPath
    Href_Lang string // country
-}
-
-func (t Lang_Tag) Country_Code() string {
-   _, code, _ := strings.Cut(t.Href_Lang, "-")
-   return code
 }
 
 func (t Lang_Tag) Language() string {
