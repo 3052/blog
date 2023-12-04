@@ -113,11 +113,6 @@ type Details struct {
    }
 }
 
-type Lang_Tag struct {
-   Href string // fullPath
-   Href_Lang string // country
-}
-
 func (t Lang_Tag) Language() string {
    lang, _, _ := strings.Cut(t.Href_Lang, "-")
    return lang

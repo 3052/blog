@@ -7,6 +7,11 @@ import (
    "strings"
 )
 
+type Lang_Tag struct {
+   Href string // fullPath
+   Href_Lang string // country
+}
+
 func (t Lang_Tag) Country_Code() string {
    _, code, _ := strings.Cut(t.Href_Lang, "-")
    return code
@@ -95,7 +100,6 @@ var buy_rent = map[string]bool{
    "RENT": true,
 }
 
-
 // iban.com/country-codes
 var countries = map[string]string{
    "AD": "Andorra",
@@ -105,7 +109,6 @@ var countries = map[string]string{
    "AO": "Angola",
    "AR": "Argentina",
    "AT": "Austria",
-   "AU": "Australia (Mullvad)",
    "AU": "Australia",
    "BB": "Barbados",
    "BE": "Belgium",
@@ -115,7 +118,6 @@ var countries = map[string]string{
    "BR": "Brazil",
    "BS": "Bahamas",
    "BZ": "Belize",
-   "CA": "Canada (Mullvad)",
    "CA": "Canada",
    "CH": "Switzerland",
    "CL": "Chile",
@@ -124,7 +126,6 @@ var countries = map[string]string{
    "CR": "Costa Rica",
    "CZ": "Czechia",
    "DE": "Germany",
-   "DK": "Denmark (Mullvad)",
    "DK": "Denmark",
    "DO": "Dominican Republic (the)",
    "DZ": "Algeria",
@@ -135,8 +136,7 @@ var countries = map[string]string{
    "FI": "Finland",
    "FJ": "Fiji",
    "FR": "France",
-   "GB": "United Kingdom (Mullvad)",
-   "GB": "United Kingdom of Great Britain and Northern Ireland (the)",
+   "GB": "United Kingdom of Great Britain",
    "GG": "Guernsey",
    "GH": "Ghana",
    "GI": "Gibraltar",
@@ -148,7 +148,6 @@ var countries = map[string]string{
    "HR": "Croatia",
    "HU": "Hungary",
    "ID": "Indonesia",
-   "IE": "Ireland (Mullvad)",
    "IE": "Ireland",
    "IL": "Israel",
    "IN": "India",
@@ -166,17 +165,13 @@ var countries = map[string]string{
    "MX": "Mexico",
    "MY": "Malaysia",
    "NG": "Nigeria",
-   "NL": "Netherlands (Mullvad)",
    "NL": "Netherlands (the)",
-   "NO": "Norway (Mullvad)",
    "NO": "Norway",
-   "NZ": "New Zealand (Mullvad)",
    "NZ": "New Zealand",
    "PA": "Panama",
    "PE": "Peru",
    "PG": "Papua New Guinea",
    "PH": "Philippines (the)",
-   "PH": "Philippines",
    "PK": "Pakistan",
    "PL": "Poland",
    "PT": "Portugal",
@@ -187,7 +182,6 @@ var countries = map[string]string{
    "RW": "Rwanda",
    "SA": "Saudi Arabia",
    "SE": "Sweden",
-   "SG": "Singapore (Mullvad)",
    "SG": "Singapore",
    "SI": "Slovenia",
    "SK": "Slovakia",
@@ -199,12 +193,15 @@ var countries = map[string]string{
    "TW": "Taiwan (Province of China)",
    "UA": "Ukraine",
    "UG": "Uganda",
-   "US": "United States (Mullvad)",
    "US": "United States of America (the)",
    "UY": "Uruguay",
    "VE": "Venezuela (Bolivarian Republic of)",
-   "ZA": "South Africa (Mullvad)",
    "ZA": "South Africa",
    "ZM": "Zambia",
    "ZW": "Zimbabwe",
+}
+
+var Blacklist = map[string]bool{
+   "ja-JP": true,
+   "ru-RU": true,
 }
