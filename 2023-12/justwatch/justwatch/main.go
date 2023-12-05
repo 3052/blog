@@ -16,7 +16,7 @@ func main() {
    var f flags
    flag.StringVar(&f.address, "a", "", "address")
    flag.DurationVar(&f.sleep, "s", 99*time.Millisecond, "sleep")
-   flag.TextVar(&f.h.Level, "level", f.h.Level, "level")
+   flag.TextVar(&f.h.Level, "v", f.h.Level, "log level")
    flag.Parse()
    log.Set_Handler(f.h)
    if f.address != "" {
