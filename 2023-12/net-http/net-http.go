@@ -15,47 +15,6 @@ import (
    "text/template"
 )
 
-// why is this needed?
-func read_request(r *bufio.Reader) (*http.Request, error) {
-   var req http.Request
-   text := textproto.NewReader(r)
-   // .Method
-   raw_method_path, err := text.ReadLine()
-   if err != nil {
-      return nil, err
-   }
-   method_path := strings.Fields(raw_method_path)
-   req.Method = method_path[0]
-   // .URL
-   ref, err := url.Parse(method_path[1])
-   if err != nil {
-      return nil, err
-   }
-   req.URL = ref
-   // .URL.Host
-   head, err := text.ReadMIMEHeader()
-   if err != nil {
-      return nil, err
-   }
-   if req.URL.Host == "" {
-      req.URL.Host = head.Get("Host")
-   }
-   // .Header
-   req.Header = http.Header(head)
-   // .Body
-   buf := new(bytes.Buffer)
-   length, err := text.R.WriteTo(buf)
-   if err != nil {
-      return nil, err
-   }
-   if length >= 1 {
-      req.Body = io.NopCloser(buf)
-   }
-   // .ContentLength
-   req.ContentLength = length
-   return &req, nil
-}
-
 func (f flags) write(req *http.Request, dst io.Writer) error {
    var v values
    if req.Body != nil && req.Method != "GET" {
@@ -76,7 +35,7 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
       } else {
          v.Raw_Req_Body = fmt.Sprintf("%#q", src)
       }
-      v.Req_Body = "io.NopCloser(req_body)"
+      v.Req_Body = "io.NopCloser(body)"
    } else {
       v.Raw_Req_Body = `""`
       v.Req_Body = "nil"
@@ -117,5 +76,46 @@ func write(req *http.Request, dst io.Writer) error {
       res.Write(os.Stdout)
    }
    return nil
+}
+
+// why is this needed?
+func read_request(r *bufio.Reader) (*http.Request, error) {
+   var req http.Request
+   text := textproto.NewReader(r)
+   // .Method
+   raw_method_path, err := text.ReadLine()
+   if err != nil {
+      return nil, err
+   }
+   method_path := strings.Fields(raw_method_path)
+   req.Method = method_path[0]
+   // .URL
+   ref, err := url.Parse(method_path[1])
+   if err != nil {
+      return nil, err
+   }
+   req.URL = ref
+   // .URL.Host
+   head, err := text.ReadMIMEHeader()
+   if err != nil {
+      return nil, err
+   }
+   if req.URL.Host == "" {
+      req.URL.Host = head.Get("Host")
+   }
+   // .Header
+   req.Header = http.Header(head)
+   // .Body
+   buf := new(bytes.Buffer)
+   length, err := text.R.WriteTo(buf)
+   if err != nil {
+      return nil, err
+   }
+   if length >= 1 {
+      req.Body = io.NopCloser(buf)
+   }
+   // .ContentLength
+   req.ContentLength = length
+   return &req, nil
 }
 

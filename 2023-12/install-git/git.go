@@ -1,7 +1,6 @@
 package main
 
 import (
-   "blog/zip"
    "fmt"
    "io"
    "net/http"

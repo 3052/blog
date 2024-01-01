@@ -3,7 +3,6 @@ meta = yellow bold
 
 [core]
 askPass = git-askpass
-pager = slit
 
 [diff]
 wsErrorHighlight = all
