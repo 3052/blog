@@ -47,6 +47,3 @@ Set-PSReadLineOption -AddToHistoryHandler $null
 
 # 2023-03-06
 Get-Alias | Remove-Alias -Force
-
-# 2023-02-04
-$env:CGO_ENABLED = 1
