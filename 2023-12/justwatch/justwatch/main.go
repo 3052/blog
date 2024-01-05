@@ -18,7 +18,7 @@ func main() {
    flag.DurationVar(&f.sleep, "s", 99*time.Millisecond, "sleep")
    flag.TextVar(&f.h.Level, "v", f.h.Level, "log level")
    flag.Parse()
-   log.Set_Handler(f.h)
+   log.Set_Logger(f.h.Level)
    if f.address != "" {
       err := f.stream()
       if err != nil {
