@@ -82,12 +82,13 @@ func Exports(dir string) ([]Export, error) {
                      }
                      switch typ := spec.Type.(type) {
                      default:
-                        panic("default")
+                        panic(typ)
                      case *ast.ArrayType:
                      case *ast.FuncType:
                      case *ast.Ident:
                      case *ast.InterfaceType:
                         exps = field(exps, spec.Name, typ.Methods)
+                     case *ast.MapType:
                      case *ast.StructType:
                         exps = field(exps, spec.Name, typ.Fields)
                      }
