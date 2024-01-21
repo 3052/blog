@@ -2,23 +2,10 @@ package main
 
 import (
    "fmt"
-   "os"
    "os/exec"
    "strings"
-   "text/template"
    "time"
 )
-
-func get_then() (string, error) {
-   b, err := exec.Command("git", "log", "-1", "--format=%cI").Output()
-   if err != nil {
-      return "", err
-   }
-   if len(b) >= 11 {
-      b = b[:10]
-   }
-   return string(b), nil
-}
 
 const (
    fail = "\x1b[30;101m Fail \x1b[m"
@@ -45,6 +32,17 @@ type git_board struct {
 
 func lines(r rune) bool {
    return r == '\n'
+}
+
+func get_then() (string, error) {
+   b, err := exec.Command("git", "log", "-1", "--format=%cI").Output()
+   if err != nil {
+      return "", err
+   }
+   if len(b) >= 11 {
+      b = b[:10]
+   }
+   return string(b), nil
 }
 
 func new_git_board() (*git_board, error) {
@@ -98,18 +96,4 @@ func new_git_board() (*git_board, error) {
       board.Date_Status = fail
    }
    return &board, nil
-}
-
-func main() {
-   board, err := new_git_board()
-   if err != nil {
-      panic(err)
-   }
-   tem, err := new(template.Template).Parse(format)
-   if err != nil {
-      panic(err)
-   }
-   if err := tem.Execute(os.Stdout, board); err != nil {
-      panic(err)
-   }
 }
