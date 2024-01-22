@@ -10,7 +10,6 @@ import (
 var repos = []repository{
    {
       name: "api",
-      homepage: "https://godocs.io/154.pages.dev/api",
       topics: []string{
          "github",
          "justwatch",
@@ -28,7 +27,6 @@ var repos = []repository{
          "mp4",
          "xml",
       },
-      homepage: "https://godocs.io/154.pages.dev/encoding",
    },
    {
       description: "Download APK from Google Play or send API requests",
@@ -37,7 +35,6 @@ var repos = []repository{
          "android",
          "google-play",
       },
-      homepage: "https://godocs.io/154.pages.dev/google",
    },
    {
       name: "media",
@@ -52,21 +49,14 @@ var repos = []repository{
          "soundcloud",
          "youtube",
       },
-      homepage: "https://godocs.io/154.pages.dev/media",
    },
    {
       description: "Protocol Buffers",
-      homepage: "https://godocs.io/154.pages.dev/protobuf",
       name: "protobuf",
-   },
-   {
-      name: "umber",
-      homepage: "https://159.pages.dev/umber",
    },
    {
       name: "widevine",
       description: "DRM",
-      homepage: "https://godocs.io/154.pages.dev/widevine",
    },
 }
 
