@@ -7,6 +7,15 @@ import (
    "strings"
 )
 
+func sort_keys[M ~map[string]V, V any](group M) []string {
+   var keys []string
+   for key := range group {
+      keys = append(keys, key)
+   }
+   sort.Strings(keys)
+   return keys
+}
+
 type Lang_Tag struct {
    Href string // fullPath
    Href_Lang string // country
@@ -65,15 +74,6 @@ type Country_Codes map[string]struct{}
 
 // map[monetizationType]map[standardWebURL]Country_Codes
 type Offers map[string]map[string]Country_Codes
-
-func sort_keys[M ~map[string]V, V any](group M) []string {
-   var keys []string
-   for key := range group {
-      keys = append(keys, key)
-   }
-   sort.Strings(keys)
-   return keys
-}
 
 func get_country(code string) (string, error) {
    country, found := countries[code]

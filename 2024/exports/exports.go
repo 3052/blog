@@ -120,8 +120,6 @@ func field(exps []Export, recv *ast.Ident, f *ast.FieldList) []Export {
          }
       } else {
          switch field := field.Type.(type) {
-         default:
-            panic("default")
          case *ast.Ident:
          case *ast.SelectorExpr:
             exps = append(exps, Export{
@@ -139,6 +137,8 @@ func field(exps []Export, recv *ast.Ident, f *ast.FieldList) []Export {
             default:
                panic(expr)
             }
+         default:
+            panic(field)
          }
       }
    }

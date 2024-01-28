@@ -6,11 +6,12 @@ import (
 )
 
 func Test_Relay(t *testing.T) {
-   relay, err := new_relays()
+   var relay app_relay
+   err := relay.get()
    if err != nil {
       t.Fatal(err)
    }
-   for _, country := range relay.countries() {
+   relay.countries(func(country string) {
       fmt.Println(country)
-   }
+   })
 }
