@@ -19,13 +19,13 @@ type Release_Group struct {
    Releases []*Release
 }
 
-func From_Artist(artist_ID string, offset int) (*Release_Group, error) {
+func From_Artist(artist_id string, offset int) (*Release_Group, error) {
    req, err := http.NewRequest("GET", root + "/release", nil)
    if err != nil {
       return nil, err
    }
    val := url.Values{
-      "artist": {artist_ID},
+      "artist": {artist_id},
       "fmt": {"json"},
       "inc": {"release-groups"},
       "limit": {"100"},
@@ -48,7 +48,7 @@ func From_Artist(artist_ID string, offset int) (*Release_Group, error) {
    return group, nil
 }
 
-func New_Release_Group(group_ID string) (*Release_Group, error) {
+func New_Release_Group(group_id string) (*Release_Group, error) {
    req, err := http.NewRequest("GET", root + "/release", nil)
    if err != nil {
       return nil, err
@@ -56,7 +56,7 @@ func New_Release_Group(group_ID string) (*Release_Group, error) {
    req.URL.RawQuery = url.Values{
       "fmt": {"json"},
       "inc": {"artist-credits recordings"},
-      "release-group": {group_ID},
+      "release-group": {group_id},
    }.Encode()
    res, err := new(http.Transport).RoundTrip(req)
    if err != nil {
@@ -111,8 +111,8 @@ type Release struct {
    Title string
 }
 
-func New_Release(release_ID string) (*Release, error) {
-   req, err := http.NewRequest("GET", root + "/release/" + release_ID, nil)
+func New_Release(release_id string) (*Release, error) {
+   req, err := http.NewRequest("GET", root + "/release/" + release_id, nil)
    if err != nil {
       return nil, err
    }
