@@ -73,6 +73,7 @@
    2023-05-11
    github.com/rlaphoenix/pywidevine/issues/26
    */
+   .is-stuck,
    .is-stuck + .gh-header-shadow {
       position: static !important
    }
