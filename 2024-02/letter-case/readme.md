@@ -17,9 +17,9 @@ optimized_serving
 ## exported
 
 ~~~
-Apk
+APK
 ApkServing
 Optimized
+OptimizedApk
 OptimizedServing
-optimizedApk
 ~~~
