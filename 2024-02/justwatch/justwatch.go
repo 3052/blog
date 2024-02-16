@@ -25,6 +25,9 @@ func (c *ContentUrls) New(path string) error {
       return err
    }
    defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return errors.New(res.Status)
+   }
    return json.NewDecoder(res.Body).Decode(c)
 }
 
@@ -39,7 +42,6 @@ query GetUrlTitleDetails(
          ... on MovieOrShowOrSeason {
             offers(country: $country, platform: $platform) {
                monetizationType
-               presentationType
                standardWebURL
             }
          }
@@ -47,25 +49,6 @@ query GetUrlTitleDetails(
    }
 }
 `
-
-// I am including `presentationType` to differentiate the different options,
-// but the data seems to be incorrect in some cases. For example, JustWatch
-// reports this as SD:
-// fetchtv.com.au/movie/details/19285
-// when the site itself reports as HD.
-type TitleDetails struct {
-   Data struct {
-      URL struct {
-         Node struct {
-            Offers []struct {
-               MonetizationType string
-               PresentationType string
-               StandardWebUrl string
-            }
-         }
-      }
-   }
-}
 
 type locale struct {
    country string
@@ -82,16 +65,117 @@ func (l *locale) UnmarshalText(b []byte) error {
 }
 
 type LangTag struct {
-   Href string
-   Locale locale
+   Href string // /ar/pelicula/mulholland-drive
+   Locale locale // es_AR
 }
 
-func (t LangTag) Details() (*TitleDetails, error) {
+// iban.com/country-codes
+var countries = map[string]string{
+   "AD": "Andorra",
+   "AE": "United Arab Emirates (the)",
+   "AG": "Antigua and Barbuda",
+   "AL": "Albania",
+   "AO": "Angola",
+   "AR": "Argentina",
+   "AT": "Austria",
+   "AU": "Australia",
+   "BB": "Barbados",
+   "BE": "Belgium",
+   "BG": "Bulgaria",
+   "BM": "Bermuda",
+   "BO": "Bolivia (Plurinational State of)",
+   "BR": "Brazil",
+   "BS": "Bahamas",
+   "BZ": "Belize",
+   "CA": "Canada",
+   "CH": "Switzerland",
+   "CL": "Chile",
+   "CM": "Cameroon",
+   "CO": "Colombia",
+   "CR": "Costa Rica",
+   "CZ": "Czechia",
+   "DE": "Germany",
+   "DK": "Denmark",
+   "DO": "Dominican Republic (the)",
+   "DZ": "Algeria",
+   "EC": "Ecuador",
+   "EE": "Estonia",
+   "EG": "Egypt",
+   "ES": "Spain",
+   "FI": "Finland",
+   "FJ": "Fiji",
+   "FR": "France",
+   "GB": "United Kingdom of Great Britain",
+   "GG": "Guernsey",
+   "GH": "Ghana",
+   "GI": "Gibraltar",
+   "GR": "Greece",
+   "GT": "Guatemala",
+   "GY": "Guyana",
+   "HK": "Hong Kong",
+   "HN": "Honduras",
+   "HR": "Croatia",
+   "HU": "Hungary",
+   "ID": "Indonesia",
+   "IE": "Ireland",
+   "IL": "Israel",
+   "IN": "India",
+   "IQ": "Iraq",
+   "IS": "Iceland",
+   "IT": "Italy",
+   "JM": "Jamaica",
+   "JP": "Japan",
+   "KE": "Kenya",
+   "KR": "Korea (the Republic of)",
+   "LC": "Saint Lucia",
+   "LT": "Lithuania",
+   "MA": "Morocco",
+   "MW": "Malawi",
+   "MX": "Mexico",
+   "MY": "Malaysia",
+   "NG": "Nigeria",
+   "NL": "Netherlands (the)",
+   "NO": "Norway",
+   "NZ": "New Zealand",
+   "PA": "Panama",
+   "PE": "Peru",
+   "PG": "Papua New Guinea",
+   "PH": "Philippines (the)",
+   "PK": "Pakistan",
+   "PL": "Poland",
+   "PT": "Portugal",
+   "PY": "Paraguay",
+   "RO": "Romania",
+   "RS": "Serbia",
+   "RU": "Russian Federation (the)",
+   "RW": "Rwanda",
+   "SA": "Saudi Arabia",
+   "SE": "Sweden",
+   "SG": "Singapore",
+   "SI": "Slovenia",
+   "SK": "Slovakia",
+   "SV": "El Salvador",
+   "TC": "Turks and Caicos",
+   "TH": "Thailand",
+   "TR": "Turkey",
+   "TT": "Trinidad and Tobago",
+   "TW": "Taiwan (Province of China)",
+   "UA": "Ukraine",
+   "UG": "Uganda",
+   "US": "United States of America (the)",
+   "UY": "Uruguay",
+   "VE": "Venezuela (Bolivarian Republic of)",
+   "ZA": "South Africa",
+   "ZM": "Zambia",
+   "ZW": "Zimbabwe",
+}
+
+func (t LangTag) Offers() ([]Offer, error) {
    body, err := func() ([]byte, error) {
       var s struct {
          Variables struct {
-            Country string
-            FullPath string
+            Country string `json:"country"`
+            FullPath string `json:"fullPath"`
          }
          Query string
       }
@@ -111,14 +195,47 @@ func (t LangTag) Details() (*TitleDetails, error) {
       return nil, err
    }
    defer res.Body.Close()
-   title := new(TitleDetails)
-   if err := json.NewDecoder(res.Body).Decode(title); err != nil {
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   var s struct {
+      Data struct {
+         URL struct {
+            Node struct {
+               Offers []Offer
+            }
+         }
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&s); err != nil {
       return nil, err
    }
-   return title, nil
+   return s.Data.URL.Node.Offers, nil
 }
 
-var buy_rent = map[string]bool{
-   "BUY": true,
-   "RENT": true,
+// `presentationType` data seems to be incorrect in some cases. For example,
+// JustWatch reports this as SD: fetchtv.com.au/movie/details/19285
+// when the site itself reports as HD
+type Offer struct {
+   MonetizationType string
+   StandardWebUrl string
 }
+
+func (o Offer) Stream() bool {
+   switch o.MonetizationType {
+   case "BUY", "RENT":
+      return false
+   }
+   return true
+}
+
+const ModeLine =
+"{{ range $index, $_ := . }}" +
+   "{{ if .Stream }}" +
+      "{{ if $index }}" +
+"===========================================================================\n" +
+      "{{ end }}" +
+"monetization = {{ .MonetizationType }}\n" +
+"URL = {{ .StandardWebUrl }}\n" +
+   "{{ end }}" +
+"{{ end }}"
