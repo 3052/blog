@@ -6,10 +6,12 @@ import (
    "time"
 )
 
-const enemy = "/us/movie/ennemi"
+// justwatch.com/us/movie/mulholland-drive
+const movie = "/us/movie/mulholland-drive"
 
-func Test_Content(t *testing.T) {
-   content, err := New_URLs(enemy)
+func TestContent(t *testing.T) {
+   var content ContentUrls
+   err := content.New(movie)
    if err != nil {
      t.Fatal(err)
    }
@@ -21,7 +23,7 @@ func Test_Content(t *testing.T) {
          if err != nil {
             t.Fatal(err)
          }
-         offer.Add(v.Country_Code, detail)
+         offer.Add(v.Country, detail)
          time.Sleep(99 * time.Millisecond)
       }
    }
