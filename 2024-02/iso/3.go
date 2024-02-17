@@ -1,6 +1,8 @@
 package iso
 
 import (
+   "bytes"
+   "encoding/json"
    "io"
    "net/http"
    "net/url"
@@ -8,15 +10,19 @@ import (
    "fmt"
 )
 
-/*
-> curl -s -O -w '%{size_download}' https://www.iso.org/home.html
-90122
-
-> curl -w '%{size_download}' -s -O https://www.iso.org/obp/ui
-1735
-*/
-func main() {
-   var req http.Request
+func (s securityKey) three() error {
+   body, err := func() ([]byte, error) {
+      m := map[string]any{
+         "clientId": 6,
+         "csrfToken": s.key.VaadinSecurityKey,
+         "syncId": 6,
+      }
+      return json.Marshal(m)
+   }()
+   if err != nil {
+      return err
+   }
+   req := new(http.Request)
    req.Header = make(http.Header)
    req.Method = "POST"
    req.ProtoMajor = 1
@@ -25,19 +31,19 @@ func main() {
    req.URL.Host = "www.iso.org"
    req.URL.Path = "/obp/ui/UIDL/"
    req.URL.Scheme = "https"
-   req.Header["Cookie"] = []string{"JSESSIONID=4EB57C67B49DCAFC47FE60380D4D278A"}
    val := make(url.Values)
    val["v-uiId"] = []string{"12"}
    req.URL.RawQuery = val.Encode()
-   req.Body = io.NopCloser(body)
-   res, err := new(http.Transport).RoundTrip(&req)
+   req.AddCookie(s.cookie)
+   req.Body = io.NopCloser(bytes.NewReader(body))
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
-      panic(err)
+      return err
    }
    defer res.Body.Close()
-   body, err := io.ReadAll(res.Body)
+   body, err = io.ReadAll(res.Body)
    if err != nil {
-      panic(err)
+      return err
    }
    fmt.Println(string(body))
    if strings.Contains(string(body), "Bhutan") {
@@ -45,12 +51,5 @@ func main() {
    } else {
       fmt.Println("fail")
    }
+   return nil
 }
-
-var body = strings.NewReader(`
-{
-   "csrfToken": "71d8e7fa-a794-45dc-85a0-0b9284028640",
-   "clientId": 6,
-   "syncId": 6
-}
-`)

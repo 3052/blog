@@ -1,17 +1,21 @@
 package iso
 
-import (
-   "io"
-   "net/http"
-   "net/url"
-   "strings"
-   "fmt"
-)
+import "net/http"
 
-/*
-> curl -s -O -w '%{size_download}' https://www.iso.org/home.html
-90122
+type sessionId struct {
+   cookie *http.Cookie
+}
 
-> curl -w '%{size_download}' -s -O https://www.iso.org/obp/ui
-1735
-*/
+func (s *sessionId) New() error {
+   res, err := http.Head("https://www.iso.org/obp/ui")
+   if err != nil {
+      return err
+   }
+   for _, cookie := range res.Cookies() {
+      if cookie.Name == "JSESSIONID" {
+         s.cookie = cookie
+         return nil
+      }
+   }
+   return http.ErrNoCookie
+}
