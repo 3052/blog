@@ -104,6 +104,43 @@ func (t LangTag) Offers() ([]Offer, error) {
    return s.Data.URL.Node.Offers, nil
 }
 
+type LangTag struct {
+   Href string // /ar/pelicula/mulholland-drive
+   Locale Locale // es_AR
+}
+
+type Locale struct {
+   country string
+   language string
+}
+
+// `presentationType` data seems to be incorrect in some cases. For example,
+// JustWatch reports this as SD: fetchtv.com.au/movie/details/19285
+// when the site itself reports as HD
+type Offer struct {
+   MonetizationType string
+   StandardWebUrl string
+}
+
+func (l Locale) String(o Offer) string {
+   var b strings.Builder
+   b.WriteString("country = ")
+   b.WriteString(country_codes[l.country])
+   b.WriteString("\nmonetization = ")
+   b.WriteString(o.MonetizationType)
+   b.WriteString("\nURL = ")
+   b.WriteString(o.StandardWebUrl)
+   return b.String()
+}
+
+func (o Offer) Stream() bool {
+   switch o.MonetizationType {
+   case "BUY", "RENT":
+      return false
+   }
+   return true
+}
+
 // iso.org/obp/ui#search/code
 var country_codes = map[string]string{
    "AD": "Andorra",
@@ -203,41 +240,4 @@ var country_codes = map[string]string{
    "ZA": "South Africa",
    "ZM": "Zambia",
    "ZW": "Zimbabwe",
-}
-
-type LangTag struct {
-   Href string // /ar/pelicula/mulholland-drive
-   Locale Locale // es_AR
-}
-
-type Locale struct {
-   country string
-   language string
-}
-
-// `presentationType` data seems to be incorrect in some cases. For example,
-// JustWatch reports this as SD: fetchtv.com.au/movie/details/19285
-// when the site itself reports as HD
-type Offer struct {
-   MonetizationType string
-   StandardWebUrl string
-}
-
-func (l Locale) String(o Offer) string {
-   var b strings.Builder
-   b.WriteString("country = ")
-   b.WriteString(country_codes[l.country])
-   b.WriteString("\nmonetization = ")
-   b.WriteString(o.MonetizationType)
-   b.WriteString("\nURL = ")
-   b.WriteString(o.StandardWebUrl)
-   return b.String()
-}
-
-func (o Offer) Stream() bool {
-   switch o.MonetizationType {
-   case "BUY", "RENT":
-      return false
-   }
-   return true
 }
