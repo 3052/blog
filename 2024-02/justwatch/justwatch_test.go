@@ -2,9 +2,7 @@ package justwatch
 
 import (
    "fmt"
-   "os"
    "testing"
-   "text/template"
    "time"
 )
 
@@ -17,20 +15,13 @@ func TestContent(t *testing.T) {
    if err != nil {
      t.Fatal(err)
    }
-   for i, tag := range content.Href_Lang_Tags {
-      if i >= 1 {
-         fmt.Println("---------------------------------------------------------")
-      }
+   for _, tag := range content.Href_Lang_Tags {
       offers, err := tag.Offers()
       if err != nil {
          t.Fatal(err)
       }
-      line, err := new(template.Template).Parse(ModeLine)
-      if err != nil {
-         t.Fatal(err)
-      }
-      if err := line.Execute(os.Stdout, offers); err != nil {
-         t.Fatal(err)
+      for _, offer := range offers {
+         fmt.Println(tag.Locale.String(offer))
       }
       time.Sleep(99 * time.Millisecond)
    }

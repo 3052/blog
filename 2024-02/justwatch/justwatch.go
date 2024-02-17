@@ -50,27 +50,62 @@ query GetUrlTitleDetails(
 }
 `
 
-type locale struct {
-   country string
-   language string
-}
+///////////////////////////
 
-func (l *locale) UnmarshalText(b []byte) error {
+func (l *Locale) UnmarshalText(b []byte) error {
    var ok bool
    l.language, l.country, ok = strings.Cut(string(b), "_")
    if !ok {
-      return errors.New("locale.UnmarshalText")
+      return errors.New("Locale.UnmarshalText")
    }
    return nil
 }
 
-type LangTag struct {
-   Href string // /ar/pelicula/mulholland-drive
-   Locale locale // es_AR
+func (t LangTag) Offers() ([]Offer, error) {
+   body, err := func() ([]byte, error) {
+      var s struct {
+         Variables struct {
+            Country string `json:"country"`
+            FullPath string `json:"fullPath"`
+         }
+         Query string
+      }
+      s.Query = graphql_compact(title_details)
+      s.Variables.Country = t.Locale.country
+      s.Variables.FullPath = t.Href
+      return json.Marshal(s)
+   }()
+   if err != nil {
+      return nil, err
+   }
+   res, err := http.Post(
+      "https://apis.justwatch.com/graphql", "application/json",
+      bytes.NewReader(body),
+   )
+   if err != nil {
+      return nil, err
+   }
+   defer res.Body.Close()
+   if res.StatusCode != http.StatusOK {
+      return nil, errors.New(res.Status)
+   }
+   var s struct {
+      Data struct {
+         URL struct {
+            Node struct {
+               Offers []Offer
+            }
+         }
+      }
+   }
+   if err := json.NewDecoder(res.Body).Decode(&s); err != nil {
+      return nil, err
+   }
+   return s.Data.URL.Node.Offers, nil
 }
 
-// iban.com/country-codes
-var countries = map[string]string{
+// iso.org/obp/ui#search/code
+var country_codes = map[string]string{
    "AD": "Andorra",
    "AE": "United Arab Emirates (the)",
    "AG": "Antigua and Barbuda",
@@ -170,47 +205,14 @@ var countries = map[string]string{
    "ZW": "Zimbabwe",
 }
 
-func (t LangTag) Offers() ([]Offer, error) {
-   body, err := func() ([]byte, error) {
-      var s struct {
-         Variables struct {
-            Country string `json:"country"`
-            FullPath string `json:"fullPath"`
-         }
-         Query string
-      }
-      s.Query = graphql_compact(title_details)
-      s.Variables.Country = t.Locale.country
-      s.Variables.FullPath = t.Href
-      return json.Marshal(s)
-   }()
-   if err != nil {
-      return nil, err
-   }
-   res, err := http.Post(
-      "https://apis.justwatch.com/graphql", "application/json",
-      bytes.NewReader(body),
-   )
-   if err != nil {
-      return nil, err
-   }
-   defer res.Body.Close()
-   if res.StatusCode != http.StatusOK {
-      return nil, errors.New(res.Status)
-   }
-   var s struct {
-      Data struct {
-         URL struct {
-            Node struct {
-               Offers []Offer
-            }
-         }
-      }
-   }
-   if err := json.NewDecoder(res.Body).Decode(&s); err != nil {
-      return nil, err
-   }
-   return s.Data.URL.Node.Offers, nil
+type LangTag struct {
+   Href string // /ar/pelicula/mulholland-drive
+   Locale Locale // es_AR
+}
+
+type Locale struct {
+   country string
+   language string
 }
 
 // `presentationType` data seems to be incorrect in some cases. For example,
@@ -221,6 +223,17 @@ type Offer struct {
    StandardWebUrl string
 }
 
+func (l Locale) String(o Offer) string {
+   var b strings.Builder
+   b.WriteString("country = ")
+   b.WriteString(country_codes[l.country])
+   b.WriteString("\nmonetization = ")
+   b.WriteString(o.MonetizationType)
+   b.WriteString("\nURL = ")
+   b.WriteString(o.StandardWebUrl)
+   return b.String()
+}
+
 func (o Offer) Stream() bool {
    switch o.MonetizationType {
    case "BUY", "RENT":
@@ -228,14 +241,3 @@ func (o Offer) Stream() bool {
    }
    return true
 }
-
-const ModeLine =
-"{{ range $index, $_ := . }}" +
-   "{{ if .Stream }}" +
-      "{{ if $index }}" +
-"===========================================================================\n" +
-      "{{ end }}" +
-"monetization = {{ .MonetizationType }}\n" +
-"URL = {{ .StandardWebUrl }}\n" +
-   "{{ end }}" +
-"{{ end }}"
