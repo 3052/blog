@@ -2,6 +2,11 @@
 
 https://github.com/settings/tokens
 
+~~~
+[core]
+pager = less
+~~~
+
 https://github.com/git-for-windows/git/releases
 
 ~~~
