@@ -21,6 +21,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   kitchen := from.Add(duration).Format(time.Kitchen)
-   fmt.Println(kitchen)
+   to := from.Add(duration)
+   fmt.Println(from.Format(time.Kitchen))
+   fmt.Println(to.Format(time.Kitchen))
 }
