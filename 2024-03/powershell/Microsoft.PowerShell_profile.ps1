@@ -1,3 +1,15 @@
+# 2023-03-24
+$env:PATH = @(
+   'C:\Users\Steven\go\bin'
+   'C:\python'
+   'C:\python\Scripts'
+   'D:\MinGit\mingw64\bin'
+   'D:\bin'
+   'D:\go\bin'
+   'D:\php'
+   'D:\vim'
+) -Join ';'
+
 # 2023-06-18
 $env:RIPGREP_CONFIG_PATH = 'C:\Users\Steven\ripgrep.txt'
 
@@ -29,18 +41,6 @@ Set-PSReadLineKeyHandler Ctrl+UpArrow {
 # 2023-05-10
 # git commit -v
 $env:EDITOR = 'gvim'
-
-# 2023-03-24
-$env:PATH = @(
-   'C:\Users\Steven\go\bin'
-   'C:\python'
-   'C:\python\Scripts'
-   'D:\MinGit\mingw64\bin'
-   'D:\bin'
-   'D:\go\bin'
-   'D:\rust\bin'
-   'D:\vim'
-) -Join ';'
 
 # 2023-03-19
 Set-PSReadLineOption -AddToHistoryHandler $null

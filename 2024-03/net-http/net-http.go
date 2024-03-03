@@ -60,7 +60,7 @@ type values struct {
 }
 
 func write(req *http.Request, dst io.Writer) error {
-   res, err := new(http.Transport).RoundTrip(req)
+   res, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }

@@ -28,7 +28,7 @@ func main() {
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = {{ printf "%q" .URL.Scheme }}
    req.Body = {{ .Req_Body }}
-   res, err := new(http.Transport).RoundTrip(&req)
+   res, err := http.DefaultClient.Do(&req)
    if err != nil {
       panic(err)
    }
