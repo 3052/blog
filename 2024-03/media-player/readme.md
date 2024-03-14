@@ -33,6 +33,7 @@ https://github.com/GabrielCoetzee/Media-Player/issues/5
 - https://github.com/Reverier-Xu/BitWave/issues/7
 - https://github.com/caprica/vlcj-player/issues/29
 - https://github.com/ch1ny/MediaPlayer/issues/1
+- https://github.com/ferrellsl/VideoPlayer/issues/1
 - https://github.com/thisismy-github/pyplayer/issues/5
 - https://github.com/valbok/QtAVPlayer/issues/461
 
@@ -53,8 +54,10 @@ https://github.com/astroLIU/AstrOrzPlayer/issues/1
 - https://github.com/mpc-qt/mpc-qt/issues/112
 - https://github.com/mpv-player/mpv/issues/7573
 - https://github.com/mpvnet-player/mpv.net/issues/667
+- https://github.com/pkoshevoy/aeyae/issues/6
 - https://github.com/smplayer-dev/smplayer/issues/920
 - https://github.com/tsl0922/ImPlay/issues/80
+- https://github.com/zaps166/QMPlay2/issues/685
 - https://trac.ffmpeg.org/ticket/4859
 
 ## windowed mode doesnt work
