@@ -66,12 +66,11 @@ func write(req *http.Request, dst io.Writer) error {
    }
    defer res.Body.Close()
    if dst != nil {
-      fmt.Println(res.Status)
-      fmt.Println(res.Header)
       _, err := io.Copy(dst, res.Body)
       if err != nil {
          return err
       }
+      res.Write(os.Stdout)
    } else {
       res.Write(os.Stdout)
    }
