@@ -1,11 +1,5 @@
 # exports
 
-> This what you wanted? To be a janitor? Live like this? All this? Do what you
-> do? It can’t be. It’s a burden, that’s what I’m trying to tell you. That’s
-> how it feels.
->
-> Michael Clayton (2007)
-
 ## what
 
 The exports module prints exported identifiers in Go source code. 
@@ -75,23 +69,3 @@ but it only works for a single identifier. Can we print out all identifiers?
 May 10, 2020:
 
 https://github.com/dominikh/go-tools/commit/5cfc85b
-
-## who
-
-<dl>
-   <dt>
-   email
-   </dt>
-   <dd>
-   srpen6@gmail.com
-   </dd>
-   <dt>
-   Discord
-   </dt>
-   <dd>
-   srpen6
-   </dd>
-   <dd>
-   https://discord.com/invite/WWq6rFb8Rf
-   </dd>
-</dl>
