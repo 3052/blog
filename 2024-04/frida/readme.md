@@ -23,7 +23,7 @@ then push:
 
 ~~~
 adb root
-adb push server /data/app/frida-server
+adb push frida-server-16.2.1-android-x86 /data/app/frida-server
 adb shell chmod +x /data/app/frida-server
 adb shell /data/app/frida-server
 ~~~
