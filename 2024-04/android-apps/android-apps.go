@@ -18,7 +18,7 @@ var apps = []application{
    {id: "com.nbcuni.nbc"},
    {id: "com.peacocktv.peacockandroid"},
    {id: "com.plexapp.android"},
-   {id: "com.roku.remote"},
+   {id: "com.roku.web.trc"},
 }
 
 func main() {
@@ -42,7 +42,7 @@ func main() {
    }
    detail.Checkin.Unmarshal()
    for i, app := range apps {
-      fmt.Println(app)
+      fmt.Println(app.id)
       detail.Details(app.id, false)
       apps[i].installs, _ = detail.Downloads()
       apps[i].name, _ = detail.Name()
