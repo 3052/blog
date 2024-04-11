@@ -9,41 +9,33 @@ import (
    "time"
 )
 
-var apps = []application{
-   {id: "au.com.stan.and"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.cbs.app"},
-   {id: "com.hulu.plus"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.peacocktv.peacockandroid"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
-}
-
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
-   var token play.RefreshToken
+   var token play.GoogleToken
    token.Data, err = os.ReadFile(home + "/google-play/token.txt")
    if err != nil {
       panic(err)
    }
    token.Unmarshal()
-   var detail play.Details
-   if err := detail.Token.Refresh(token); err != nil {
+   var auth play.GoogleAuth
+   if err := auth.Auth(token); err != nil {
       panic(err)
    }
-   detail.Checkin.Data, err = os.ReadFile(home + "/google-play/x86.bin")
+   var checkin play.GoogleCheckin
+   checkin.Data, err = os.ReadFile(home + "/google-play/x86.bin")
    if err != nil {
       panic(err)
    }
-   detail.Checkin.Unmarshal()
+   checkin.Unmarshal()
    for i, app := range apps {
       fmt.Println(app.id)
-      detail.Details(app.id, false)
+      detail, err := checkin.Details(auth, app.id, false)
+      if err != nil {
+         panic(err)
+      }
       apps[i].installs, _ = detail.Downloads()
       apps[i].name, _ = detail.Name()
       time.Sleep(99 * time.Millisecond)
@@ -68,4 +60,16 @@ type application struct {
    id string
    name string
    installs uint64
+}
+
+var apps = []application{
+   {id: "au.com.stan.and"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.cbs.app"},
+   {id: "com.hulu.plus"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.peacocktv.peacockandroid"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
 }
