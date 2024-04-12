@@ -43,17 +43,10 @@ func main() {
    slices.SortFunc(apps, func(a, b application) int {
       return int(b.installs - a.installs)
    })
-   for _, app := range apps {
-      fmt.Println(app)
+   for i, app := range apps {
+      fmt.Printf("%v. %v\n", i+1, app.name)
+      fmt.Printf("\t- %v\n", encoding.Cardinal(app.installs))
    }
-}
-
-func (a application) String() string {
-   var b []byte
-   b = fmt.Append(b, encoding.Cardinal(a.installs))
-   b = append(b, ' ')
-   b = append(b, a.name...)
-   return string(b)
 }
 
 type application struct {
