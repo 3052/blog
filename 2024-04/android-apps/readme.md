@@ -1,14 +1,15 @@
 # android apps
 
 ~~~
-91.83 million Hulu: Stream TV shows & movies
-55.32 million Plex: Stream Movies & TV
-35.91 million Peacock TV: Stream TV & Movies
-33.70 million Paramount+
-15.96 million The NBC App - Stream TV Shows
-11.27 million Stan.
-4.52 million MUBI: Curated Cinema
+1. Tubi: Movies & Live TV
+2. Hulu: Stream TV shows & movies
+3. Plex: Stream Movies & TV
+4. Peacock TV: Stream TV & Movies
+5. Paramount+
+6. The NBC App - Stream TV Shows
+7. Stan.
 
-1.44 million AMC+
-348.03 thousand The Roku Channel
+8. MUBI: Curated Cinema
+9. AMC+
+10. The Roku Channel
 ~~~

@@ -9,6 +9,19 @@ import (
    "time"
 )
 
+var apps = []application{
+   {id: "au.com.stan.and"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.cbs.app"},
+   {id: "com.hulu.plus"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.peacocktv.peacockandroid"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
+   {id: "com.tubitv"},
+}
+
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -53,16 +66,4 @@ type application struct {
    id string
    name string
    installs uint64
-}
-
-var apps = []application{
-   {id: "au.com.stan.and"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.cbs.app"},
-   {id: "com.hulu.plus"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.peacocktv.peacockandroid"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
 }
