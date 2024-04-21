@@ -20,6 +20,7 @@ var apps = []application{
    {id: "com.plexapp.android"},
    {id: "com.roku.web.trc"},
    {id: "com.tubitv"},
+   {id: "tv.pluto.android"},
 }
 
 func main() {
