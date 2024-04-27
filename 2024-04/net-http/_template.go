@@ -10,6 +10,7 @@ import (
 
 func main() {
    var req http.Request
+   req.Header = make(http.Header)
    {{ range $key, $val := .Header -}}
       req.Header[{{ printf "%q" $key }}] = {{ printf "%#v" $val }}
    {{ end -}}

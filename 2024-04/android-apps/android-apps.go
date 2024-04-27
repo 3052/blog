@@ -16,7 +16,6 @@ var apps = []application{
    {id: "com.hulu.plus"},
    {id: "com.mubi"},
    {id: "com.nbcuni.nbc"},
-   {id: "com.peacocktv.peacockandroid"},
    {id: "com.plexapp.android"},
    {id: "com.roku.web.trc"},
    {id: "com.tubitv"},
