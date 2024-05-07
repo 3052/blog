@@ -14,6 +14,7 @@ var apps = []application{
    {id: "ca.ctv.ctvgo"},
    {id: "com.amcplus.amcfullepisodes"},
    {id: "com.cbs.app"},
+   {id: "com.draken.android"},
    {id: "com.hulu.plus"},
    {id: "com.mubi"},
    {id: "com.nbcuni.nbc"},
