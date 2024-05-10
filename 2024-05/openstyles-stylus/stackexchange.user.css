@@ -1,11 +1,13 @@
 /*
 ==userstyle==
-@version 2023.11.13
+@version 2024.05.09
 @namespace 154.pages.dev
-@name Vogue
+@name stack exchange
 ==/userstyle==
 */
-@-moz-document domain("stackoverflow.com") {
+@-moz-document
+domain("stackexchange.com"),
+domain("stackoverflow.com") {
    :visited {
       color: hsl(270 100% 50%) !important
    }
