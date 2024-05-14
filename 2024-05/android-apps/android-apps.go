@@ -21,6 +21,7 @@ var apps = []application{
    {id: "com.plexapp.android"},
    {id: "com.roku.web.trc"},
    {id: "com.tubitv"},
+   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
    {id: "tv.pluto.android"},
 }
 
