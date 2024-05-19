@@ -23,7 +23,7 @@ then push:
 
 ~~~
 adb root
-adb push frida-server-16.2.1-android-x86 /data/app/frida-server
+adb push frida-server-16.2.2-android-x86 /data/app/frida-server
 adb shell chmod +x /data/app/frida-server
 adb shell /data/app/frida-server
 ~~~
@@ -31,7 +31,21 @@ adb shell /data/app/frida-server
 then start Frida:
 
 ~~~
-frida -U -l hello.js -f com.google.android.youtube
+## network error
+```
+frida -U `
+-l android/android-certificate-unpinning.js `
+-l config.js `
+-f com.audioteka
+```
+## unrecognized TLS error - this must be patched manually
+```
+frida -U `
+-l config.js `
+-l android/android-certificate-unpinning.js `
+-l android/android-certificate-unpinning-fallback.js `
+-f com.audioteka
+```
 ~~~
 
 https://github.com/httptoolkit/frida-interception-and-unpinning/issues/51
