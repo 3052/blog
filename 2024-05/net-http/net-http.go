@@ -25,20 +25,20 @@ func (f flags) write(req *http.Request, dst io.Writer) error {
       if req.Header.Get("content-type") == "application/json" {
          var dst bytes.Buffer
          json.Indent(&dst, src, "", " ")
-         v.Raw_Req_Body = "`" + dst.String() + "`"
+         v.RawBody = "`" + dst.String() + "`"
       } else if f.form {
          form, err := url.ParseQuery(string(src))
          if err != nil {
             return err
          }
-         v.Raw_Req_Body = fmt.Sprintf("\n%#v.Encode(),\n", form)
+         v.RawBody = fmt.Sprintf("\n%#v.Encode(),\n", form)
       } else {
-         v.Raw_Req_Body = fmt.Sprintf("%#q", src)
+         v.RawBody = fmt.Sprintf("%#q", src)
       }
-      v.Req_Body = "io.NopCloser(body)"
+      v.RequestBody = "io.NopCloser(body)"
    } else {
-      v.Raw_Req_Body = `""`
-      v.Req_Body = "nil"
+      v.RawBody = `""`
+      v.RequestBody = "nil"
    }
    v.Query = req.URL.Query()
    v.Request = req
@@ -55,8 +55,8 @@ var content embed.FS
 type values struct {
    *http.Request
    Query url.Values
-   Req_Body string
-   Raw_Req_Body string
+   RequestBody string
+   RawBody string
 }
 
 func write(req *http.Request, dst io.Writer) error {

@@ -27,7 +27,7 @@ func main() {
    {{ end -}}
    req.URL.RawQuery = val.Encode()
    req.URL.Scheme = {{ printf "%q" .URL.Scheme }}
-   req.Body = {{ .Req_Body }}
+   req.Body = {{ .RequestBody }}
    res, err := http.DefaultClient.Do(&req)
    if err != nil {
       panic(err)
@@ -36,4 +36,4 @@ func main() {
    res.Write(os.Stdout)
 }
 
-var body = strings.NewReader({{ .Raw_Req_Body }})
+var body = strings.NewReader({{ .RawBody }})
