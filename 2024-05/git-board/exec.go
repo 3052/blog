@@ -47,19 +47,19 @@ func new_git_board() (*git_board, error) {
       board.Change++
    }
    if board.Add >= 99 {
-      board.Add_Status = pass
+      board.AddStatus = pass
    } else {
-      board.Add_Status = fail
+      board.AddStatus = fail
    }
    if board.Delete >= 99 {
-      board.Delete_Status = pass
+      board.DeleteStatus = pass
    } else {
-      board.Delete_Status = fail
+      board.DeleteStatus = fail
    }
    if board.Change >= 99 {
-      board.Change_Status = pass
+      board.ChangeStatus = pass
    } else {
-      board.Change_Status = fail
+      board.ChangeStatus = fail
    }
    // Then
    then, err := get_then()
@@ -70,9 +70,9 @@ func new_git_board() (*git_board, error) {
    // Now
    board.Now = time.Now().AddDate(0, 0, -1).String()[:10]
    if board.Then <= board.Now {
-      board.Date_Status = pass
+      board.DateStatus = pass
    } else {
-      board.Date_Status = fail
+      board.DateStatus = fail
    }
    return &board, nil
 }

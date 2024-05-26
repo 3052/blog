@@ -1,7 +1,7 @@
 package main
 
 import (
-   "154.pages.dev/media/youtube"
+   "154.pages.dev/platform/youtube"
    "fmt"
    "os"
    "strconv"
@@ -11,13 +11,14 @@ import (
 func main() {
    if len(os.Args) == 2 {
       var req youtube.Request
-      req.Video_ID = os.Args[1]
+      req.VideoId = os.Args[1]
       req.Web()
-      play, err := req.Player(nil)
+      var play youtube.Player
+      err := play.Post(req, nil)
       if err != nil {
          panic(err)
       }
-      views, err := views_per_year(play)
+      views, err := views_per_year(&play)
       if err != nil {
          panic(err)
       }
@@ -34,7 +35,7 @@ func views_per_year(play *youtube.Player) (string, error) {
          return 0, err
       }
       y := time.Since(t).Hours() / 24 / 365
-      return float64(play.Video_Details.View_Count) / y, nil
+      return float64(play.VideoDetails.ViewCount) / y, nil
    }()
    if err != nil {
       return "", err
@@ -51,7 +52,7 @@ func views_per_year(play *youtube.Player) (string, error) {
    b = append(b, "   "...)
    b = strconv.AppendFloat(b, views, 'f', 0, 64)
    b = append(b, "   "...)
-   b = append(b, play.Video_Details.Video_ID...)
+   b = append(b, play.VideoDetails.VideoId...)
    return string(b), nil
 }
 

@@ -1,7 +1,9 @@
-154.pages.dev/encoding v1.21.3 h1:kTcWdLh7A1kP2O7c3DNNKR0G6VHrUg/H0qmfqEEeE1Y=
-154.pages.dev/encoding v1.21.3/go.mod h1:fTySlfwgtzBCCjzr+f4ncnWleN3AGgUilIWjGy2MPcw=
+154.pages.dev/encoding v1.22.5 h1:p+7WKtVTegCFq2YHDiR1VLYcCImr4T53CsfueuZzvIs=
+154.pages.dev/encoding v1.22.5/go.mod h1:fTySlfwgtzBCCjzr+f4ncnWleN3AGgUilIWjGy2MPcw=
 154.pages.dev/google v1.4.5 h1:kBGdmj0DXvyucnYpgH+HbdxActkK2B53ViyqFUoqQaM=
 154.pages.dev/google v1.4.5/go.mod h1:/SpSNeWJbR8DhnVsfMDXaZLpTgyEOftlJwqlyirSPco=
+154.pages.dev/platform v1.4.6 h1:rWgEQ8Dqp9/5OTZAwi7pPJ46nTYFCFVO/wJ8D7uHihA=
+154.pages.dev/platform v1.4.6/go.mod h1:6bODDOtZoyOnGeMr75L0wt1t8wt+DqzEHG2/HSjOyB8=
 154.pages.dev/protobuf v1.2.0 h1:mA9M6BQ3kRQwy5hXq6vtKcvZWcvtBjGVLc7EIGvBkVc=
 154.pages.dev/protobuf v1.2.0/go.mod h1:kFM1NMn73gQZwDNqF24zulewOIORP/4Etn1L6qlTc3U=
 google.golang.org/protobuf v1.34.0 h1:Qo/qEd2RZPCf2nKuorzksSknv0d3ERwp1vFG38gSmH4=

@@ -24,21 +24,21 @@ const (
 )
 
 const format =
-   "{{ .Add_Status }} additions\ttarget:99\tactual:{{ .Add }}\n" +
-   "{{ .Delete_Status }} deletions\ttarget:99\tactual:{{ .Delete }}\n" +
-   "{{ .Change_Status }} changed files\ttarget:99\tactual:{{ .Change }}\n" +
-   "{{ .Date_Status }} last commit\ttarget:{{ .Then }}\tactual:{{ .Now }}\n"
+   "{{ .AddStatus }} additions\ttarget:99\tactual:{{ .Add }}\n" +
+   "{{ .DeleteStatus }} deletions\ttarget:99\tactual:{{ .Delete }}\n" +
+   "{{ .ChangeStatus }} changed files\ttarget:99\tactual:{{ .Change }}\n" +
+   "{{ .DateStatus }} last commit\ttarget:{{ .Then }}\tactual:{{ .Now }}\n"
 
 type git_board struct {
    Add int
-   Add_Status string
+   AddStatus string
    Delete int
-   Delete_Status string
+   DeleteStatus string
    Change int
-   Change_Status string
+   ChangeStatus string
    Then string
    Now string
-   Date_Status string
+   DateStatus string
 }
 
 func lines(r rune) bool {
