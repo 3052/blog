@@ -1,8 +1,8 @@
 package main
 
 import (
-   "154.pages.dev/encoding"
    "154.pages.dev/google/play"
+   "154.pages.dev/text"
    "fmt"
    "os"
    "slices"
@@ -62,7 +62,7 @@ func main() {
    })
    for i, app := range apps {
       fmt.Printf("%v. %v\n", i+1, app.name)
-      fmt.Printf("\t- %v\n", encoding.Cardinal(app.installs))
+      fmt.Printf("\t- %v\n", text.Cardinal(app.installs))
    }
 }
 
