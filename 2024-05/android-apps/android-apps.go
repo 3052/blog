@@ -24,6 +24,7 @@ var apps = []application{
    {id: "com.tubitv"},
    {id: "nl.peoplesplayground.audienceplayer.cinemember"},
    {id: "tv.pluto.android"},
+   {id: "tv.wuaki"},
 }
 
 func main() {
