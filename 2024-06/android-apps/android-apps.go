@@ -11,6 +11,7 @@ import (
 
 var apps = []application{
    {id: "au.com.stan.and"},
+   {id: "be.rtbf.auvio"},
    {id: "ca.ctv.ctvgo"},
    {id: "com.amcplus.amcfullepisodes"},
    {id: "com.cbs.app"},
