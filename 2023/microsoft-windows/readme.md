@@ -2,7 +2,7 @@
 
 ## Backup
 
-1. `C:\Users\Steven`
+1. `C:\Users\Hello`
 
 2. `C:\Windows\System32\DriverStore\FileRepository`
    - <https://superuser.com/questions/29704>
