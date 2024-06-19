@@ -8,7 +8,7 @@
 4. click For my personal use
 5. enter First name
 6. enter Last name
-7. enter Username `pennysteven15`
+7. enter Username
 8. enter Password
 9. confirm Password
 10. click Next
