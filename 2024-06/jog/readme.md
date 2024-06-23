@@ -12,8 +12,8 @@
 6a
 7a
 8a
-9a
-10a FAIL
+9a FAIL
+10a FAIL FAIL
 11a FAIL
 12p FAIL FAIL
 1p
