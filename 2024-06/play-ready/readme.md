@@ -46,6 +46,26 @@ this does not fix it:
 
 https://support.microsoft.com/topic/19d26c90-5aeb-de46-ae0b-d864a94bb321
 
+~~~
+Date: Wed, 26 Jun 2024 16:41:27 -0500
+Subject: how to build playReady DLL
+To: "contact@security-explorations.com" <contact@security-explorations.com>
+
+I tried this:
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+Launch-VsDevShell.ps1 -Arch arm64 -HostArch amd64
+cd ice_repro\linker\linkrepro
+$env:OBJECT_ROOT = '.'
+link '@link.rsp'
+
+but I get this result:
+
+Generating code
+Finished generating code
+LINK : fatal error LNK1000: Internal error during IMAGE::EmitRelocations
+~~~
+
 then:
 
 ~~~
