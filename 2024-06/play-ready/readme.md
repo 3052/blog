@@ -17,17 +17,19 @@
 5. workloads
 6. desktop development with C++
 7. individual components
-8. MSVC VS C++ ARM64 build tools
-9. install
-10. continue
-11. close
-12. start
-13. visual studio
-14. developer powershell for VS
+8. compilers, build tools, and runtimes
+9. MSVC VS C++ ARM64/ARM64EC build tools
+10. install
+11. continue
+12. close
+13. start
+14. visual studio
+15. developer powershell for VS
 
 ~~~
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 Launch-VsDevShell.ps1 -Arch arm64 -HostArch amd64
+Get-Command link | Format-List
 cd ice_repro\linker\linkrepro
 $env:OBJECT_ROOT = '.'
 link '@link.rsp'
@@ -87,3 +89,24 @@ dumpbin /disasm windows.media.protection.playready.dll
 11. analyze
 
 https://github.com/NationalSecurityAgency/ghidra
+
+## search
+
+- https://activation.playready.microsoft.com/PlayReady/ACT/Activation.asmx?WSDL
+- https://prp.spserv.microsoft.com/PRProvisioning/AcquirePRCert/v1
+- https://prp.spserv.microsoft.com/PRProvisioning/Bootstrap/v1
+
+same:
+
+- https://go.microsoft.com/fwlink/?LinkID=507346
+- https://prod.provgateway.playready.microsoft.com/PRProvisioning/Bootstrap/v1
+
+same:
+
+- https://go.microsoft.com/fwlink/?LinkID=507347
+- https://prod.provgateway.playready.microsoft.com/PRProvisioning/AcquirePRCert/v1
+
+same:
+
+- https://activation2.playready.microsoft.com/PlayReady/ACT/Activation.asmx?WSDL&Client=Win10&LinkId=613387
+- https://go.microsoft.com/fwlink/?LinkID=613387
