@@ -60,19 +60,19 @@ type values struct {
 }
 
 func write(req *http.Request, dst io.Writer) error {
-   res, err := http.DefaultClient.Do(req)
+   resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
    }
-   defer res.Body.Close()
+   defer resp.Body.Close()
    if dst != nil {
-      _, err := io.Copy(dst, res.Body)
+      _, err := io.Copy(dst, resp.Body)
       if err != nil {
          return err
       }
-      res.Write(os.Stdout)
+      resp.Write(os.Stdout)
    } else {
-      res.Write(os.Stdout)
+      resp.Write(os.Stdout)
    }
    return nil
 }
