@@ -7,6 +7,7 @@ import (
 )
 
 var patterns = []string{
+   `C:\ProgramData\Mozilla-*`,
    `C:\Users\Steven\.android`,
    `C:\Users\Steven\.cargo`,
    `C:\Users\Steven\AppData\Local\Android Open Source Project`,
