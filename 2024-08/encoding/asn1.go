@@ -1,15 +1,14 @@
-package http
+package encoding
 
 import (
    "encoding/json"
-   "io"
    "net/http"
    "time"
 )
 
-type response_new struct {
-   date value[time.Time]
-   body value[struct {
+type json3 struct {
+   Date time.Time
+   Body struct {
       Slideshow struct {
          Author string `json:"author"`
          Date   string `json:"date"`
@@ -20,38 +19,26 @@ type response_new struct {
          } `json:"slides"`
          Title string `json:"title"`
       } `json:"slideshow"`
-   }]
+   }
 }
 
-func (r *response_new) New() error {
+func (j *json3) New() error {
    resp, err := http.Get("http://httpbingo.org/json")
    if err != nil {
       return err
    }
    defer resp.Body.Close()
-   r.date.raw = []byte(resp.Header.Get("date"))
-   r.body.raw, err = io.ReadAll(resp.Body)
+   j.Date, err = time.Parse(time.RFC1123, resp.Header.Get("date"))
    if err != nil {
       return err
    }
-   return nil
+   return json.NewDecoder(resp.Body).Decode(&j.Body)
 }
 
-func (r *response_new) unmarshal() error {
-   date, err := time.Parse(time.RFC1123, string(r.date.raw))
-   if err != nil {
-      return err
-   }
-   r.date.value = &date
-   r.body.New()
-   return json.Unmarshal(r.body.raw, r.body.value)
+func (j *json3) marshal() ([]byte, error) {
+   return json.Marshal(j)
 }
 
-type value[T any] struct {
-   value *T
-   raw []byte
-}
-
-func (v *value[T]) New() {
-   v.value = new(T)
+func (j *json3) unmarshal(text []byte) error {
+   return json.Unmarshal(text, j)
 }

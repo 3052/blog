@@ -1,4 +1,4 @@
-package http
+package encoding
 
 import (
    "encoding/json"
@@ -6,7 +6,7 @@ import (
    "time"
 )
 
-type response_old struct {
+type json3 struct {
    Date time.Time
    Body struct {
       Slideshow struct {
@@ -22,23 +22,23 @@ type response_old struct {
    }
 }
 
-func (r *response_old) New() error {
+func (j *json3) New() error {
    resp, err := http.Get("http://httpbingo.org/json")
    if err != nil {
       return err
    }
    defer resp.Body.Close()
-   r.Date, err = time.Parse(time.RFC1123, resp.Header.Get("date"))
+   j.Date, err = time.Parse(time.RFC1123, resp.Header.Get("date"))
    if err != nil {
       return err
    }
-   return json.NewDecoder(resp.Body).Decode(&r.Body)
+   return json.NewDecoder(resp.Body).Decode(&j.Body)
 }
 
-func (r *response_old) marshal() ([]byte, error) {
-   return json.Marshal(r)
+func (j *json3) marshal() ([]byte, error) {
+   return json.Marshal(j)
 }
 
-func (r *response_old) unmarshal(text []byte) error {
-   return json.Unmarshal(text, r)
+func (j *json3) unmarshal(text []byte) error {
+   return json.Unmarshal(text, j)
 }

@@ -1,12 +1,12 @@
-package http
+package encoding
 
 import (
    "fmt"
    "testing"
 )
 
-func TestNew(b *testing.T) {
-   var resp response_new
+func TestJson1(b *testing.T) {
+   var resp json1
    err := resp.New()
    if err != nil {
       b.Fatal(err)
@@ -19,8 +19,8 @@ func TestNew(b *testing.T) {
    fmt.Printf("%+v\n", resp.body.value)
 }
 
-func BenchmarkNew(b *testing.B) {
-   var resp response_new
+func BenchmarkJson1(b *testing.B) {
+   var resp json1
    err := resp.New()
    if err != nil {
       b.Fatal(err)

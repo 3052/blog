@@ -1,39 +1,39 @@
-package http
+package encoding
 
 import (
    "fmt"
    "testing"
 )
 
-func TestOld(b *testing.T) {
-   var old response_old
-   err := old.New()
+func TestJson3(b *testing.T) {
+   var resp json3
+   err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
-   text, err := old.marshal()
+   text, err := resp.marshal()
    if err != nil {
       b.Fatal(err)
    }
-   err = old.unmarshal(text)
+   err = resp.unmarshal(text)
    if err != nil {
       b.Fatal(err)
    }
-   fmt.Printf("%+v\n", old)
+   fmt.Printf("%+v\n", resp)
 }
 
-func BenchmarkOld(b *testing.B) {
-   var old response_old
-   err := old.New()
+func BenchmarkJson3(b *testing.B) {
+   var resp json3
+   err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
    for range b.N {
-      text, err := old.marshal()
+      text, err := resp.marshal()
       if err != nil {
          b.Fatal(err)
       }
-      err = old.unmarshal(text)
+      err = resp.unmarshal(text)
       if err != nil {
          b.Fatal(err)
       }
