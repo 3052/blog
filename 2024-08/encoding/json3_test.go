@@ -5,14 +5,14 @@ import (
    "testing"
 )
 
-func BenchmarkJson3_00(b *testing.B) {
+func BenchmarkJson3_10(b *testing.B) {
    var resp json3
    err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
    for range b.N {
-      text, err := resp.marshal_00()
+      text, err := resp.marshal_10()
       if err != nil {
          b.Fatal(err)
       }
@@ -23,14 +23,14 @@ func BenchmarkJson3_00(b *testing.B) {
    }
 }
 
-func BenchmarkJson3_10(b *testing.B) {
+func BenchmarkJson3_00(b *testing.B) {
    var resp json3
    err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
    for range b.N {
-      text, err := resp.marshal_10()
+      text, err := resp.marshal_00()
       if err != nil {
          b.Fatal(err)
       }

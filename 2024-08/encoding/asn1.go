@@ -7,10 +7,6 @@ import (
    "time"
 )
 
-func (r *response_asn1) marshal() ([]byte, error) {
-   return asn1.Marshal(*r)
-}
-
 type response_asn1 struct {
    Date time.Time
    Body struct {
@@ -38,6 +34,10 @@ func (r *response_asn1) New() error {
       return err
    }
    return json.NewDecoder(resp.Body).Decode(&r.Body)
+}
+
+func (r *response_asn1) marshal() ([]byte, error) {
+   return asn1.Marshal(*r)
 }
 
 func (r *response_asn1) unmarshal(text []byte) error {
