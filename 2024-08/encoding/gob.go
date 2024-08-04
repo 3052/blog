@@ -1,17 +1,22 @@
 package encoding
 
 import (
-   "encoding/asn1"
+   "encoding/gob"
    "encoding/json"
+   "io"
    "net/http"
    "time"
 )
 
-func (r *response_asn1) marshal() ([]byte, error) {
-   return asn1.Marshal(*r)
+func (g *response_gob) decode(r io.Reader) error {
+   return gob.NewDecoder(r).Decode(g)
 }
 
-type response_asn1 struct {
+func (g *response_gob) encode(w io.Writer) error {
+   return gob.NewEncoder(w).Encode(g)
+}
+
+type response_gob struct {
    Date time.Time
    Body struct {
       Slideshow struct {
@@ -27,23 +32,15 @@ type response_asn1 struct {
    }
 }
 
-func (r *response_asn1) New() error {
+func (g *response_gob) New() error {
    resp, err := http.Get("http://httpbingo.org/json")
    if err != nil {
       return err
    }
    defer resp.Body.Close()
-   r.Date, err = time.Parse(time.RFC1123, resp.Header.Get("date"))
+   g.Date, err = time.Parse(time.RFC1123, resp.Header.Get("date"))
    if err != nil {
       return err
    }
-   return json.NewDecoder(resp.Body).Decode(&r.Body)
-}
-
-func (r *response_asn1) unmarshal(text []byte) error {
-   _, err := asn1.Unmarshal(text, r)
-   if err != nil {
-      return err
-   }
-   return nil
+   return json.NewDecoder(resp.Body).Decode(&g.Body)
 }

@@ -6,6 +6,22 @@ import (
    "time"
 )
 
+func (j json3) marshal_00() ([]byte, error) {
+   return json.Marshal(j)
+}
+
+func (j *json3) marshal_10() ([]byte, error) {
+   return json.Marshal(j)
+}
+
+func (j *json3) marshal_11() ([]byte, error) {
+   return json.Marshal(*j)
+}
+
+func (j *json3) unmarshal(text []byte) error {
+   return json.Unmarshal(text, j)
+}
+
 type json3 struct {
    Date time.Time
    Body struct {
@@ -33,12 +49,4 @@ func (j *json3) New() error {
       return err
    }
    return json.NewDecoder(resp.Body).Decode(&j.Body)
-}
-
-func (j *json3) marshal() ([]byte, error) {
-   return json.Marshal(j)
-}
-
-func (j *json3) unmarshal(text []byte) error {
-   return json.Unmarshal(text, j)
 }

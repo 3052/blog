@@ -1,39 +1,42 @@
 package encoding
 
 import (
+   "bytes"
    "fmt"
    "testing"
 )
 
-func TestAsn1(b *testing.T) {
-   var resp response_asn1
+func TestGob(b *testing.T) {
+   var resp response_gob
    err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
-   text, err := resp.marshal()
+   network := new(bytes.Buffer)
+   err = resp.encode(network)
    if err != nil {
       b.Fatal(err)
    }
-   err = resp.unmarshal(text)
+   err = resp.decode(network)
    if err != nil {
       b.Fatal(err)
    }
    fmt.Printf("%+v\n", resp)
 }
 
-func BenchmarkAsn1(b *testing.B) {
-   var resp response_asn1
+func BenchmarkGob(b *testing.B) {
+   var resp response_gob
    err := resp.New()
    if err != nil {
       b.Fatal(err)
    }
+   network := new(bytes.Buffer)
    for range b.N {
-      text, err := resp.marshal()
+      err = resp.encode(network)
       if err != nil {
          b.Fatal(err)
       }
-      err = resp.unmarshal(text)
+      err = resp.decode(network)
       if err != nil {
          b.Fatal(err)
       }
