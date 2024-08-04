@@ -19,10 +19,6 @@ func (j *json3) New() error {
    return json.Unmarshal([]byte(raw_body), &j.Body)
 }
 
-func (j *json3) unmarshal(text []byte) error {
-   return json.Unmarshal(text, j)
-}
-
 func (j json3) marshal_00() ([]byte, error) {
    return json.Marshal(j)
 }
@@ -33,4 +29,8 @@ func (j *json3) marshal_10() ([]byte, error) {
 
 func (j *json3) marshal_11() ([]byte, error) {
    return json.Marshal(*j)
+}
+
+func (j *json3) unmarshal(text []byte) error {
+   return json.Unmarshal(text, j)
 }

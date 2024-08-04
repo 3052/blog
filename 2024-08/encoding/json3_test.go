@@ -73,7 +73,7 @@ func TestJson3_00(b *testing.T) {
    if err != nil {
       b.Fatal(err)
    }
-   fmt.Printf("%+v\n", resp)
+   fmt.Printf("%+v\n\n", resp)
 }
 
 func TestJson3_10(b *testing.T) {
@@ -90,7 +90,7 @@ func TestJson3_10(b *testing.T) {
    if err != nil {
       b.Fatal(err)
    }
-   fmt.Printf("%+v\n", resp)
+   fmt.Printf("%+v\n\n", resp)
 }
 
 func TestJson3_11(b *testing.T) {
@@ -107,5 +107,5 @@ func TestJson3_11(b *testing.T) {
    if err != nil {
       b.Fatal(err)
    }
-   fmt.Printf("%+v\n", resp)
+   fmt.Printf("%+v\n\n", resp)
 }
