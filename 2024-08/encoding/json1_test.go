@@ -7,11 +7,8 @@ import (
 
 func TestJson1(b *testing.T) {
    var resp json1
-   err := resp.New()
-   if err != nil {
-      b.Fatal(err)
-   }
-   err = resp.unmarshal()
+   resp.New()
+   err := resp.unmarshal()
    if err != nil {
       b.Fatal(err)
    }
@@ -20,13 +17,10 @@ func TestJson1(b *testing.T) {
 }
 
 func BenchmarkJson1(b *testing.B) {
-   var resp json1
-   err := resp.New()
-   if err != nil {
-      b.Fatal(err)
-   }
    for range b.N {
-      err = resp.unmarshal()
+      var resp json1
+      resp.New()
+      err := resp.unmarshal()
       if err != nil {
          b.Fatal(err)
       }
