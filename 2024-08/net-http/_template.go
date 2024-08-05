@@ -17,7 +17,7 @@ func main() {
    req.Method = {{ printf "%q" .Method }}
    req.ProtoMajor = 1
    req.ProtoMinor = 1
-   req.URL = new(url.URL)
+   req.URL = &url.URL{}
    req.URL.Host = {{ printf "%q" .URL.Host }}
    req.URL.Path = {{ printf "%q" .URL.Path }}
    req.URL.RawPath = {{ printf "%q" .URL.RawPath }}

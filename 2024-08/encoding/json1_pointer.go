@@ -5,6 +5,10 @@ import (
    "time"
 )
 
+func (v *value_pointer[T]) New() {
+   v.value = new(T)
+}
+
 type json1_pointer struct {
    date value_pointer[time.Time]
    body value_pointer[body]
@@ -28,8 +32,4 @@ func (j *json1_pointer) unmarshal() error {
 type value_pointer[T any] struct {
    value *T
    raw []byte
-}
-
-func (v *value_pointer[T]) New() {
-   v.value = new(T)
 }

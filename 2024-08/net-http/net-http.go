@@ -105,7 +105,7 @@ func read_request(r *bufio.Reader) (*http.Request, error) {
    // .Header
    req.Header = http.Header(head)
    // .Body
-   buf := new(bytes.Buffer)
+   buf := &bytes.Buffer{}
    length, err := text.R.WriteTo(buf)
    if err != nil {
       return nil, err
