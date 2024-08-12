@@ -54,6 +54,7 @@ type application struct {
    name string
    installs uint64
 }
+
 var apps = []application{
    {id: "au.com.stan.and"},
    {id: "be.rtbf.auvio"},
