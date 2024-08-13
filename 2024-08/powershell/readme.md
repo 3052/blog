@@ -23,11 +23,3 @@ but much slower. get one of these:
 PowerShell-7.3.0-win-x64.zip
 PowerShell-7.3.0-win-x86.zip
 ~~~
-
-## scrollToTop
-
-https://devblogs.microsoft.com/commandline/windows-terminal-preview-1-6-release
-
-## find
-
-https://devblogs.microsoft.com/commandline/windows-terminal-preview-v0-8-release
