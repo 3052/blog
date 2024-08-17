@@ -15,24 +15,30 @@ func main() {
       panic(err)
    }
    var token play.GoogleToken
-   token.Data, err = os.ReadFile(home + "/google-play/token.txt")
+   token.Raw, err = os.ReadFile(home + "/google-play/token.txt")
    if err != nil {
       panic(err)
    }
-   token.Unmarshal()
-   var auth play.GoogleAuth
-   if err := auth.Auth(token); err != nil {
+   err = token.Unmarshal()
+   if err != nil {
+      panic(err)
+   }
+   auth, err := token.Auth()
+   if err != nil {
       panic(err)
    }
    var checkin play.GoogleCheckin
-   checkin.Data, err = os.ReadFile(home + "/google-play/x86.txt")
+   checkin.Raw, err = os.ReadFile(home + "/google-play/x86.txt")
    if err != nil {
       panic(err)
    }
-   checkin.Unmarshal()
+   err = checkin.Unmarshal()
+   if err != nil {
+      panic(err)
+   }
    for i, app := range apps {
       fmt.Println(app.id)
-      detail, err := checkin.Details(auth, app.id, false)
+      detail, err := auth.Details(&checkin, app.id, false)
       if err != nil {
          panic(err)
       }
