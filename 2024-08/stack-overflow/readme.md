@@ -1,23 +1,23 @@
 # stack overflow
 
-the email address actually needs to be valid. this bases are blocked:
+## email.ml
 
-~~~
-svnpenn@gmail.com
-srpen6@gmail.com
-~~~
+We do not allow temporary email addresses
 
-what about:
+https://email.ml
 
-~~~
-srpen7@gmail.com
-~~~
+## mailsac.com
 
-ashburn va:
+You cannot register at this time
 
-Something went wrong. Please contact us at
-community-support@stackoverflow.email for assistance. 
+https://mailsac.com
 
-atlanta ga:
+## smail.pw
 
-works
+Something went wrong
+
+https://smail.pw
+
+## vmail.dev
+
+https://github.com/oiov/vmail/issues/20
