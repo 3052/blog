@@ -49,11 +49,12 @@ func main() {
       if err := os.Rename(temp, "docs"); err != nil {
          panic(err)
       }
-      err = os.WriteFile("docs/.ignore", []byte("*.html"), 0666)
+      err = os.WriteFile("docs/.ignore", []byte("*.html"), os.ModePerm)
       if err != nil {
          panic(err)
       }
-      if err := os.WriteFile("docs/.nojekyll", nil, 0666); err != nil {
+      err = os.WriteFile("docs/.nojekyll", nil, os.ModePerm)
+      if err != nil {
          panic(err)
       }
    } else {
