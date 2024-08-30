@@ -15,7 +15,7 @@ import (
    "text/template"
 )
 
-func (f flags) write(req *http.Request, dst io.Writer) error {
+func (f *flags) write(req *http.Request, dst io.Writer) error {
    var v values
    if req.Body != nil && req.Method != "GET" {
       src, err := io.ReadAll(req.Body)
