@@ -1,5 +1,16 @@
 # search
 
+~~~
+pass
+"playready/act/activation.asmx"
+
+fail
+"prprovisioning/acquireprcert"
+"prprovisioning/acquireprcert/v1"
+"prprovisioning/bootstrap"
+"prprovisioning/bootstrap/v1"
+~~~
+
 - https://activation.playready.microsoft.com/PlayReady/ACT/Activation.asmx?WSDL
 - https://prp.spserv.microsoft.com/PRProvisioning/AcquirePRCert/v1
 - https://prp.spserv.microsoft.com/PRProvisioning/Bootstrap/v1
