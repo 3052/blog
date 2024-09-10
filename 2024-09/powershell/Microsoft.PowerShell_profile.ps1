@@ -1,3 +1,7 @@
+# 2024-9-10
+Get-Alias | Remove-Alias -Force
+Set-PSReadLineOption -PredictionSource None
+
 # 2023-03-24
 $env:PATH = @(
    'C:\Users\Steven\go\bin'
@@ -41,9 +45,3 @@ Set-PSReadLineKeyHandler Ctrl+UpArrow {
 # 2023-05-10
 # git commit -v
 $env:EDITOR = 'gvim'
-
-# 2023-03-19
-Set-PSReadLineOption -AddToHistoryHandler $null
-
-# 2023-03-06
-Get-Alias | Remove-Alias -Force
