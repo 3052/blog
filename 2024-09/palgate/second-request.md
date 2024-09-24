@@ -118,3 +118,5 @@ com.bluegate.app-config.x86-342.apk\lib\x86\libnative-lib.so
 ~~~
 
 how do we call it?
+
+https://mas.owasp.org/MASTG/techniques/android/MASTG-TECH-0018
