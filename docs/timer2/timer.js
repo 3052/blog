@@ -1,8 +1,7 @@
 'use strict';
 
-document.write('<center>1.0.0</center>');
+document.write('<h1>1.0.1</h1>');
 
-var timerFont = "sans-serif"
 var fontSize = 256
 var fontUnit = "pt"
 
@@ -216,128 +215,23 @@ function multibeep(count, gap, duration, frequency, volume, type, callback) {
    beep(duration, frequency, volume, type, cb)
 }
 
-// Set up a dictionary that has all our default variables
-var dictionary = []
-
-dictionary['timerFont'] = timerFont
-dictionary['fontSize'] = fontSize
-dictionary['fontUnit'] = fontUnit
-dictionary['normalBackColor'] = normalBackColor
-dictionary['normalForeColor'] = normalForeColor
-dictionary['warnBackColor'] = warnBackColor
-dictionary['warnForeColor'] = warnForeColor
-dictionary['alarmBackColor'] = alarmBackColor
-dictionary['alarmForeColor'] = alarmForeColor
-if (doneBlink)
-    dictionary['doneBlink'] = "true"
-else
-    dictionary['doneBlink'] = "false"
-if (showNegative)
-    dictionary['showNegative'] = "true"
-else
-    dictionary['showNegative'] = "false"
-dictionary['resetTimeMinutes'] = Math.floor(resetTime / 60)
-dictionary['resetTimeSeconds'] = resetTime % 60
-dictionary['warnTime'] = warnTime
-dictionary['alarmTime'] = alarmTime
-dictionary['roundTo'] = roundTo
-dictionary['warnRoundTo'] = warnRoundTo
-dictionary['alarmRoundTo'] = alarmRoundTo
-dictionary['warnBeeps'] = warnBeeps
-dictionary['warnBeepDuration'] = warnBeepDuration
-dictionary['warnBeepFreq'] = warnBeepFreq
-dictionary['warnBeepGap'] = warnBeepGap
-dictionary['alarmBeeps'] = alarmBeeps
-dictionary['alarmBeepDuration'] = alarmBeepDuration
-dictionary['alarmBeepFreq'] = alarmBeepFreq
-dictionary['alarmBeepGap'] = alarmBeepGap
-dictionary['doneBeeps'] = doneBeeps
-dictionary['doneBeepDuration'] = doneBeepDuration
-dictionary['doneBeepFreq'] = doneBeepFreq
-dictionary['doneBeepGap'] = doneBeepGap
-dictionary['addMinutes'] = addMinutes
-dictionary['addSeconds'] = addSeconds
-
-//
-// Parse name/value pairs from the URL.
-//
-// First, strip off the leading '?'
-var searchString = document.location.search;
-searchString = searchString.substring(1);
-
-var nvPairs = searchString.split("&");
-// Now loop through the pairs, and extract what we want
-for (let i = 0; i < nvPairs.length; i++)
-    {
-    var nvPair = nvPairs[i].split("=");
-    var name = nvPair[0];
-    var value = decodeURIComponent(nvPair[1]);
-    dictionary[name] = value
-    }
-
-//
-// Pick out all variable values that we allow to be controlled from
-// the URL
-//
-timerFont = dictionary['timerFont']
-fontSize = dictionary['fontSize']
-fontUnit = dictionary['fontUnit']
 if (fontUnit == "pct")
     fontUnit = "%"
-normalBackColor = dictionary['normalBackColor']
-normalForeColor = dictionary['normalForeColor']
-warnBackColor = dictionary['warnBackColor']
-warnForeColor = dictionary['warnForeColor']
-alarmBackColor = dictionary['alarmBackColor']
-alarmForeColor = dictionary['alarmForeColor']
-if (dictionary['doneBlink'] == "true") 
-    doneBlink = true
-else
-    doneBlink = false
-if (dictionary['showNegative'] == "true") 
-    showNegative = true
-else
-    showNegative = false
 
-//resetTime = +dictionary['resetTimeMinutes'] * 60 + (+dictionary['resetTimeSeconds'])
 resetTime = 9;
-
-warnTime = +dictionary['warnTime']
-alarmTime = +dictionary['alarmTime']
-roundTo = +dictionary['roundTo']
-warnRoundTo = +dictionary['warnRoundTo']
-alarmRoundTo = +dictionary['alarmRoundTo']
-warnBeeps = +dictionary['warnBeeps']
-warnBeepDuration = +dictionary['warnBeepDuration']
-warnBeepFreq = +dictionary['warnBeepFreq']
-// warnBeepGap = +dictionary['warnBeepGap']
-warnBeepGap = +dictionary['warnBeepDuration']
-alarmBeeps = +dictionary['alarmBeeps']
-alarmBeepDuration = +dictionary['alarmBeepDuration']
-alarmBeepFreq = +dictionary['alarmBeepFreq']
-// alarmBeepGap = +dictionary['alarmBeepGap']
-alarmBeepGap = +dictionary['alarmBeepDuration']
-doneBeeps = +dictionary['doneBeeps']
-doneBeepDuration = +dictionary['doneBeepDuration']
-doneBeepFreq = +dictionary['doneBeepFreq']
-// doneBeepGap = +dictionary['doneBeepGap']
-doneBeepGap = +dictionary['doneBeepDuration']
-addMinutes = +dictionary['addMinutes']
-addSeconds = +dictionary['addSeconds']
 
 var now = new Date();
 now = now.getTime()
 var target = now + resetTime * 1000
 timeLeft = resetTime * 1000
 
+document.write(`
+<center>
+   <span id="countdown"></span>
+</center>
+<center>
+   <button id="pause-start-button" onclick="pause()">Start</button>
+</center>
+`);
 
-
-document.write("<center><span id='countdown' style='"
-  + "; font-size:" + fontSize + fontUnit
-  + "; font-family: " + timerFont
-  + "'></span></center>");
-
-document.write("<center>")
-document.write("<button id='pause-start-button' onclick='pause()'>Start</button>")
-document.write("</center>")
 display();
