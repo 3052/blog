@@ -2,21 +2,9 @@
 
 document.write('<h1>1.0.1</h1>');
 
-var fontSize = 256
-var fontUnit = "pt"
-
-var normalBackColor = "palegreen";
-var normalForeColor = "navy";
-
-var warnBackColor = "yellow";
-var warnForeColor = "navy";
-
-var alarmBackColor = "red";
-var alarmForeColor = "white";
+///
 
 var doneBlink = false;
-
-var showNegative = false;
 
 var resetTime = 300;
 var timeLeft = 300;
@@ -52,108 +40,100 @@ var addSeconds = 0;
 
 var pendingUpdate = 0;
 
-function update()
-    {
-    display()
-    if (paused)
-        return
-    var now = new Date()
-    now = now.getTime()
-    var left = target - now
-    if (left > 0  ||  doneBlink  ||  showNegative)
-        {
-        var nextUpdate = left % 1000
-        if (nextUpdate == 0)
-            nextUpdate = 1
-        else if (nextUpdate < 0)
-            nextUpdate = 1000
-        pendingUpdate = setTimeout("update()", nextUpdate)
-        }
-    }
+function update() {
+   display();
+   if (paused){
+      return;
+   }
+   var now = new Date();
+   now = now.getTime();
+   var left = target - now;
+   var nextUpdate = left % 1000
+   if (nextUpdate == 0){
+      nextUpdate = 1
+   } else if (nextUpdate < 0){
+      nextUpdate = 1000
+   }
+   pendingUpdate = setTimeout("update()", nextUpdate)
+}
 
-function display()
-    {
-    var now = new Date()
-    now = now.getTime()
-    var left = target - now
-    if (paused)
-        left = timeLeft
-    // Round to nearest second, being clever about negative numbers
-    if ((left % 1000 + 1000) % 1000 < 500)
-        left = Math.floor(left / 1000);
-    else
-        left = Math.ceil(left / 1000);
-    var blinkSeconds = left
-    if (left < 0  &&  !showNegative)
-        left = 0
-    // Round up to multiple of n
-    var round = roundTo
-    if (left <= 0  &&  !doneBeepDone)
-        {
-        doneBeepDone = true;
-        if (doneBeeps > 0)
-            multibeep(doneBeeps, doneBeepGap, doneBeepDuration, doneBeepFreq);
-        }
-    if (left <= alarmTime)
-        {
-        round = alarmRoundTo
-        if (!alarmBeepDone)
-            {
-            alarmBeepDone = true
-            if (alarmBeeps > 0)
-                multibeep(alarmBeeps, alarmBeepGap, alarmBeepDuration,
-                  alarmBeepFreq)
-            }
-        }
-    else if (left <= warnTime)
-        {
-        round = warnRoundTo
-        if (!warnBeepDone)
-            {
-            warnBeepDone = true
-            if (warnBeeps > 0)
-                multibeep(warnBeeps, warnBeepGap, warnBeepDuration,
-                  warnBeepFreq)
-            }
-        }
-    var rounded = Math.floor((left + round - 1) / round) * round
-    var minutes = Math.floor(rounded / 60)
-    var seconds = rounded % 60
-    if (seconds < 0)
-        {
-        minutes += 1
-        seconds = -seconds
-        if (minutes == 0)
-            minutes = "-" + minutes
-        }
-    var sec = seconds
-    if (seconds < 10)
-        sec = "0" + seconds
-    document.getElementById("countdown").innerHTML = minutes + ":" + sec
+function display() {
+   var now = new Date();
+   now = now.getTime();
+   var left = target - now;
+   if (paused){
+      left = timeLeft
+   }
+   // Round to nearest second, being clever about negative numbers
+   if ((left % 1000 + 1000) % 1000 < 500){
+      left = Math.floor(left / 1000);
+   } else{
+      left = Math.ceil(left / 1000);
+   }
+   var blinkSeconds = left;
+   if (left < 0  &&  !true){
+      left = 0
+   }
+   // Round up to multiple of n
+   var round = roundTo;
+   if (left <= 0  &&  !doneBeepDone) {
+      doneBeepDone = true;
+      if (doneBeeps > 0){
+         multibeep(doneBeeps, doneBeepGap, doneBeepDuration, doneBeepFreq);
+      }
+   }
+   if (left <= alarmTime) {
+      round = alarmRoundTo
+      if (!alarmBeepDone) {
+         alarmBeepDone = true
+         if (alarmBeeps > 0){
+            multibeep(alarmBeeps, alarmBeepGap, alarmBeepDuration, alarmBeepFreq)
+         }
+      }
+   } else if (left <= warnTime) {
+      round = warnRoundTo
+      if (!warnBeepDone) {
+         warnBeepDone = true
+         if (warnBeeps > 0){
+            multibeep(warnBeeps, warnBeepGap, warnBeepDuration, warnBeepFreq)
+         }
+      }
+   }
+   var rounded = Math.floor((left + round - 1) / round) * round;
+   var minutes = Math.floor(rounded / 60);
+   var seconds = rounded % 60;
+   if (seconds < 0) {
+      minutes += 1
+      seconds = -seconds
+      if (minutes == 0){
+         minutes = "-" + minutes
+      }
+   }
+   var sec = seconds;
+   if (seconds < 10){
+      sec = "0" + seconds;
+   }
+   document.getElementById("countdown").innerHTML = minutes + ":" + sec
 }
 
 // Start or stop the timer
-function pause()
-    {
-    var now = new Date()
-    now = now.getTime()
-    var button = document.getElementById("pause-start-button")
-    if (paused)
-        {
-        paused = false
-        target = now + timeLeft
-        clearTimeout(pendingUpdate)
-        button.innerHTML = 'Pause'
-        update()
-        }
-    else
-        {
-        paused = true
-        timeLeft = target - now
-        button.innerHTML = 'Start'
-        display()
-        }
-    }
+function pause() {
+   var now = new Date()
+   now = now.getTime()
+   var button = document.getElementById("pause-start-button")
+   if (paused) {
+      paused = false
+      target = now + timeLeft
+      clearTimeout(pendingUpdate)
+      button.innerHTML = 'Pause'
+      update()
+   } else {
+      paused = true
+      timeLeft = target - now
+      button.innerHTML = 'Start'
+      display();
+   }
+}
 
 // We need an audio context to be able to beep.  However, we can't do it
 // here because some browsers insist that the user first take some action
@@ -214,9 +194,6 @@ function multibeep(count, gap, duration, frequency, volume, type, callback) {
    }
    beep(duration, frequency, volume, type, cb)
 }
-
-if (fontUnit == "pct")
-    fontUnit = "%"
 
 resetTime = 9;
 
