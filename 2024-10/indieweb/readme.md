@@ -1,5 +1,7 @@
 # indie web
 
+neocities.org
+
 ## bearblog.dev
 
 https://github.com/HermanMartinus/bearblog/issues/301
@@ -51,10 +53,6 @@ https://app.montaigne.io/auth/signin
 ## nekoweb.org
 
 https://github.com/dimdenGD/dimdenGD/issues/2
-
-## neocities.org
-
-https://github.com/neocities/neocities/issues/553
 
 ## omg.lol
 
