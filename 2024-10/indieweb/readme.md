@@ -1,19 +1,5 @@
 # indie web
 
-https://shellsharks.com/indieweb#hosting
-
-~~~
-mataroa
-mmm.page
-montaigne
-outpost.pub
-posthaven
-scribbles
-smol pub
-write.as
-yay.boo (also from good enough)
-~~~
-
 ## bearblog.dev
 
 https://github.com/HermanMartinus/bearblog/issues/301
@@ -34,6 +20,12 @@ https://glitch.com/signup
 
 https://github.com/havenweb/haven/issues/119
 
+## ichi.city
+
+exit status 4
+
+https://ichi.city/register
+
 ## mataroa.blog
 
 https://github.com/mataroa-blog/mataroa/issues/87
@@ -43,6 +35,18 @@ https://github.com/mataroa-blog/mataroa/issues/87
 $5
 
 https://micro.blog
+
+## mmm.page
+
+5 pages
+
+https://mmm.page
+
+## montaigne.io
+
+Please use your Apple ID to sign in
+
+https://app.montaigne.io/auth/signin
 
 ## nekoweb.org
 
@@ -57,6 +61,12 @@ https://github.com/neocities/neocities/issues/553
 $20
 
 https://home.omg.lol
+
+## outpost.pub
+
+$8
+
+https://outpost.pub/pricing
 
 ## pages.casa
 
@@ -76,3 +86,34 @@ https://pico.sh/getting-started
 3 pages
 
 https://pika.page#pricing
+
+## posthaven.com
+
+$5
+
+https://posthaven.com/pricing
+
+## scribbles.page
+
+$5
+
+https://scribbles.page
+
+## smol.pub
+
+Buy a key to get access instantly, or request a free key
+
+https://smol.pub/register
+
+## write.as
+
+closed for now
+
+https://write.as/pricing
+
+## yay.boo
+
+If you already have a site or two hosted on Yay.Boo, tell us your email
+address and we’ll send you a magic link to sign in
+
+<https://yay.boo/users/sign_in>
