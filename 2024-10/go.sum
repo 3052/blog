@@ -4,5 +4,7 @@
 41.neocities.org/protobuf v1.3.9/go.mod h1:IkdWzRl6U/qkDzoZ7kuL70HMBPYGsFS0go5Ifv7qS0I=
 41.neocities.org/text v1.3.1 h1:cjlS+H8hn1IwHcvl74fRng1lB+mWvHpCG4nDdYYfal8=
 41.neocities.org/text v1.3.1/go.mod h1:0y7K0Lgi+FZD0UwnyS5+G4njXypzm/b98GU52s32KH0=
+github.com/beevik/etree v1.4.1 h1:PmQJDDYahBGNKDcpdX8uPy1xRCwoCGVUiW669MEirVI=
+github.com/beevik/etree v1.4.1/go.mod h1:gPNJNaBGVZ9AwsidazFZyygnd+0pAU38N4D+WemwKNs=
 google.golang.org/protobuf v1.35.1 h1:m3LfL6/Ca+fqnjnlqQXNpFPABW1UD7mjh8KO2mKFytA=
 google.golang.org/protobuf v1.35.1/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
