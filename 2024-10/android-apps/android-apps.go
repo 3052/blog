@@ -9,37 +9,17 @@ import (
    "time"
 )
 
-var apps = []application{
-   {id: "air.ITVMobilePlayer"},
-   {id: "be.rtbf.auvio"},
-   {id: "ca.ctv.ctvgo"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.cbs.app"},
-   {id: "com.criterionchannel"},
-   {id: "com.draken.android"},
-   {id: "com.hulu.plus"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
-   {id: "com.tubitv"},
-   {id: "com.wbd.stream"},
-   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
-   {id: "tv.pluto.android"},
-   {id: "tv.wuaki"},
-}
-
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
       panic(err)
    }
-   var token play.GoogleToken
-   token.Raw, err = os.ReadFile(home + "/google-play/token.txt")
+   data, err := os.ReadFile(home + "/google-play/token.txt")
    if err != nil {
       panic(err)
    }
-   err = token.Unmarshal()
+   var token play.GoogleToken
+   err = token.Unmarshal(data)
    if err != nil {
       panic(err)
    }
@@ -47,12 +27,12 @@ func main() {
    if err != nil {
       panic(err)
    }
-   var checkin play.GoogleCheckin
-   checkin.Raw, err = os.ReadFile(home + "/google-play/x86.txt")
+   data, err = os.ReadFile(home + "/google-play/x86.txt")
    if err != nil {
       panic(err)
    }
-   err = checkin.Unmarshal()
+   var checkin play.GoogleCheckin
+   err = checkin.Unmarshal(data)
    if err != nil {
       panic(err)
    }
@@ -79,4 +59,24 @@ type application struct {
    id string
    name string
    installs uint64
+}
+
+var apps = []application{
+   {id: "air.ITVMobilePlayer"},
+   {id: "be.rtbf.auvio"},
+   {id: "ca.ctv.ctvgo"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.cbs.app"},
+   {id: "com.criterionchannel"},
+   {id: "com.draken.android"},
+   {id: "com.hulu.plus"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
+   {id: "com.tubitv"},
+   {id: "com.wbd.stream"},
+   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
+   {id: "tv.pluto.android"},
+   {id: "tv.wuaki"},
 }

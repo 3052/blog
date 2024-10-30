@@ -14,13 +14,10 @@ type greeting struct {
 }
 
 func BenchmarkJson(b *testing.B) {
-   for i := range b.N {
+   for range b.N {
       data, err := json.Marshal(greeting{"hello", "world"})
       if err != nil {
          b.Fatal(err)
-      }
-      if i == 0 {
-         b.Log(len(data))
       }
       var greet greeting
       err = json.Unmarshal(data, &greet)
@@ -31,13 +28,10 @@ func BenchmarkJson(b *testing.B) {
 }
 
 func BenchmarkAsn1(b *testing.B) {
-   for i := range b.N {
+   for range b.N {
       data, err := asn1.Marshal(greeting{"hello", "world"})
       if err != nil {
          b.Fatal(err)
-      }
-      if i == 0 {
-         b.Log(len(data))
       }
       var greet greeting
       _, err = asn1.Unmarshal(data, &greet)
@@ -48,14 +42,11 @@ func BenchmarkAsn1(b *testing.B) {
 }
 
 func BenchmarkGob(b *testing.B) {
-   for i := range b.N {
+   for range b.N {
       data := &bytes.Buffer{}
       err := gob.NewEncoder(data).Encode(greeting{"hello", "world"})
       if err != nil {
          b.Fatal(err)
-      }
-      if i == 0 {
-         b.Log(data.Len())
       }
       var greet greeting
       err = gob.NewDecoder(data).Decode(&greet)
