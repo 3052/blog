@@ -3,7 +3,7 @@ module blog
 go 1.23.0
 
 require (
-	41.neocities.org/google v1.5.9
+	41.neocities.org/google v1.6.2
 	41.neocities.org/text v1.3.2
 	github.com/beevik/etree v1.4.1
 )
