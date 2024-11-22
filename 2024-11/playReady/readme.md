@@ -1,5 +1,7 @@
 # playReady
 
+https://forum.videohelp.com/threads/416567-PRD-Devices
+
 ~~~
 Today at 6:12 PM
 I am dumb - why is it 3 files instead of 2
