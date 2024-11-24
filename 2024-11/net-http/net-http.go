@@ -105,13 +105,13 @@ func read_request(r *bufio.Reader) (*http.Request, error) {
    // .Header
    req.Header = http.Header(head)
    // .Body
-   buf := &bytes.Buffer{}
-   length, err := text.R.WriteTo(buf)
+   data := &bytes.Buffer{}
+   length, err := text.R.WriteTo(data)
    if err != nil {
       return nil, err
    }
    if length >= 1 {
-      req.Body = io.NopCloser(buf)
+      req.Body = io.NopCloser(data)
    }
    // .ContentLength
    req.ContentLength = length
