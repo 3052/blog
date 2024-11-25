@@ -1,3 +1,16 @@
+
+# 2024-11-24
+$env:PATH = @(
+   'C:\Program Files\Mullvad VPN\resources'
+   'C:\Users\Steven\go\bin'
+   'C:\python'
+   'C:\python\Scripts'
+   'D:\MinGit\mingw64\bin'
+   'D:\bin'
+   'D:\go\bin'
+   'D:\vim'
+) -Join ';'
+
 ## 2024-9-21
 
 Set-PSReadLineOption -AddToHistoryHandler $null
@@ -16,18 +29,6 @@ Set-PSReadLineKeyHandler Ctrl+UpArrow {
 # 2024-9-10
 Get-Alias | Remove-Alias -Force
 Set-PSReadLineOption -PredictionSource None
-
-# 2023-03-24
-$env:PATH = @(
-   'C:\Users\Steven\go\bin'
-   'C:\python'
-   'C:\python\Scripts'
-   'D:\MinGit\mingw64\bin'
-   'D:\bin'
-   'D:\go\bin'
-   'D:\php'
-   'D:\vim'
-) -Join ';'
 
 # 2023-05-10
 $env:LESS = -join @(
