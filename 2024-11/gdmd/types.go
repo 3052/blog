@@ -3,6 +3,7 @@
 package main
 
 import (
+   "go/ast"
    "go/doc"
    "go/printer"
    "go/token"
@@ -99,7 +100,14 @@ func NewFunction(fset *token.FileSet, f *doc.Func) Function {
 
    recv := ""
    if f.Decl.Recv != nil {
-      recv = f.Decl.Recv.List[0].Names[0].Name
+      switch typ := f.Decl.Recv.List[0].Type.(type) {
+      case *ast.Ident:
+         recv = typ.Name
+      case *ast.StarExpr:
+         recv = "*" + typ.X.(*ast.Ident).Name
+      default:
+         panic(typ)
+      }
    }
 
    return Function{

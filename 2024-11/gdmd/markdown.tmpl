@@ -18,15 +18,15 @@ package `{{ .Name }}`
 {{ end -}}
 {{ if .Functions -}}
 - [Functions](#functions)
-{{ range .Functions }}  - [{{ .Signature }}](#func-{{ .Name | ToLower }})
+{{ range .Functions }}  - [{{ .Signature | escape }}](#func-{{ .Name | ToLower }})
 {{ end -}}
 {{ end -}}
 {{ if .Types -}}
 - [Types](#types)
 {{ range .Types }}  - [type {{ .Name }}](#type-{{ .Name | ToLower }})
-{{ range .Functions }}    - [{{ .Signature }}](#func-{{ .Name | ToLower }})
+{{ range .Functions }}    - [{{ .Signature | escape }}](#func-{{ .Name | ToLower }})
 {{ end -}}
-{{ range .Methods }}    - [{{ .Signature }}](#func-{{ .Recv | ToLower }}-{{ .Name | ToLower }})
+{{ range .Methods }}    - [{{ .Signature | escape }}](#func-{{ .Recv | ToLower }}-{{ .Name | ToLower }})
 {{ end -}}
 {{ end -}}
 {{ end -}}
@@ -38,7 +38,7 @@ package `{{ .Name }}`
 ## Nested packages
 
 {{ range .Nested -}}
-[{{ .Name }}](./{{ .Dir }}/README.md)
+[{{ .Name }}](./{{ .Dir }}/docs.md)
 {{ end -}}
 {{ end -}}
 
@@ -124,7 +124,7 @@ package `{{ .Name }}`
 {{ end -}}
 
 {{ range .Methods }}
-### func ({{.Recv}}) [{{ .Name }}](./{{ .Pos.Filename }}#L{{ .Pos.Line }})
+### func ({{.Recv | escape}}) [{{ .Name }}](./{{ .Pos.Filename }}#L{{ .Pos.Line }})
 
 ```go
 {{ .Signature }}
