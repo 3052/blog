@@ -15,8 +15,6 @@ const prefs = {
    'browser.startup.page': 3,
    // disable delay hiding mute tab
    'browser.tabs.delayHidingAudioPlayingIconMS': 0,
-   // title bar
-   'browser.tabs.drawInTitlebar': false,
    // jumplist setting
    'browser.taskbar.lists.enabled': false,
    // disable URL autocomplete
@@ -40,8 +38,6 @@ const prefs = {
    'network.cookie.cookieBehavior': 1,
    // youtube
    'privacy.trackingprotection.pbmode.enabled': false,
-   // github bookmarklets
-   'security.csp.enable': false,
    // remember passwords
    'signon.rememberSignons': false,
    // developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion
@@ -50,16 +46,16 @@ const prefs = {
 
 Services.prefs.getChildList('').forEach(p => Services.prefs.clearUserPref(p));
 
-for (const [key, val] of Object.entries(prefs)) {
+for (const [key, value] of Object.entries(prefs)) {
    if (Services.prefs.getPrefType(key) == Services.prefs.PREF_INVALID) {
       console.log('INVALID', key);
    }
-   switch (typeof val) {
+   switch (typeof value) {
    case 'boolean':
-      Services.prefs.setBoolPref(key, val);
+      Services.prefs.setBoolPref(key, value);
       break;
    case 'number':
-      Services.prefs.setIntPref(key, val);
+      Services.prefs.setIntPref(key, value);
    }
    if (!Services.prefs.prefHasUserValue(key)) {
       console.log('DEFAULT', key);

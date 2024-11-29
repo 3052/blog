@@ -47,3 +47,13 @@ C:\Program Files\Mozilla Firefox\distribution\policies.json
 ~~~
 general.useragent.override
 ~~~
+
+## widevine
+
+~~~
+archive.mozilla.org/pub/firefox/releases/128.5.0esr/win64/en-US/
+4.10.2830.0
+
+archive.mozilla.org/pub/firefox/releases/115.18.0esr/win64/en-US/
+4.10.2830.0
+~~~
