@@ -25,8 +25,7 @@
 21. under Privacy and Terms, click More options
 22. click Don't save my Web & App Activity
 23. click Show me ads that aren't personalized
-24. click Don't save my YouTube History
-25. click I agree
+24. click I agree
 
 ## compute
 

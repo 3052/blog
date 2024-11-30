@@ -31,21 +31,20 @@ adb shell /data/app/frida-server
 then start Frida:
 
 ~~~
-## network error
-```
 frida -U `
 -l android/android-certificate-unpinning.js `
 -l config.js `
 -f com.audioteka
-```
-## unrecognized TLS error - this must be patched manually
-```
+~~~
+
+or:
+
+~~~
 frida -U `
 -l config.js `
 -l android/android-certificate-unpinning.js `
 -l android/android-certificate-unpinning-fallback.js `
 -f com.audioteka
-```
 ~~~
 
 https://github.com/httptoolkit/frida-interception-and-unpinning/issues/51
