@@ -9,6 +9,6 @@ require (
 )
 
 require (
-	41.neocities.org/protobuf v1.3.9 // indirect
-	google.golang.org/protobuf v1.35.1 // indirect
+	41.neocities.org/protobuf v1.4.0 // indirect
+	google.golang.org/protobuf v1.35.2 // indirect
 )

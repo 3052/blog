@@ -2,6 +2,8 @@
 
 https://github.com/golang/go/issues/2381
 
+---
+
 ## abhinav/doc2go
 
 https://github.com/abhinav/doc2go/issues/256
