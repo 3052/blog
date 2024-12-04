@@ -2,7 +2,9 @@
 
 ## go
 
-https://github.com/peterhellberg/neocities
+push:
+
+https://github.com/peterhellberg/neocities/issues/7
 
 ## ruby
 
