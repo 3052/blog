@@ -26,3 +26,5 @@ encrypt the decryption key in the license response with the encrypting key you
 defined
 and it allows you to decrypt it with the private value you have saved
 ~~~
+
+https://github.com/lossui011/Shield-Playready-SL2000
