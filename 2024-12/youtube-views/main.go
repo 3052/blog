@@ -1,59 +1,52 @@
 package main
 
 import (
-   "154.pages.dev/platform/youtube"
+   "flag"
    "fmt"
-   "os"
    "strconv"
    "time"
 )
 
 func main() {
-   if len(os.Args) == 2 {
-      var req youtube.Request
-      req.VideoId = os.Args[1]
-      req.Web()
-      var play youtube.Player
-      err := play.Post(req, nil)
+   var tube InnerTube
+   tube.Context.Client.ClientName = android
+   flag.StringVar(&tube.VideoId, "v", "", "video ID")
+   flag.Parse()
+   if tube.VideoId != "" {
+      play, err := tube.Player()
       if err != nil {
          panic(err)
       }
-      views, err := views_per_year(&play)
+      views, err := views_per_year(play)
       if err != nil {
          panic(err)
       }
       fmt.Println(views)
    } else {
-      fmt.Println("youtube-views [video ID]")
+      flag.Usage()
    }
 }
 
-func views_per_year(play *youtube.Player) (string, error) {
-   views, err := func() (float64, error) {
-      t, err := play.Time()
-      if err != nil {
-         return 0, err
-      }
+func views_per_year(play *Player) (string, error) {
+   views := func() float64 {
+      t := play.Microformat.PlayerMicroformatRenderer.PublishDate.Time
       y := time.Since(t).Hours() / 24 / 365
-      return float64(play.VideoDetails.ViewCount) / y, nil
+      return float64(play.VideoDetails.ViewCount) / y
    }()
-   if err != nil {
-      return "", err
-   }
-   var b []byte
+   var data []byte
    if views >= 10_000_000 {
-      b = append(b, red...)
-      b = append(b, " FAIL "...)
+      data = append(data, red...)
+      data = append(data, " FAIL "...)
    } else {
-      b = append(b, green...)
-      b = append(b, " PASS "...)
+      data = append(data, green...)
+      data = append(data, " PASS "...)
    }
-   b = append(b, reset...)
-   b = append(b, "   "...)
-   b = strconv.AppendFloat(b, views, 'f', 0, 64)
-   b = append(b, "   "...)
-   b = append(b, play.VideoDetails.VideoId...)
-   return string(b), nil
+   data = append(data, reset...)
+   data = append(data, "   "...)
+   data = strconv.AppendFloat(data, views, 'f', 0, 64)
+   data = append(data, "   "...)
+   data = append(data, play.VideoDetails.VideoId...)
+   return string(data), nil
 }
 
 const (
