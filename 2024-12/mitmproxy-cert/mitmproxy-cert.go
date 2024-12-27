@@ -50,7 +50,7 @@ func main() {
    commands := [][]string{
       {"adb", "shell", "mkdir", "-p", from},
       {"adb", "shell", "cp", to + "/*", from},
-      {"adb", "push", f.cert, from + "/" + push},
+      {"adb", "push", cert, from + "/" + push},
       {"adb", "root"},
       {"adb", "wait-for-device"},
       {"adb", "shell", "mount", "-t", "tmpfs", "tmpfs", to},
@@ -63,7 +63,7 @@ func main() {
       cmd.Stderr = os.Stderr
       cmd.Stdout = os.Stdout
       fmt.Println(cmd.Args)
-      if !f.info {
+      if !info {
          err := cmd.Run()
          if err != nil {
             panic(err)
