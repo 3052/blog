@@ -3,7 +3,7 @@
 you cannot use plus variations:
 
 ~~~
-srpen6+1407@gmail.com
+hello+1407@gmail.com
 ~~~
 
 Email domain could not be verified:
@@ -15,13 +15,13 @@ Email domain could not be verified:
 Email is invalid or already taken:
 
 ~~~
-spen@protonmail.com
+hello@protonmail.com
 ~~~
 
 how about:
 
 ~~~
-spen+3052@protonmail.com
+hello+3052@protonmail.com
 ~~~
 
 how long to wait for VPN? lets start with:
