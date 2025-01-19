@@ -5,9 +5,18 @@ import (
    "fmt"
    "os"
    "path/filepath"
-   "slices"
    "strings"
 )
+
+func (u *userinfo) String() string {
+   var data strings.Builder
+   data.WriteString(u.Username)
+   if u.Password != "" {
+      data.WriteByte(':') // if this becomes a problem just use tab
+      data.WriteString(u.Password)
+   }
+   return data.String()
+}
 
 func main() {
    home, err := os.UserHomeDir()
@@ -27,13 +36,7 @@ func main() {
       info := infos[os.Args[1]]
       fmt.Print(&info) // no newline
    } else {
-      keys := make([]string, 0, len(infos))
-      for key := range infos {
-         keys = append(keys, key)
-      }
-      slices.Sort(keys)
-      for _, key := range keys {
-         value := infos[key]
+      for key, value := range infos {
          fmt.Println(key, &value)
       }
    }
@@ -42,14 +45,4 @@ func main() {
 type userinfo struct {
    Password string
    Username string
-}
-
-func (u *userinfo) String() string {
-   var data strings.Builder
-   data.WriteString(u.Username)
-   if u.Password != "" {
-      data.WriteByte(':')
-      data.WriteString(u.Password)
-   }
-   return data.String()
 }
