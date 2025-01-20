@@ -1,9 +1,9 @@
 # winter
 
-1. Jan 10
-2. Jan 17
-3. Jan 24
-4. Jan 31
-5. Feb 7
-6. Feb 14
-7. Feb 21
+1. Jan 17-19
+2. Jan 24-26
+3. Jan 31-Feb 2
+4. Feb 7-9
+5. Feb 14-16
+6. Feb 21-23
+7. Feb 28

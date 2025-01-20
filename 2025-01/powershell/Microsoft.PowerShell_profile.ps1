@@ -1,16 +1,25 @@
+# 2025-01-19
+$env:path = 'C:\Program Files\Python311'
+$env:path += ';C:\Program Files\Python311\Scripts'
+$env:path += ';c:\users\steven\appdata\roaming\python\python311\scripts'
 
-# 2024-11-24
-$env:PATH = @(
-   'C:\Program Files\7-Zip-Zstandard'
-   'C:\Program Files\Mullvad VPN\resources'
-   'C:\Users\Steven\go\bin'
-   'C:\python'
-   'C:\python\Scripts'
-   'D:\MinGit\mingw64\bin'
-   'D:\bin'
-   'D:\go\bin'
-   'D:\vim'
-) -Join ';'
+# 2025-01-18
+$env:path += ';C:\Program Files\Mullvad VPN\resources'
+
+# 2025-01-17
+$env:path += ';C:\Users\Steven\go\bin'
+
+# 2025-01-14
+$env:path += ';D:\MinGit\mingw64\bin'
+
+# 2025-01-13
+$env:path += ';D:\bin'
+
+# 2025-01-12
+$env:path += ';D:\go\bin'
+
+# 2025-01-11
+$env:path += ';D:\vim'
 
 ## 2024-9-21
 
