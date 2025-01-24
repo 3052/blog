@@ -9,6 +9,27 @@ import (
    "time"
 )
 
+var apps = []application{
+   {id: "air.ITVMobilePlayer"},
+   {id: "be.rtbf.auvio"},
+   {id: "ca.ctv.ctvgo"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.cbs.app"},
+   {id: "com.criterionchannel"},
+   {id: "com.draken.android"},
+   {id: "com.hulu.plus"},
+   {id: "com.kanopy"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
+   {id: "com.tubitv"},
+   {id: "com.wbd.stream"},
+   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
+   {id: "tv.pluto.android"},
+   {id: "tv.wuaki"},
+}
+
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -38,12 +59,12 @@ func main() {
    }
    for i, app := range apps {
       fmt.Println(app.id)
-      detail, err := auth.Details(&checkin, app.id, false)
+      detail, err := auth.Details(checkin, app.id, false)
       if err != nil {
          panic(err)
       }
-      apps[i].installs, _ = detail.Downloads()
-      apps[i].name, _ = detail.Name()
+      apps[i].installs = detail.Downloads()
+      apps[i].name = detail.Name()
       time.Sleep(99 * time.Millisecond)
    }
    slices.SortFunc(apps, func(a, b application) int {
@@ -59,24 +80,4 @@ type application struct {
    id string
    name string
    installs uint64
-}
-
-var apps = []application{
-   {id: "air.ITVMobilePlayer"},
-   {id: "be.rtbf.auvio"},
-   {id: "ca.ctv.ctvgo"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.cbs.app"},
-   {id: "com.criterionchannel"},
-   {id: "com.draken.android"},
-   {id: "com.hulu.plus"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
-   {id: "com.tubitv"},
-   {id: "com.wbd.stream"},
-   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
-   {id: "tv.pluto.android"},
-   {id: "tv.wuaki"},
 }

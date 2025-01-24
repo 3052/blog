@@ -1,2 +1,10 @@
+41.neocities.org/google v1.6.6 h1:QPUAeP2b6kpkQ1G8EDyonXd9xpdlc5y4Lx5/eb6pL9A=
+41.neocities.org/google v1.6.6/go.mod h1:XSzRpIdZq1Df+5ifme83y/S0uzmvali+EUZ4KshnFnE=
+41.neocities.org/protobuf v1.4.0 h1:mT5AUnprtZTfemwWVi97VjuiSl4B/tdaX1b/YH0o9dw=
+41.neocities.org/protobuf v1.4.0/go.mod h1:4D09L9uzZktpREGiKaEq4QD7GA5eMzcRPaFdHoKCQnI=
+41.neocities.org/text v1.3.7 h1:msqRylxmje/VqZ0NuHDXXak8DGhhYV3HGpCuf22OvIc=
+41.neocities.org/text v1.3.7/go.mod h1:0y7K0Lgi+FZD0UwnyS5+G4njXypzm/b98GU52s32KH0=
 github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
 github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
+google.golang.org/protobuf v1.35.2 h1:8Ar7bF+apOIoThw1EdZl0p1oWvMqTHmpA2fRTyZO8io=
+google.golang.org/protobuf v1.35.2/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
