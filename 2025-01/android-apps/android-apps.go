@@ -2,7 +2,7 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/text"
+   "41.neocities.org/log"
    "fmt"
    "os"
    "slices"
@@ -72,7 +72,7 @@ func main() {
    })
    for i, app := range apps {
       fmt.Printf("%v. %v\n", i+1, app.name)
-      fmt.Printf("\t- %v\n", text.Cardinal(app.installs))
+      fmt.Printf("\t- %v\n", log.Cardinal(app.installs))
    }
 }
 

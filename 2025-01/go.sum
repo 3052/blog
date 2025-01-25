@@ -1,5 +1,7 @@
 41.neocities.org/google v1.6.6 h1:QPUAeP2b6kpkQ1G8EDyonXd9xpdlc5y4Lx5/eb6pL9A=
 41.neocities.org/google v1.6.6/go.mod h1:XSzRpIdZq1Df+5ifme83y/S0uzmvali+EUZ4KshnFnE=
+41.neocities.org/log v1.3.8 h1:fei5Lv36fr9p6LhuZEDQNhdpmpQ+Bnn5QURDbF6OMCQ=
+41.neocities.org/log v1.3.8/go.mod h1:oYGqoRxcEJ9s1MscaTvsXC7tu2Vjk20zBYgbupr8srs=
 41.neocities.org/protobuf v1.4.0 h1:mT5AUnprtZTfemwWVi97VjuiSl4B/tdaX1b/YH0o9dw=
 41.neocities.org/protobuf v1.4.0/go.mod h1:4D09L9uzZktpREGiKaEq4QD7GA5eMzcRPaFdHoKCQnI=
 41.neocities.org/text v1.3.7 h1:msqRylxmje/VqZ0NuHDXXak8DGhhYV3HGpCuf22OvIc=
