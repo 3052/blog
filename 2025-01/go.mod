@@ -3,8 +3,8 @@ module blog
 go 1.23.0
 
 require (
-	41.neocities.org/google v1.6.7
-	41.neocities.org/log v1.3.8
+	41.neocities.org/google v1.6.8
+	41.neocities.org/x v1.4.0
 	github.com/BurntSushi/toml v1.4.0
 )
 

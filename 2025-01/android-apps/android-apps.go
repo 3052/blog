@@ -2,33 +2,12 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/log"
+   "41.neocities.org/x/strconv"
    "fmt"
    "os"
    "slices"
    "time"
 )
-
-var apps = []application{
-   {id: "air.ITVMobilePlayer"},
-   {id: "be.rtbf.auvio"},
-   {id: "ca.ctv.ctvgo"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.cbs.app"},
-   {id: "com.criterionchannel"},
-   {id: "com.draken.android"},
-   {id: "com.hulu.plus"},
-   {id: "com.kanopy"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
-   {id: "com.tubitv"},
-   {id: "com.wbd.stream"},
-   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
-   {id: "tv.pluto.android"},
-   {id: "tv.wuaki"},
-}
 
 func main() {
    home, err := os.UserHomeDir()
@@ -72,7 +51,7 @@ func main() {
    })
    for i, app := range apps {
       fmt.Printf("%v. %v\n", i+1, app.name)
-      fmt.Printf("\t- %v\n", log.Cardinal(app.installs))
+      fmt.Printf("\t- %v\n", strconv.Cardinal(app.installs))
    }
 }
 
@@ -80,4 +59,24 @@ type application struct {
    id string
    name string
    installs uint64
+}
+var apps = []application{
+   {id: "air.ITVMobilePlayer"},
+   {id: "be.rtbf.auvio"},
+   {id: "ca.ctv.ctvgo"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.cbs.app"},
+   {id: "com.criterionchannel"},
+   {id: "com.draken.android"},
+   {id: "com.hulu.plus"},
+   {id: "com.kanopy"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
+   {id: "com.tubitv"},
+   {id: "com.wbd.stream"},
+   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
+   {id: "tv.pluto.android"},
+   {id: "tv.wuaki"},
 }

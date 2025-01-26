@@ -1,9 +1,9 @@
-41.neocities.org/google v1.6.7 h1:4lC32ZnZlr76IutcuInuliKEBoBVNu0Xs1b8UIwZu+I=
-41.neocities.org/google v1.6.7/go.mod h1:cFxuBOL/TvKDysc5KG6grTvNtuQ3ZchGYygYFGaiXts=
-41.neocities.org/log v1.3.8 h1:fei5Lv36fr9p6LhuZEDQNhdpmpQ+Bnn5QURDbF6OMCQ=
-41.neocities.org/log v1.3.8/go.mod h1:oYGqoRxcEJ9s1MscaTvsXC7tu2Vjk20zBYgbupr8srs=
+41.neocities.org/google v1.6.8 h1:2/m+Ovzp5MrKXx1RZfy1lYC5w8GsjwPpwMp+87yoZno=
+41.neocities.org/google v1.6.8/go.mod h1:RgNLQTr2BfLakAn3j57oSwHrAmCHzc8+f4AdZDx2iKM=
 41.neocities.org/protobuf v1.4.1 h1:Y1/Prbg/lNRjWeGhpkDa1IxjbcYuCzX8oiuOGHhzKEs=
 41.neocities.org/protobuf v1.4.1/go.mod h1:IHtGh5d1ujJcJczvVJ70V3JRkUJc252uaNFkht2Il7Q=
+41.neocities.org/x v1.4.0 h1:OySlCTfFYmTx5CX124SFhR8uJDMoceyKIl/kaOGV8Dk=
+41.neocities.org/x v1.4.0/go.mod h1:W914QR0V7rkZGunkjXoKFF97FiObrEdozhJj26qo+f0=
 github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
 github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 google.golang.org/protobuf v1.36.4 h1:6A3ZDJHn/eNqc1i+IdefRzy/9PokBTPvcqMySR7NNIM=
