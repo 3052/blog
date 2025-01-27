@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	41.neocities.org/google v1.6.8
-	41.neocities.org/x v1.4.0
+	41.neocities.org/x v1.4.3
 	github.com/BurntSushi/toml v1.4.0
 )
 
