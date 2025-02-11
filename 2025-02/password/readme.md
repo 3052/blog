@@ -7,7 +7,7 @@
 password = 'alfa bravo'
 username = 'alfa.bravo@gmail.com'
 
-['charlie.delta@discord.com']
+['discord.com#charlie.delta']
 password = 'charlie delta'
 username = 'charlie.delta@protonmail.com'
 ~~~
