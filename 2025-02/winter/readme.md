@@ -1,7 +1,6 @@
 # winter
 
 ~~~
-9 feb 9
 8 feb 14
 7 feb 15
 6 feb 16
