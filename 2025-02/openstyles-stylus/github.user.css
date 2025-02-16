@@ -1,7 +1,7 @@
 /*
 ==userstyle==
 @name GitHub
-@namespace 3052
+@namespace 10317
 @version 2023.10.27
 ==/userstyle==
 */
@@ -68,13 +68,5 @@
    }
    .react-code-text {
       font-size: 1em !important
-   }
-   /*
-   2023-05-11
-   github.com/rlaphoenix/pywidevine/issues/26
-   */
-   .is-stuck,
-   .is-stuck + .gh-header-shadow {
-      position: static !important
    }
 }
