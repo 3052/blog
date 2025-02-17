@@ -16,6 +16,67 @@ import (
    "text/template"
 )
 
+func (f *flags) write(req *http.Request, dst io.Writer) error {
+   var v values
+   if req.Body != nil && req.Method != "GET" {
+      src, err := io.ReadAll(req.Body)
+      if err != nil {
+         return err
+      }
+      if req.Header.Get("content-type") == "application/json" {
+         dst := &bytes.Buffer{}
+         json.Indent(dst, src, "", " ")
+         v.RawBody = fmt.Sprintf("`%v`", dst)
+      } else if f.form {
+         form, err := url.ParseQuery(string(src))
+         if err != nil {
+            return err
+         }
+         v.RawBody = fmt.Sprintf("\n%#v.Encode(),\n", form)
+      } else {
+         v.RawBody = fmt.Sprintf("%#q", src)
+      }
+      v.RequestBody = "io.NopCloser(body)"
+   } else {
+      v.RawBody = `""`
+      v.RequestBody = "nil"
+   }
+   v.Query = req.URL.Query()
+   v.Request = req
+   temp, err := template.ParseFS(content, "_template.go")
+   if err != nil {
+      return err
+   }
+   return temp.Execute(dst, v)
+}
+
+//go:embed _template.go
+var content embed.FS
+
+type values struct {
+   *http.Request
+   Query url.Values
+   RequestBody string
+   RawBody string
+}
+
+func write(req *http.Request, dst io.Writer) error {
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   defer resp.Body.Close()
+   if dst != nil {
+      _, err := io.Copy(dst, resp.Body)
+      if err != nil {
+         return err
+      }
+      resp.Write(os.Stdout)
+   } else {
+      resp.Write(os.Stdout)
+   }
+   return nil
+}
 // why is this needed?
 func read_request(r *bufio.Reader) (*http.Request, error) {
    var req http.Request
@@ -113,65 +174,4 @@ func main() {
          }
       }
    }
-}
-func (f *flags) write(req *http.Request, dst io.Writer) error {
-   var v values
-   if req.Body != nil && req.Method != "GET" {
-      src, err := io.ReadAll(req.Body)
-      if err != nil {
-         return err
-      }
-      if req.Header.Get("content-type") == "application/json" {
-         var dst bytes.Buffer
-         json.Indent(&dst, src, "", " ")
-         v.RawBody = "`" + dst.String() + "`"
-      } else if f.form {
-         form, err := url.ParseQuery(string(src))
-         if err != nil {
-            return err
-         }
-         v.RawBody = fmt.Sprintf("\n%#v.Encode(),\n", form)
-      } else {
-         v.RawBody = fmt.Sprintf("%#q", src)
-      }
-      v.RequestBody = "io.NopCloser(body)"
-   } else {
-      v.RawBody = `""`
-      v.RequestBody = "nil"
-   }
-   v.Query = req.URL.Query()
-   v.Request = req
-   temp, err := template.ParseFS(content, "_template.go")
-   if err != nil {
-      return err
-   }
-   return temp.Execute(dst, v)
-}
-
-//go:embed _template.go
-var content embed.FS
-
-type values struct {
-   *http.Request
-   Query url.Values
-   RequestBody string
-   RawBody string
-}
-
-func write(req *http.Request, dst io.Writer) error {
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   defer resp.Body.Close()
-   if dst != nil {
-      _, err := io.Copy(dst, resp.Body)
-      if err != nil {
-         return err
-      }
-      resp.Write(os.Stdout)
-   } else {
-      resp.Write(os.Stdout)
-   }
-   return nil
 }

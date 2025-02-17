@@ -9,13 +9,13 @@ import (
 )
 
 func (u *userinfo) String() string {
-   var data strings.Builder
-   data.WriteString(u.Username)
+   var b strings.Builder
+   b.WriteString(u.Username)
    if u.Password != "" {
-      data.WriteByte(':') // if this becomes a problem just use tab
-      data.WriteString(u.Password)
+      b.WriteByte(':') // if this becomes a problem just use tab
+      b.WriteString(u.Password)
    }
-   return data.String()
+   return b.String()
 }
 
 func main() {
