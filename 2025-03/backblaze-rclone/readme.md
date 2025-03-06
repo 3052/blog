@@ -28,7 +28,7 @@ rclone sync remote:<bucket> . -P
 ## Upload
 
 ~~~
-rclone sync . remote:<bucket> -P
+rclone sync . remote:minerals -P
 ~~~
 
 ## References
