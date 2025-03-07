@@ -1,5 +1,13 @@
+# 2025-03-07
+# go.dev/doc/go1.13
+$env:GOPROXY = 'direct'
+$env:GOSUMDB = 'off'
+
+# 2025-03-06
+$env:path = 'D:\zig'
+
 # 2025-01-19
-$env:path = 'C:\Program Files\Python311'
+$env:path += ';C:\Program Files\Python311'
 $env:path += ';C:\Program Files\Python311\Scripts'
 $env:path += ';c:\users\steven\appdata\roaming\python\python311\scripts'
 

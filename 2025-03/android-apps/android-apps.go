@@ -2,7 +2,7 @@ package main
 
 import (
    "41.neocities.org/google/play"
-   "41.neocities.org/x/strconv"
+   "41.neocities.org/x/stringer"
    "fmt"
    "os"
    "slices"
