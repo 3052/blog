@@ -14,11 +14,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   data, err := os.ReadFile(home + "/google-play/token.txt")
+   data, err := os.ReadFile(home + "/google-play/Token")
    if err != nil {
       panic(err)
    }
-   var token play.GoogleToken
+   var token play.Token
    err = token.Unmarshal(data)
    if err != nil {
       panic(err)
@@ -27,11 +27,11 @@ func main() {
    if err != nil {
       panic(err)
    }
-   data, err = os.ReadFile(home + "/google-play/x86.txt")
+   data, err = os.ReadFile(home + "/google-play/x86")
    if err != nil {
       panic(err)
    }
-   var checkin play.GoogleCheckin
+   var checkin play.Checkin
    err = checkin.Unmarshal(data)
    if err != nil {
       panic(err)
@@ -51,7 +51,7 @@ func main() {
    })
    for i, app := range apps {
       fmt.Printf("%v. %v\n", i+1, app.name)
-      fmt.Printf("\t- %v\n", strconv.Cardinal(app.installs))
+      fmt.Printf("\t- %v\n", stringer.Cardinal(app.installs))
    }
 }
 
