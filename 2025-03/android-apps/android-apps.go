@@ -14,7 +14,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   data, err := os.ReadFile(home + "/google-play/Token")
+   data, err := os.ReadFile(home + "/google/play/Token")
    if err != nil {
       panic(err)
    }
@@ -27,7 +27,7 @@ func main() {
    if err != nil {
       panic(err)
    }
-   data, err = os.ReadFile(home + "/google-play/x86")
+   data, err = os.ReadFile(home + "/google/play/x86")
    if err != nil {
       panic(err)
    }
