@@ -36,22 +36,21 @@ func main() {
    if err != nil {
       panic(err)
    }
-   for i, app := range apps {
-      fmt.Println(app.id)
+   for _, app := range apps {
       detail, err := auth.Details(checkin, app.id, false)
       if err != nil {
          panic(err)
       }
-      apps[i].installs = detail.Downloads()
-      apps[i].name = detail.Name()
+      app.installs = detail.Downloads()
+      app.name = detail.Name()
+      fmt.Println(app.id, stringer.Cardinal(app.installs))
       time.Sleep(99 * time.Millisecond)
    }
-   slices.SortFunc(apps, func(a, b application) int {
+   slices.SortFunc(apps, func(a, b *application) int {
       return int(b.installs - a.installs)
    })
    for i, app := range apps {
       fmt.Printf("%v. %v\n", i+1, app.name)
-      fmt.Printf("\t- %v\n", stringer.Cardinal(app.installs))
    }
 }
 
@@ -60,8 +59,10 @@ type application struct {
    name string
    installs uint64
 }
-var apps = []application{
+
+var apps = []*application{
    {id: "air.ITVMobilePlayer"},
+   {id: "au.com.streamotion.ares"},
    {id: "be.rtbf.auvio"},
    {id: "ca.ctv.ctvgo"},
    {id: "com.amcplus.amcfullepisodes"},
@@ -80,3 +81,4 @@ var apps = []application{
    {id: "tv.pluto.android"},
    {id: "tv.wuaki"},
 }
+
