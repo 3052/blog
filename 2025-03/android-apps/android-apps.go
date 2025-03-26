@@ -55,8 +55,8 @@ func main() {
 }
 
 type application struct {
-   id string
-   name string
+   id       string
+   name     string
    installs uint64
 }
 
@@ -66,6 +66,7 @@ var apps = []*application{
    {id: "be.rtbf.auvio"},
    {id: "ca.ctv.ctvgo"},
    {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.canal.android.canal"},
    {id: "com.cbs.app"},
    {id: "com.criterionchannel"},
    {id: "com.draken.android"},
@@ -81,4 +82,3 @@ var apps = []*application{
    {id: "tv.pluto.android"},
    {id: "tv.wuaki"},
 }
-
