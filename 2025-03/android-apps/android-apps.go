@@ -9,6 +9,30 @@ import (
    "time"
 )
 
+var apps = []*application{
+   {id: "air.ITVMobilePlayer"},
+   {id: "au.com.streamotion.ares"},
+   {id: "be.rtbf.auvio"},
+   {id: "ca.ctv.ctvgo"},
+   {id: "com.amcplus.amcfullepisodes"},
+   {id: "com.canal.android.canal"},
+   {id: "com.cbs.app"},
+   {id: "com.criterionchannel"},
+   {id: "com.draken.android"},
+   {id: "com.hulu.plus"},
+   {id: "com.kanopy"},
+   {id: "com.mubi"},
+   {id: "com.nbcuni.nbc"},
+   {id: "com.plexapp.android"},
+   {id: "com.roku.web.trc"},
+   {id: "com.tubitv"},
+   {id: "com.wbd.stream"},
+   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
+   {id: "tv.molotov.app"},
+   {id: "tv.pluto.android"},
+   {id: "tv.wuaki"},
+}
+
 func main() {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -58,27 +82,4 @@ type application struct {
    id       string
    name     string
    installs uint64
-}
-
-var apps = []*application{
-   {id: "air.ITVMobilePlayer"},
-   {id: "au.com.streamotion.ares"},
-   {id: "be.rtbf.auvio"},
-   {id: "ca.ctv.ctvgo"},
-   {id: "com.amcplus.amcfullepisodes"},
-   {id: "com.canal.android.canal"},
-   {id: "com.cbs.app"},
-   {id: "com.criterionchannel"},
-   {id: "com.draken.android"},
-   {id: "com.hulu.plus"},
-   {id: "com.kanopy"},
-   {id: "com.mubi"},
-   {id: "com.nbcuni.nbc"},
-   {id: "com.plexapp.android"},
-   {id: "com.roku.web.trc"},
-   {id: "com.tubitv"},
-   {id: "com.wbd.stream"},
-   {id: "nl.peoplesplayground.audienceplayer.cinemember"},
-   {id: "tv.pluto.android"},
-   {id: "tv.wuaki"},
 }
