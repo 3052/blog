@@ -194,7 +194,6 @@ The Social Network - 2010\The Social Network - 2010.m4a
 The Social Network - 2010\The Social Network - 2010.m4v
 The Truman Show - 1998\The Truman Show - 1998.m4a
 The Truman Show - 1998\The Truman Show - 1998.m4v
-The.Life.Aquatic.With.Steve.Zissou.2004.1080p.BluRay.x265-RARBG\The.Life.Aquatic.With.Steve.Zissou.2004.1080p.BluRay.x265-RARBG.mp4
 There Will Be Blood - 2007\There Will Be Blood - 2007.m4a
 There Will Be Blood - 2007\There Will Be Blood - 2007.m4v
 Three Colors Blue (1993)\Three Colors- Blue - 1993.m4a
