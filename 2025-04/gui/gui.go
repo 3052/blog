@@ -57,6 +57,12 @@ var Tests = []test{
       issue_url: "codeberg.org/tslocum/etk/issues/11",
    },
    {
+      api_url:   "api.github.com/repos/cogentcore/core",
+      size_go:   113_943,
+      issue_url: "github.com/cogentcore/core/issues/1497",
+      issue:      "unknown revision f26f1ae0a7c4",
+   },
+   {
       api_url:   "api.github.com/repos/richardwilkes/unison",
       issue:     "build without C",
       issue_url: "github.com/richardwilkes/unison/issues/64",
