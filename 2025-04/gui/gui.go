@@ -1,78 +1,80 @@
 package gui
 
 type test struct {
-   api_url   string
    issue     string
    issue_url string
+   linux     bool
    pushed_at int
-   size_exe  string
-   size_go   int
+   size      string
    url       string
 }
 
 var Tests = []test{
    {
+      issue:     "tag version",
+      issue_url: "github.com/tadvi/winc/issues/14",
+      linux:     false,
       pushed_at: 2021,
-      url:       "github.com/tadvi/winc",
-      size_exe:  "1.62 MB",
+      size:      "1.62 MB",
    },
    {
+      issue:     "tag version",
+      issue_url: "github.com/rodrigocfd/windigo/issues/36",
+      linux:     false,
       pushed_at: 2023,
-      size_exe:  "1.69 MB",
-      url:       "github.com/rodrigocfd/windigo",
+      size:      "1.69 MB",
    },
    {
-      api_url:   "api.github.com/repos/aarzilli/nucular",
+      issue:     "smaller backend",
       issue_url: "github.com/aarzilli/nucular/issues/89",
-      size_exe:  "2.75 MB",
-      size_go:   13_293,
+      linux:     true,
+      pushed_at: 2025,
+      size:      "2.75 MB",
+   },
+
+   {
+      size:      "8.44 MB",
+      issue_url: "github.com/yottahmd/furex/issues/74",
+      issue:     "executable size",
    },
    {
-      issue:     "button example",
-      issue_url: "github.com/yottahmd/furex/issues/73",
-      size_exe:  "8.44 MB",
-   },
-   {
-      issue:     "example without ebiten",
+      size:      "8.93 MB",
       issue_url: "github.com/demouth/ebitenlg/issues/1",
-      size_exe:  "8.93 MB",
+      issue:     "executable size",
    },
    {
       issue:     "executable size",
       issue_url: "github.com/hajimehoshi/guigui/issues/27",
-      size_exe:  "10.4 MB",
+      size:      "10.4 MB",
    },
    {
       url:       "github.com/zeozeozeo/ebitengine-microui-go",
       issue_url: "github.com/zeozeozeo/microui-go/issues/4",
-      size_exe:  "10.6 MB",
+      issue:     "smaller demo",
+      size:      "10.6 MB",
    },
    {
       issue_url: "github.com/zeozeozeo/microui-go/issues/4",
-      size_exe:  "10.6 MB",
+      size:      "10.6 MB",
+      issue:     "smaller demo",
       url:       "github.com/zeozeozeo/microui-go",
    },
    {
-      size_exe:  "15.7 MB",
+      size:      "15.7 MB",
       issue_url: "codeberg.org/tslocum/etk/issues/11",
+      issue:     "executable size is large",
    },
    {
-      api_url:   "api.github.com/repos/cogentcore/core",
-      size_go:   113_943,
       issue_url: "github.com/cogentcore/core/issues/1497",
-      issue:      "unknown revision f26f1ae0a7c4",
+      issue:     "unknown revision f26f1ae0a7c4",
    },
    {
-      api_url:   "api.github.com/repos/richardwilkes/unison",
       issue:     "build without C",
       issue_url: "github.com/richardwilkes/unison/issues/64",
-      size_go:   161_209,
    },
    {
-      api_url:   "api.github.com/repos/fyne-io/fyne",
       issue:     "build without C",
       issue_url: "github.com/fyne-io/fyne/issues/5651",
-      size_go:   113_691,
    },
    {
       issue:     "make it clear that this is not pure Go",
