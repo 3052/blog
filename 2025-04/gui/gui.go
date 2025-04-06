@@ -1,6 +1,13 @@
-package gui
+package main
+
+import "fmt"
+
+func main() {
+   fmt.Println(len(tests))
+}
 
 type test struct {
+   go_sum    int
    issue     string
    issue_url string
    linux     bool
@@ -9,8 +16,9 @@ type test struct {
    url       string
 }
 
-var Tests = []test{
+var tests = []test{
    {
+      go_sum:    0,
       issue:     "tag version",
       issue_url: "github.com/tadvi/winc/issues/14",
       linux:     false,
@@ -18,20 +26,20 @@ var Tests = []test{
       size:      "1.62 MB",
    },
    {
-      issue:     "tag version",
-      issue_url: "github.com/rodrigocfd/windigo/issues/36",
-      linux:     false,
-      pushed_at: 2023,
-      size:      "1.69 MB",
-   },
-   {
+      go_sum:    115,
       issue:     "smaller backend",
       issue_url: "github.com/aarzilli/nucular/issues/89",
       linux:     true,
-      pushed_at: 2025,
       size:      "2.75 MB",
    },
-
+   {
+      go_sum:    0,
+      linux:     false,
+      pushed_at: 2023,
+      size:      "1.69 MB",
+      issue_url: "github.com/rodrigocfd/windigo/issues/38",
+      issue:     "export option types",
+   },
    {
       size:      "8.44 MB",
       issue_url: "github.com/yottahmd/furex/issues/74",
