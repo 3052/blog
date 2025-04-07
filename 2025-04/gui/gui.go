@@ -73,8 +73,8 @@ var tests = []test{
       issue:     "executable size is large",
    },
    {
-      issue_url: "github.com/cogentcore/core/issues/1497",
-      issue:     "unknown revision f26f1ae0a7c4",
+      issue_url: "github.com/cogentcore/core/issues/1500",
+      issue:     "checksum mismatch",
    },
    {
       issue:     "build without C",
