@@ -73,8 +73,8 @@ var tests = []test{
       issue:     "executable size is large",
    },
    {
-      issue_url: "github.com/cogentcore/core/issues/1500",
-      issue:     "checksum mismatch",
+      issue_url: "github.com/cogentcore/core/issues/1502",
+      issue:     "wgpuglfw: build constraints exclude all Go files",
    },
    {
       issue:     "build without C",
