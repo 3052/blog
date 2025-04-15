@@ -4,7 +4,6 @@ import (
    "bufio"
    "bytes"
    "embed"
-   "encoding/json"
    "flag"
    "fmt"
    "io"
@@ -19,22 +18,18 @@ import (
 func (f *flags) write(req *http.Request, dst io.Writer) error {
    var v values
    if req.Body != nil && req.Method != "GET" {
-      src, err := io.ReadAll(req.Body)
+      data, err := io.ReadAll(req.Body)
       if err != nil {
          return err
       }
-      if req.Header.Get("content-type") == "application/json" {
-         dst := &bytes.Buffer{}
-         json.Indent(dst, src, "", " ")
-         v.RawBody = fmt.Sprintf("`%v`", dst)
-      } else if f.form {
-         form, err := url.ParseQuery(string(src))
+      if f.form {
+         form, err := url.ParseQuery(string(data))
          if err != nil {
             return err
          }
          v.RawBody = fmt.Sprintf("\n%#v.Encode(),\n", form)
       } else {
-         v.RawBody = fmt.Sprintf("%#q", src)
+         v.RawBody = fmt.Sprintf("%#q", data)
       }
       v.RequestBody = "io.NopCloser(body)"
    } else {
@@ -77,6 +72,7 @@ func write(req *http.Request, dst io.Writer) error {
    }
    return nil
 }
+
 // why is this needed?
 func read_request(r *bufio.Reader) (*http.Request, error) {
    var req http.Request
