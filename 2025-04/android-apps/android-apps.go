@@ -26,6 +26,7 @@ var apps = []application{
    {id: "com.roku.web.trc"}, // The Roku Channel
    {id: "com.tubitv"}, // Tubi: Free Movies & Live TV
    {id: "com.wbd.stream"}, // Max: Stream HBO, TV, & Movies
+   {id: "es.plus.yomvi"}, // Movistar Plus+
    {id: "nl.peoplesplayground.audienceplayer.cinemember"}, // CineMember
    {id: "tv.molotov.app"}, // Molotov - TV en direct, replay
    {id: "tv.pluto.android"}, // PlutoTV: Live TV & Free Movies

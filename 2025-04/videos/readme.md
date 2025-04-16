@@ -7,128 +7,6 @@ fd -H -t f
 result:
 
 ~~~
-A Few Good Men (1992)\A Few Good Men - 1992.m4a
-A Few Good Men (1992)\A Few Good Men - 1992.m4v
-A Few Good Men (1992)\desktop.ini
-A Knight's Tale (2001)\A Knight's Tale - 2001.m4a
-A Knight's Tale (2001)\A Knight's Tale - 2001.m4v
-A Knight's Tale (2001)\desktop.ini
-American Hustle (2013)\American Hustle - 2013.m4a
-American Hustle (2013)\American Hustle - 2013.m4v
-American Hustle (2013)\desktop.ini
-American Made (2017)\American Made - 2017.m4a
-American Made (2017)\American Made - 2017.m4v
-American Made (2017)\desktop.ini
-American Psycho (2000)\American Psycho - 2000.m4a
-American Psycho (2000)\American Psycho - 2000.m4v
-American Psycho (2000)\desktop.ini
-Baby Driver (2017)\Baby Driver - 2017.m4a
-Baby Driver (2017)\Baby Driver - 2017.m4v
-Baby Driver (2017)\desktop.ini
-Batman Begins (2005)\.m4a
-Batman Begins (2005)\.m4v
-Batman Begins (2005)\desktop.ini
-Birdman or (The Unexpected Virtue of Ignorance) (2014)\Birdman or (The Unexpected Virtue of Ignorance) - 2014.m4a
-Birdman or (The Unexpected Virtue of Ignorance) (2014)\Birdman or (The Unexpected Virtue of Ignorance) - 2014.m4v
-Birdman or (The Unexpected Virtue of Ignorance) (2014)\desktop.ini
-Birdman or (The Unexpected Virtue of Ignorance) (2014)\readme.txt
-Blade Runner (1982)\.m4a
-Blade Runner (1982)\.m4v
-Blade Runner (1982)\desktop.ini
-Blue Is the Warmest Color (2013)\Blue Is the Warmest Color - 2013.m4a
-Blue Is the Warmest Color (2013)\Blue Is the Warmest Color - 2013.m4v
-Blue Is the Warmest Color (2013)\Blue Is the Warmest Color - 2013.vtt
-Blue Is the Warmest Color (2013)\readme.txt
-Bound (1996)\Bound - 1996.m4a
-Bound (1996)\Bound - 1996.m4v
-Bound (1996)\desktop.ini
-Casino Royale (2006)\Casino Royale - 2006.m4a
-Casino Royale (2006)\Casino Royale - 2006.m4v
-Casino Royale (2006)\desktop.ini
-Cast Away (2000)\Cast Away - 2000.m4a
-Cast Away (2000)\Cast Away - 2000.m4v
-Cast Away (2000)\desktop.ini
-Castle in the Sky (1986)\Castle in the Sky - 1986.m4a
-Castle in the Sky (1986)\Castle in the Sky - 1986.m4v
-Castle in the Sky (1986)\desktop.ini
-Closer (2004)\.m4a
-Closer (2004)\.m4v
-Closer (2004)\desktop.ini
-Collateral (2004)\Collateral - 2004.m4a
-Collateral (2004)\Collateral - 2004.m4v
-Collateral (2004)\desktop.ini
-Contagion (2011)\Contagion - 2011.m4a
-Contagion (2011)\Contagion - 2011.m4v
-Contagion (2011)\desktop.ini
-Cruel Intentions (1999)\Cruel Intentions - 1998.m4a
-Cruel Intentions (1999)\Cruel Intentions - 1998.m4v
-Derailed (2005)\.m4a
-Derailed (2005)\.m4v
-Derailed (2005)\desktop.ini
-Die Hard With a Vengeance (1995)\.m4a
-Die Hard With a Vengeance (1995)\.m4v
-Django Unchained (2012)\.m4a
-Django Unchained (2012)\.m4v
-Django Unchained (2012)\desktop.ini
-Don't Worry Darling (2022)\Don't Worry Darling - 2022.m4a
-Don't Worry Darling (2022)\Don't Worry Darling - 2022.m4v
-Donnie Darko (2001)\Donnie Darko - 2004.m4a
-Donnie Darko (2001)\Donnie Darko - 2004.m4v
-Donnie Darko (2001)\desktop.ini
-Edge of Tomorrow (2014)\Edge of Tomorrow - 2014.m4a
-Edge of Tomorrow (2014)\Edge of Tomorrow - 2014.m4v
-Eileen (2023)\Eileen - 2023.m4a
-Eileen (2023)\Eileen - 2023.m4v
-Eternal Sunshine of the Spotless Mind (2004)\.m4a
-Eternal Sunshine of the Spotless Mind (2004)\.m4v
-Ex Machina (2015)\Ex Machina - 2015.m4a
-Ex Machina (2015)\Ex Machina - 2015.m4v
-Eyes Wide Shut (1999)\Eyes Wide Shut - 1999.m4a
-Eyes Wide Shut (1999)\Eyes Wide Shut - 1999.m4v
-Ferris Bueller's Day Off (1986)\Ferris Bueller's Day Off - 1986.m4a
-Ferris Bueller's Day Off (1986)\Ferris Bueller's Day Off - 1986.m4v
-Ford v Ferrari (2019)\Ford v Ferrari - 2019.m4a
-Ford v Ferrari (2019)\Ford v Ferrari - 2019.m4v
-Gattaca (1997)\Gattaca - 1997.m4a
-Gattaca (1997)\Gattaca - 1997.m4v
-Gone Girl (2014)\.m4a
-Gone Girl (2014)\.m4v
-Gone Girl (2014)\desktop.ini
-Hackers (1995)\Hackers - 1995.m4a
-Hackers (1995)\Hackers - 1995.m4v
-Hackers (1995)\desktop.ini
-Heat (1995)\Heat - 1995.m4a
-Heat (1995)\Heat - 1995.m4v
-Heat (1995)\desktop.ini
-Horrible Bosses (2011)\.m4a
-Horrible Bosses (2011)\.m4v
-Horrible Bosses (2011)\desktop.ini
-Horrible Bosses 2 (2014)\Horrible Bosses 2 - 2014.m4a
-Horrible Bosses 2 (2014)\Horrible Bosses 2 - 2014.m4v
-Horrible Bosses 2 (2014)\desktop.ini
-I Care a Lot (2021)\I care a lot - 0.m4a
-I Care a Lot (2021)\I care a lot - 0.m4v
-I Care a Lot (2021)\desktop.ini
-I Heart Huckabees - 2004\I Heart Huckabees - 2004.m4a
-I Heart Huckabees - 2004\I Heart Huckabees - 2004.m4v
-I Heart Huckabees - 2004\desktop.ini
-Inception - 2010\Inception - 2010.m4a
-Inception - 2010\Inception - 2010.m4v
-Inception - 2010\desktop.ini
-Indecent Proposal - 1993\Indecent Proposal - 1993.m4a
-Indecent Proposal - 1993\Indecent Proposal - 1993.m4v
-Indecent Proposal - 1993\desktop.ini
-Inherent Vice - 2014\Inherent Vice - 2014.m4a
-Inherent Vice - 2014\Inherent Vice - 2014.m4v
-Inherent Vice - 2014\desktop.ini
-Interstellar - 2014\Interstellar - 2014.m4a
-Interstellar - 2014\Interstellar - 2014.m4v
-Interstellar - 2014\desktop.ini
-Jack Reacher - 2012\Jack Reacher - 2012.m4a
-Jack Reacher - 2012\Jack Reacher - 2012.m4v
-Jack Reacher - 2012\desktop.ini
-Jackie Brown (1997)\.m4a
-Jackie Brown (1997)\.m4v
 Jerry maguire - 1996\Jerry maguire - 1996.m4a
 Jerry maguire - 1996\Jerry maguire - 1996.m4v
 Jerry maguire - 1996\desktop.ini
@@ -261,6 +139,9 @@ Side Effects - 2013\desktop.ini
 Silver Linings Playbook - 2012\Silver Linings Playbook - 2012.m4a
 Silver Linings Playbook - 2012\Silver Linings Playbook - 2012.m4v
 Silver Linings Playbook - 2012\desktop.ini
+Spirited Away (2001)\.m4a
+Spirited Away (2001)\.m4v
+Spirited Away (2001)\desktop.ini
 T2 Trainspotting - 2017\T2 Trainspotting - 2017.m4a
 T2 Trainspotting - 2017\T2 Trainspotting - 2017.m4v
 T2 Trainspotting - 2017\desktop.ini
@@ -290,6 +171,7 @@ The Dark Knight Rises - 2012\The Dark Knight Rises - 2012.m4v
 The Dark Knight Rises - 2012\desktop.ini
 The Departed (2006)\.m4a
 The Departed (2006)\.m4v
+The Departed (2006)\desktop.ini
 The Edge of Seventeen - 2016\The Edge of Seventeen - 2016.m4a
 The Edge of Seventeen - 2016\The Edge of Seventeen - 2016.m4v
 The Edge of Seventeen - 2016\desktop.ini
@@ -354,9 +236,6 @@ Top Gun- Maverick - 2022\desktop.ini
 Trance - 2013\Trance - 2013.m4a
 Trance - 2013\Trance - 2013.m4v
 Trance - 2013\desktop.ini
-Tropic Thunder - 2008\Tropic Thunder - 2008.m4a
-Tropic Thunder - 2008\Tropic Thunder - 2008.m4v
-Tropic Thunder - 2008\desktop.ini
 Uncut Gems - 2019\Uncut Gems - 2019.m4a
 Uncut Gems - 2019\Uncut Gems - 2019.m4v
 Uncut Gems - 2019\desktop.ini
@@ -380,6 +259,8 @@ Wild Things - 1998\Wild Things - 1998.m4v
 Wild Things - 1998\desktop.ini
 X-Men- First Class - 2011\X-Men- First Class - 2011.m4a
 X-Men- First Class - 2011\X-Men- First Class - 2011.m4v
+X-Men- First Class - 2011\desktop.ini
 Zodiac - 2007\Zodiac - 2007.m4a
 Zodiac - 2007\Zodiac - 2007.m4v
+Zodiac - 2007\desktop.ini
 ~~~
