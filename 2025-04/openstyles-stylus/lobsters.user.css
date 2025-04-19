@@ -1,40 +1,40 @@
 /*
 ==userstyle==
 @name Lobsters
-@namespace 10317
-@version 2023-11-26
+@namespace 41.neocities.org
+@version 2025.04.19
 ==/userstyle==
 */
 @-moz-document domain("lobste.rs") {
+   /* 2025-04-19 */
+   :visited {
+      color: hsl(270 100% 50%)
+   }
    /* 2023-10-15 */
    .comments1 > .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters {
+   .comments_subtree > .comment > .comment_gutter > .voters {
       background: blue
    }
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters {
+   .comments_subtree > .comment > .comment_gutter > .voters {
       background: green
    }
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
    .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters {
+   .comments_subtree > .comment > .comment_gutter > .voters {
       background: orange
    }
    .comments1 > .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters > .score,
+   .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters > .score,
+   .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
    .comments1 > .comments_subtree > .comments >
    .comments_subtree > .comments >
    .comments_subtree > .comments >
-   .comments_subtree > .comment > .voters > .score {
+   .comments_subtree > .comment > .comment_gutter > .voters > .upvoter {
       color: white
-   }
-   /* 2023-10-14 */
-   :visited {
-      color: hsl(270 100% 50%) !important
    }
 }
