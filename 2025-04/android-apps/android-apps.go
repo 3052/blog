@@ -35,8 +35,8 @@ var apps = []application{
 
 type application struct {
    id       string
-   name     string
    installs uint64
+   name     string
 }
 
 func main() {
