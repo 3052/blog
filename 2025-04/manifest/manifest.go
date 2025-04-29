@@ -34,20 +34,6 @@ func (i *intent_filter) String() string {
    return b.String()
 }
 
-func (m manifest) intent_filter() iter.Seq[intent_filter] {
-   return func(yield func(intent_filter) bool) {
-      for _, activity := range m.Application.Activity {
-         for _, intent := range activity.IntentFilter {
-            if intent.Action.Name == "android.intent.action.VIEW" {
-               if !yield(intent) {
-                  return
-               }
-            }
-         }
-      }
-   }
-}
-
 type manifest struct {
    Application struct {
       Activity []struct {
@@ -69,4 +55,20 @@ type intent_filter struct {
       PathPattern string `xml:"pathPattern,attr"`
       PathPrefix  string `xml:"pathPrefix,attr"`
    } `xml:"data"`
+}
+
+func (m manifest) intent_filter() iter.Seq[intent_filter] {
+   return func(yield func(intent_filter) bool) {
+      for _, activity := range m.Application.Activity {
+         for _, intent := range activity.IntentFilter {
+            if intent.Action.Name == "android.intent.action.VIEW" {
+               if len(intent.Data) >= 1 {
+                  if !yield(intent) {
+                     return
+                  }
+               }
+            }
+         }
+      }
+   }
 }
