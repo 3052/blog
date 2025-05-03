@@ -1,0 +1,26 @@
+/*
+==userstyle==
+@name Lobsters
+@namespace 41.neocities.org
+@version 2025.04.19
+==/userstyle==
+*/
+@-moz-document domain("lobste.rs") {
+   :visited {
+      color: hsl(270 100% 50%);
+   }
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+      background: blue;
+   }
+   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+      background: green;
+   }
+   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+      background: orange;
+   }
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
+   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
+   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter {
+      color: white;
+   }
+}
