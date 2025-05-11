@@ -12,6 +12,34 @@ import (
    "time"
 )
 
+const (
+   android = "ANDROID"
+   android_embedded_player = "ANDROID_EMBEDDED_PLAYER"
+   android_version = "19.33.35"
+   web = "WEB"
+   web_version = "2.20231219.04.00"
+)
+
+func main() {
+   var tube InnerTube
+   tube.Context.Client.ClientName = web
+   flag.StringVar(&tube.VideoId, "v", "", "video ID")
+   flag.Parse()
+   if tube.VideoId != "" {
+      play, err := tube.Player()
+      if err != nil {
+         panic(err)
+      }
+      views, err := views_per_year(play)
+      if err != nil {
+         panic(err)
+      }
+      fmt.Println(views)
+   } else {
+      flag.Usage()
+   }
+}
+
 func views_per_year(play *Player) (string, error) {
    views := func() float64 {
       date := play.Microformat.PlayerMicroformatRenderer.PublishDate.Time
@@ -33,26 +61,6 @@ func views_per_year(play *Player) (string, error) {
    data = append(data, "   "...)
    data = append(data, play.VideoDetails.VideoId...)
    return string(data), nil
-}
-
-func main() {
-   var tube InnerTube
-   tube.Context.Client.ClientName = web
-   flag.StringVar(&tube.VideoId, "v", "", "video ID")
-   flag.Parse()
-   if tube.VideoId != "" {
-      play, err := tube.Player()
-      if err != nil {
-         panic(err)
-      }
-      views, err := views_per_year(play)
-      if err != nil {
-         panic(err)
-      }
-      fmt.Println(views)
-   } else {
-      flag.Usage()
-   }
 }
 
 const (
@@ -171,14 +179,3 @@ func (v *VideoId) Set(data string) error {
 func (v VideoId) String() string {
    return string(v)
 }
-
-const (
-   android_version = "19.33.35"
-   web_version = "2.20231219.04.00"
-)
-
-const (
-   android = "ANDROID"
-   android_embedded_player = "ANDROID_EMBEDDED_PLAYER"
-   web = "WEB"
-)
