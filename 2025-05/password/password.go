@@ -22,6 +22,42 @@ func (u *user) New() error {
    return toml.Unmarshal(data, u)
 }
 
+type user map[string][]info
+
+type info struct {
+   Date     time.Time
+   Password string
+   Username string
+}
+
+func (u user) contains(data string) {
+   var line bool
+   for key, values := range u {
+      if strings.Contains(key, data) {
+         for _, value := range values {
+            if line {
+               fmt.Println()
+            } else {
+               line = true
+            }
+            fmt.Print(key, "\n", &value, "\n")
+         }
+      }
+   }
+}
+
+func (u user) equal(data string) {
+   values, ok := u[data]
+   if ok {
+      value := values[0]
+      fmt.Print(value.Username)
+      if value.Password != "" {
+         // go.dev/pkg/net/url?m=old#PathEscape
+         fmt.Print(":", value.Password)
+      }
+   }
+}
+
 func (i *info) String() string {
    b := []byte("username = ")
    b = append(b, i.Username...)
@@ -59,41 +95,5 @@ func main() {
       user1.equal(*equal)
    default:
       flag.Usage()
-   }
-}
-
-func (u user) contains(data string) {
-   var line bool
-   for key, values := range u {
-      if strings.Contains(key, data) {
-         for _, value := range values {
-            if line {
-               fmt.Println()
-            } else {
-               line = true
-            }
-            fmt.Print(key, "\n", &value, "\n")
-         }
-      }
-   }
-}
-
-type info struct {
-   Date     time.Time
-   Password string
-   Username string
-}
-
-type user map[string][]info
-
-func (u user) equal(data string) {
-   values, ok := u[data]
-   if ok {
-      value := values[0]
-      fmt.Print(value.Username)
-      if value.Password != "" {
-         // go.dev/pkg/net/url?m=old#PathEscape
-         fmt.Print(":", value.Password)
-      }
    }
 }

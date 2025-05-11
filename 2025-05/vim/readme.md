@@ -21,6 +21,9 @@ diff --git a/colors/PaperColor.vim b/colors/PaperColor.vim
 index afef1d4..31f97a4 100755
 --- a/colors/PaperColor.vim
 +++ b/colors/PaperColor.vim
+@@ -1230 +1230 @@ fun! s:apply_syntax_highlightings()
+-  exec 'hi Exception' . s:fg_red
++  exec 'hi Exception' . s:fg_red . s:ft_bold
 @@ -1238 +1238 @@ fun! s:apply_syntax_highlightings()
 -  exec 'hi Type' . s:fg_pink . s:ft_bold
 +  exec 'hi Type' . s:fg_positive . s:ft_bold
@@ -48,3 +51,20 @@ index a069746..4afea16 100644
 ~~~
 
 https://github.com/tpope/vim-markdown/tree/master/syntax
+
+## syntax/zig.vim
+
+~~~diff
+diff --git a/syntax/zig.vim b/syntax/zig.vim
+index 80df1f8..a8ffc32 100644
+--- a/syntax/zig.vim
++++ b/syntax/zig.vim
+@@ -261 +261 @@ highlight default link zigBuiltinFn Statement
+-highlight default link zigKeyword Keyword
++highlight default link zigKeyword Structure
+@@ -292 +292 @@ highlight default link zigSpecial Special
+-highlight default link zigVarDecl Function
++highlight default link zigVarDecl Structure
+~~~
+
+https://github.com/ziglang/zig.vim
