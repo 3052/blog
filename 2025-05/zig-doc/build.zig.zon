@@ -1,0 +1,12 @@
+.{
+    .name = .name,
+    .paths = .{""},
+    .version = "0.0.0",
+   .fingerprint = 0x5e237e061c5901e6,
+    .dependencies = .{
+        .protobuf_zig = .{
+            .url = "https://github.com/travisstaloch/protobuf-zig/archive/refs/heads/main.zip",
+            .hash = "protobuf_zig-0.0.0-DTgLM5J1BgArvE7SsmLR6rCiJKZ2onLFq3uBKRtlZGfW",
+        },
+    },
+}

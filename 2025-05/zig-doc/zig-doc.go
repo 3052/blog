@@ -3,61 +3,53 @@ package main
 import (
    "flag"
    "log"
-   "net/http"
-   "path"
    "os"
    "os/exec"
 )
 
+const build_zig_zon = `
+.{
+   .name = .name,
+   .paths = .{ "" },
+   .version = "0.0.0",
+}
+`
+
+func write_file(name string, data []byte) error {
+   log.Println("WriteFile", name)
+   return os.WriteFile(name, data, os.ModePerm)
+}
+
+func run(name string, arg ...string) error {
+   c := exec.Command(name, arg...)
+   c.Stderr = os.Stderr
+   c.Stdout = os.Stdout
+   log.Println("Run", c.Args)
+   return c.Run()
+}
+
+func doc(zip string) error {
+   err := write_file("build.zig", nil)
+   if err != nil {
+      return err
+   }
+   err = write_file("build.zig.zon", []byte(build_zig_zon))
+   if err != nil {
+      return err
+   }
+   return run("zig", "fetch", "--save", zip)
+}
+
 func main() {
-   from := flag.String("f", "", "from address")
-   // need localhost to avoid security alert
-   to := flag.String("t", "localhost:8080", "to address")
+   log.SetFlags(log.Ltime)
+   zip := flag.String("z", "", "zip")
    flag.Parse()
-   if *from != "" {
-      err := serve(*from, *to)
+   if *zip != "" {
+      err := doc(*zip)
       if err != nil {
          panic(err)
       }
    } else {
       flag.Usage()
    }
-}
-
-func get(address string) error {
-   resp, err := http.Get(address)
-   if err != nil {
-      return err
-   }
-   defer resp.Body.Close()
-   file, err := os.Create(path.Base(address))
-   if err != nil {
-      return err
-   }
-   defer file.Close()
-   _, err = file.ReadFrom(resp.Body)
-   if err != nil {
-      return err
-   }
-   return nil
-}
-
-func serve(from, to string) error {
-   err := get(from)
-   if err != nil {
-      return err
-   }
-   command := exec.Command(
-      "zig", "test", "--test-no-exec", "-femit-docs", path.Base(from),
-   )
-   command.Stderr = os.Stderr
-   command.Stdout = os.Stdout
-   err = command.Run()
-   if err != nil {
-      return err
-   }
-   log.Print(to)
-   return http.ListenAndServe(
-      to, http.FileServer(http.Dir("docs")),
-   )
 }
