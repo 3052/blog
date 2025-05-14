@@ -1,13 +1,5 @@
-# 2025-04-13
-$env:RIPGREP_CONFIG_PATH = 'D:\git\blog\2025-04\ripgrep\ripgrep.txt'
-
-# 2025-03-07
-# go.dev/doc/go1.13
-$env:GOPROXY = 'direct'
-$env:GOSUMDB = 'off'
-
-# 2025-03-06
-$env:path = 'D:\zig'
+# 2025-05-14
+$env:path = 'C:\Program Files\Rust stable GNU 1.86\bin'
 
 # 2025-01-19
 $env:path += ';C:\Program Files\Python311'
@@ -31,6 +23,14 @@ $env:path += ';D:\go\bin'
 
 # 2025-01-11
 $env:path += ';D:\vim'
+
+# 2025-04-13
+$env:RIPGREP_CONFIG_PATH = 'D:\git\blog\2025-04\ripgrep\ripgrep.txt'
+
+# 2025-03-07
+# go.dev/doc/go1.13
+$env:GOPROXY = 'direct'
+$env:GOSUMDB = 'off'
 
 # 2024-09-21
 Set-PSReadLineOption -AddToHistoryHandler $null
