@@ -10,6 +10,22 @@ import (
    "time"
 )
 
+// go.dev/pkg/net/url?m=old#PathEscape
+func (u user) equal(data string, url bool) {
+   values, ok := u[data]
+   if ok {
+      value := values[0]
+      if url {
+         fmt.Printf(
+            "$env:https_proxy = '%v:%v@%v'\n",
+            value.Username, value.Password, data,
+         )
+      } else {
+         fmt.Printf("%v:%v", value.Username, value.Password)
+      }
+   }
+}
+
 func (u *user) New() error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -46,18 +62,6 @@ func (u user) contains(data string) {
    }
 }
 
-func (u user) equal(data string) {
-   values, ok := u[data]
-   if ok {
-      value := values[0]
-      fmt.Print(value.Username)
-      if value.Password != "" {
-         // go.dev/pkg/net/url?m=old#PathEscape
-         fmt.Print(":", value.Password)
-      }
-   }
-}
-
 func (i *info) String() string {
    b := []byte("username = ")
    b = append(b, i.Username...)
@@ -86,13 +90,16 @@ func main() {
       }
    }
    contains := flag.String("c", "", "contains")
-   equal := flag.String("e", "", "equal")
+   url := flag.String("u", "", "URL")
+   userinfo := flag.String("i", "", "userinfo")
    flag.Parse()
    switch {
    case *contains != "":
       user1.contains(*contains)
-   case *equal != "":
-      user1.equal(*equal)
+   case *url != "":
+      user1.equal(*url, true)
+   case *userinfo != "":
+      user1.equal(*userinfo, false)
    default:
       flag.Usage()
    }
