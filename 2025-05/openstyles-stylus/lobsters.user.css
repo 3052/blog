@@ -9,18 +9,18 @@
    :visited {
       color: hsl(270 100% 50%);
    }
-   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .voters {
       background: blue;
    }
-   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comment > .voters {
       background: green;
    }
-   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters {
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comment > .voters {
       background: orange;
    }
-   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
-   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter,
-   .comments1 > .comments_subtree > .comments > .comments_subtree > div > .comments > .comments_subtree > div > .comments > .comments_subtree > .comment > .comment_gutter > .voters > .upvoter {
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comment > .voters > .upvoter,
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comment > .voters > .upvoter,
+   .comments1 > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comments > .comments_subtree > .comment > .voters > .upvoter {
       color: white;
    }
 }
