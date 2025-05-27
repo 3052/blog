@@ -10,23 +10,7 @@ import (
    "time"
 )
 
-// go.dev/pkg/net/url?m=old#PathEscape
-func (u user) equal(data string, url bool) {
-   values, ok := u[data]
-   if ok {
-      value := values[0]
-      if url {
-         fmt.Printf(
-            "$env:https_proxy = '%v:%v@%v'\n",
-            value.Username, value.Password, data,
-         )
-      } else {
-         fmt.Printf("%v:%v", value.Username, value.Password)
-      }
-   }
-}
-
-func (u *user) New() error {
+func (h *hosts) New() error {
    home, err := os.UserHomeDir()
    if err != nil {
       return err
@@ -35,10 +19,8 @@ func (u *user) New() error {
    if err != nil {
       return err
    }
-   return toml.Unmarshal(data, u)
+   return toml.Unmarshal(data, h)
 }
-
-type user map[string][]info
 
 type info struct {
    Date     time.Time
@@ -46,61 +28,94 @@ type info struct {
    Username string
 }
 
-func (u user) contains(data string) {
+type hosts map[string][]info
+
+func (i *info) String() string {
+   var b strings.Builder
+   b.WriteString(i.Username)
+   b.WriteByte(':')
+   b.WriteString(i.Password)
+   return b.String()
+}
+
+func get_line(host string, user *info) string {
+   var b strings.Builder
+   b.WriteString("//")
+   b.WriteString(user.Username)
+   b.WriteByte(':')
+   b.WriteString(user.Password)
+   b.WriteByte('@')
+   b.WriteString(host)
+   return b.String()
+}
+
+func get_lines(host string, user *info) string {
+   b := []byte("host = ")
+   b = append(b, host...)
+   b = append(b, "\nusername = "...)
+   b = append(b, user.Username...)
+   b = append(b, "\npassword = "...)
+   b = append(b, user.Password...)
+   b = append(b, "\ndate = "...)
+   b = user.Date.AppendFormat(b, time.DateOnly)
+   return string(b)
+}
+
+func main() {
+   var host_info hosts
+   err := host_info.New()
+   if err != nil {
+      panic(err)
+   }
+   const day = 24 * time.Hour
+   for host, users := range host_info {
+      for _, user := range users {
+         if time.Since(user.Date) >= 365*day {
+            fmt.Println("time.Since(user.Date) >= 365*day")
+            fmt.Println(get_lines(host, &user))
+            return
+         }
+      }
+   }
+   url := flag.String("u", "", "URL")
+   userinfo := flag.String("i", "", "userinfo")
+   verbose := flag.String("v", "", "verbose")
+   flag.Parse()
+   switch {
+   case *url != "":
+      host_info.contains(*url, true)
+   case *userinfo != "":
+      host_info.equal(*userinfo)
+   case *verbose != "":
+      host_info.contains(*verbose, false)
+   default:
+      flag.Usage()
+   }
+}
+
+func (h hosts) equal(host string) {
+   values, ok := h[host]
+   if ok {
+      fmt.Print(&values[0])
+   }
+}
+
+func (h hosts) contains(data string, url bool) {
    var line bool
-   for key, values := range u {
-      if strings.Contains(key, data) {
-         for _, value := range values {
+   for host, users := range h {
+      if strings.Contains(host, data) {
+         for _, user := range users {
             if line {
                fmt.Println()
             } else {
                line = true
             }
-            fmt.Print(key, "\n", &value, "\n")
+            if url {
+               fmt.Println(get_line(host, &user))
+            } else {
+               fmt.Println(get_lines(host, &user))
+            }
          }
       }
-   }
-}
-
-func (i *info) String() string {
-   b := []byte("username = ")
-   b = append(b, i.Username...)
-   b = append(b, "\npassword = "...)
-   b = append(b, i.Password...)
-   b = append(b, "\ndate = "...)
-   b = i.Date.AppendFormat(b, time.DateOnly)
-   return string(b)
-}
-
-func main() {
-   var user1 user
-   err := user1.New()
-   if err != nil {
-      panic(err)
-   }
-   const day = 24 * time.Hour
-   for key, values := range user1 {
-      for _, value := range values {
-         if time.Since(value.Date) >= 365*day {
-            fmt.Println("time.Since(value.Date) >= 365*day")
-            fmt.Println(key)
-            fmt.Println(&value)
-            return
-         }
-      }
-   }
-   contains := flag.String("c", "", "contains")
-   url := flag.String("u", "", "URL")
-   userinfo := flag.String("i", "", "userinfo")
-   flag.Parse()
-   switch {
-   case *contains != "":
-      user1.contains(*contains)
-   case *url != "":
-      user1.equal(*url, true)
-   case *userinfo != "":
-      user1.equal(*userinfo, false)
-   default:
-      flag.Usage()
    }
 }

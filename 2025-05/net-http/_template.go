@@ -32,8 +32,10 @@ func main() {
    if err != nil {
       panic(err)
    }
-   defer resp.Body.Close()
-   resp.Write(os.Stdout)
+   err = resp.Write(os.Stdout)
+   if err != nil {
+      panic(err)
+   }
 }
 
 var body = strings.NewReader({{ .RawBody }})

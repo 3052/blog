@@ -60,17 +60,13 @@ func write(req *http.Request, dst io.Writer) error {
    if err != nil {
       return err
    }
-   defer resp.Body.Close()
    if dst != nil {
-      _, err := io.Copy(dst, resp.Body)
+      _, err = io.Copy(dst, resp.Body)
       if err != nil {
          return err
       }
-      resp.Write(os.Stdout)
-   } else {
-      resp.Write(os.Stdout)
    }
-   return nil
+   return resp.Write(os.Stdout)
 }
 
 // why is this needed?
