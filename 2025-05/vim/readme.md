@@ -36,6 +36,15 @@ https://github.com/NLKNguyen/papercolor-theme/tree/master/colors
 
 ## syntax/go.vim
 
+~~~
+diff --git a/syntax/go.vim b/syntax/go.vim
+index 9af11ac..8801bbd 100644
+--- a/syntax/go.vim
++++ b/syntax/go.vim
+@@ -88,0 +89 @@ syn keyword     goBuiltins          make new panic print println
++syn keyword     goBuiltins          max min
+~~~
+
 https://github.com/google/vim-ft-go/blob/master/syntax/go.vim
 
 ## syntax/markdown.vim
