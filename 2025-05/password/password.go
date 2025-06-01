@@ -22,44 +22,7 @@ func (h *hosts) New() error {
    return toml.Unmarshal(data, h)
 }
 
-type info struct {
-   Date     time.Time
-   Password string
-   Username string
-}
-
 type hosts map[string][]info
-
-func (i *info) String() string {
-   var b strings.Builder
-   b.WriteString(i.Username)
-   b.WriteByte(':')
-   b.WriteString(i.Password)
-   return b.String()
-}
-
-func get_line(host string, user *info) string {
-   var b strings.Builder
-   b.WriteString("//")
-   b.WriteString(user.Username)
-   b.WriteByte(':')
-   b.WriteString(user.Password)
-   b.WriteByte('@')
-   b.WriteString(host)
-   return b.String()
-}
-
-func get_lines(host string, user *info) string {
-   b := []byte("host = ")
-   b = append(b, host...)
-   b = append(b, "\nusername = "...)
-   b = append(b, user.Username...)
-   b = append(b, "\npassword = "...)
-   b = append(b, user.Password...)
-   b = append(b, "\ndate = "...)
-   b = user.Date.AppendFormat(b, time.DateOnly)
-   return string(b)
-}
 
 func main() {
    var host_info hosts
@@ -105,17 +68,55 @@ func (h hosts) contains(data string, url bool) {
    for host, users := range h {
       if strings.Contains(host, data) {
          for _, user := range users {
-            if line {
-               fmt.Println()
-            } else {
-               line = true
-            }
             if url {
                fmt.Println(get_line(host, &user))
             } else {
+               if line {
+                  fmt.Println()
+               } else {
+                  line = true
+               }
                fmt.Println(get_lines(host, &user))
             }
          }
       }
    }
+}
+
+func (i *info) String() string {
+   var b strings.Builder
+   b.WriteString(i.Username)
+   b.WriteByte(':')
+   b.WriteString(i.Password)
+   return b.String()
+}
+
+func get_line(host string, user *info) string {
+   var b strings.Builder
+   b.WriteString("//")
+   b.WriteString(user.Username)
+   b.WriteByte(':')
+   b.WriteString(user.Password)
+   b.WriteByte('@')
+   b.WriteString(host)
+   return b.String()
+}
+
+type info struct {
+   Date     time.Time
+   Password string
+   Username string
+}
+
+func get_lines(host string, user *info) string {
+   var b []byte
+   b = append(b, "host = "...)
+   b = append(b, host...)
+   b = append(b, "\nusername = "...)
+   b = append(b, user.Username...)
+   b = append(b, "\npassword = "...)
+   b = append(b, user.Password...)
+   b = append(b, "\ndate = "...)
+   b = user.Date.AppendFormat(b, time.DateOnly)
+   return string(b)
 }
