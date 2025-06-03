@@ -3,27 +3,32 @@ package main
 import (
    "bytes"
    "fmt"
+   "io/fs"
    "os"
    "path/filepath"
 )
 
+func walk_dir(path string, _ fs.DirEntry, err error) error {
+   if err != nil {
+      return err
+   }
+   if filepath.Ext(path) != ".go" {
+      return nil
+   }
+   fmt.Printf("%q\n", path)
+   data, err := os.ReadFile(path)
+   if err != nil {
+      return err
+   }
+   data = bytes.ReplaceAll(
+      data, []byte{'\t'}, []byte("   "),
+   )
+   return os.WriteFile(path, data, os.ModePerm)
+}
+
 func main() {
-   names, err := filepath.Glob("*.go")
+   err := filepath.WalkDir(".", walk_dir)
    if err != nil {
       panic(err)
-   }
-   for _, name := range names {
-      fmt.Printf("%q\n", name)
-      data, err := os.ReadFile(name)
-      if err != nil {
-         panic(err)
-      }
-      data = bytes.ReplaceAll(
-         data, []byte{'\t'}, []byte("   "),
-      )
-      err = os.WriteFile(name, data, os.ModePerm)
-      if err != nil {
-         panic(err)
-      }
    }
 }
