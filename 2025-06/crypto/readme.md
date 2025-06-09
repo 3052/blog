@@ -1,5 +1,5 @@
 # crypto
 
-~~~
-site:pkg.go.dev "cmac"
-~~~
+- cmac
+- ecb
+- padding
