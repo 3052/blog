@@ -1,42 +1,53 @@
 package crypto
 
-type module struct {
+var Modules = []struct {
+   ecb    bool
    go_sum int
    note   string
-   url    []string
-}
-
-var modules = []module{
+   pad    bool
+   url    string
+}{
    {
-      go_sum: 2,
-      note: `module is stupid
-      github.com/pedroalbanese/gogost/blob/master/cmd/cmac/main.go`,
-      url: []string{"github.com/pedroalbanese/gogost"},
-   },
-   {
+      ecb:    true,
       go_sum: 4,
-      url: []string{
-         "api.github.com/repos/RyuaNerin/go-krypto",
-         "github.com/RyuaNerin/go-krypto/issues/6",
-      },
+      note:   "export CMAC",
+      pad:    true,
+      url:    "github.com/emmansun/gmsm/issues/332",
    },
    {
-      go_sum: 7,
-      url:    []string{"github.com/deatil/go-cryptobin"},
+      ecb:    true,
+      go_sum: 4,
+      note:   "tag version",
+      pad:    true,
+      url:    "github.com/go-webdl/crypto/issues/2",
    },
    {
       go_sum: 8,
-      url:    []string{"github.com/tink-crypto/tink-go"},
+      url:    "github.com/tink-crypto/tink-go",
    },
    {
       go_sum: 10,
-      url:    []string{"github.com/jacobsa/crypto"},
+      url:    "github.com/jacobsa/crypto",
    },
    {
-      go_sum: 4,
-      url: []string{
-         "api.github.com/repos/enceve/crypto",
-         "github.com/enceve/crypto/issues/20",
-      },
+      note: "export types",
+      url:  "github.com/Colduction/aes/issues/1",
+   },
+   {
+      note: "pad function",
+      url:  "github.com/RyuaNerin/go-krypto/issues/6",
+   },
+   {
+      note: "pubkey/elgamalecc: Encrypt should accept point input",
+      url:  "github.com/deatil/go-cryptobin/issues/37",
+   },
+   {
+      note: "ECB mode",
+      url:  "github.com/enceve/crypto/issues/20",
+   },
+   {
+      note: `module is stupid
+      github.com/pedroalbanese/gogost/blob/master/cmd/cmac/main.go`,
+      url: "github.com/pedroalbanese/gogost",
    },
 }
