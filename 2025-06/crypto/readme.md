@@ -2,4 +2,5 @@
 
 - cmac
 - ecb
+- elGamal
 - padding
