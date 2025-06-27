@@ -10,21 +10,16 @@ var Modules = []struct {
    url     string
 }{
    {
-      go_sum: 8,
-      url:    "github.com/tink-crypto/tink-go",
-   },
-   {
       go_sum: 10,
       url:    "github.com/jacobsa/crypto",
    },
    {
-      note: "pad function",
-      url:  "github.com/RyuaNerin/go-krypto/issues/6",
+      go_sum: 8,
+      url:    "github.com/tink-crypto/tink-go",
    },
    {
-      go_sum: 7,
-      note: "pubkey/elgamalecc: Encrypt should accept point input",
-      url:  "github.com/deatil/go-cryptobin/issues/37",
+      note: "pad function",
+      url:  "github.com/RyuaNerin/go-krypto/issues/6",
    },
    {
       note: "ECB mode",
@@ -42,7 +37,6 @@ var Modules = []struct {
       github.com/pedroalbanese/gogost/blob/master/cmd/cmac/main.go`,
       url: "github.com/pedroalbanese/gogost",
    },
-   //////////////////////////////////////////////////////////////////////////////
    {
       ecb:     true,
       pad:     true,
@@ -52,6 +46,12 @@ var Modules = []struct {
       note:    "p256: Encrypt should accept point input",
       url:     "github.com/go-webdl/crypto/issues/3",
    },
+   {
+      go_sum: 7,
+      note: "pubkey/elgamalecc: Encrypt should accept point input",
+      url:  "github.com/deatil/go-cryptobin/issues/37",
+   },
+   //////////////////////////////////////////////////////////////////////////////
    {
       ecb:     true,
       pad:     true,
