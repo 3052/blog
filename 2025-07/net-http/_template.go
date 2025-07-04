@@ -22,12 +22,12 @@ func main() {
    req.URL.Path = {{ printf "%q" .URL.Path }}
    req.URL.RawPath = {{ printf "%q" .URL.RawPath }}
    value := url.Values{}
-   {{ range $key, $value := .Query -}}
+   {{ range $key, $value := .URL.Query -}}
       value[{{ printf "%q" $key }}] = {{ printf "%#v" $value }}
    {{ end -}}
    req.URL.RawQuery = value.Encode()
    req.URL.Scheme = {{ printf "%q" .URL.Scheme }}
-   req.Body = {{ .RequestBody }}
+   req.Body = {{ .Body }}
    resp, err := http.DefaultClient.Do(&req)
    if err != nil {
       panic(err)
@@ -38,4 +38,4 @@ func main() {
    }
 }
 
-var body = strings.NewReader({{ .RawBody }})
+var data = {{ .RawBody }}

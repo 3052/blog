@@ -1,0 +1,138 @@
+package main
+
+import (
+   "bufio"
+   "embed"
+   "flag"
+   "fmt"
+   "io"
+   "net/http"
+   "net/url"
+   "os"
+   "text/template"
+)
+
+func main() {
+   var set flag_set
+   set.New()
+   if set.in.name == "" {
+      flag.Usage()
+   } else {
+      var err error
+      set.out.file, err = new_file(set.out.name)
+      if err != nil {
+         panic(err)
+      }
+      defer set.out.file.Close()
+      set.in.file, err = os.Open(set.in.name)
+      if err != nil {
+         panic(err)
+      }
+      defer set.in.file.Close()
+      req, err := http.ReadRequest(bufio.NewReader(set.in.file))
+      if err != nil {
+         panic(err)
+      }
+      req.RequestURI = ""
+      if req.URL.Scheme == "" {
+         if set.https {
+            req.URL.Scheme = "https"
+         } else {
+            req.URL.Scheme = "http"
+         }
+      }
+      if set.golang {
+         err = set.write_go(req)
+      } else {
+         err = set.write(req)
+      }
+      if err != nil {
+         panic(err)
+      }
+   }
+}
+
+func (f *flag_set) write(req *http.Request) error {
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   if f.out.name != "" {
+      _, err = io.Copy(f.out.file, resp.Body)
+      if err != nil {
+         return err
+      }
+   }
+   return resp.Write(os.Stdout)
+}
+
+func (f *flag_set) write_go(req *http.Request) error {
+   var value request
+   value.Method = req.Method
+   value.URL = req.URL
+   value.Header = req.Header
+   if req.Body != nil {
+      data, err := io.ReadAll(req.Body)
+      if err != nil {
+         return err
+      }
+      if f.form {
+         form, err := url.ParseQuery(string(data))
+         if err != nil {
+            return err
+         }
+         value.RawBody = fmt.Sprintf("\n%#v.Encode(),\n", form)
+      } else {
+         value.RawBody = fmt.Sprintf("%#q", data)
+      }
+      value.Body = "io.NopCloser(strings.NewReader(data))"
+   } else {
+      value.RawBody = `""`
+      value.Body = "nil"
+   }
+   temp, err := template.ParseFS(content, "_template.go")
+   if err != nil {
+      return err
+   }
+   return temp.Execute(f.out.file, value)
+}
+type flag_set struct {
+   golang bool
+   https bool
+   form bool
+   in struct {
+      name string
+      file *os.File
+   }
+   out struct {
+      name string
+      file *os.File
+   }
+}
+
+func (f *flag_set) New() {
+   flag.BoolVar(&f.form, "f", false, "form")
+   flag.BoolVar(&f.golang, "g", false, "request as Go code")
+   flag.BoolVar(&f.https, "s", false, "HTTPS")
+   flag.StringVar(&f.in.name, "i", "", "in file")
+   flag.StringVar(&f.out.name, "o", "", "output file")
+   flag.Parse()
+}
+
+type request struct {
+   Method string
+   URL *url.URL
+   Header http.Header
+   Body string
+   RawBody string
+}
+
+//go:embed _template.go
+var content embed.FS
+
+func new_file(name string) (*os.File, error) {
+   if name != "" {
+      return os.Create(name)
+   }
+   return os.Stdout, nil
+}
