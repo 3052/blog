@@ -11,9 +11,11 @@ import (
 func main() {
    var req http.Request
    req.Header = http.Header{}
-   {{ range $key, $value := .Header -}}
-      req.Header[{{ printf "%q" $key }}] = {{ printf "%#v" $value }}
-   {{ end -}}
+   {{- range $key, $values := .Header }}
+      {{- range $value := $values }}
+   req.Header.Add({{ printf "%q" $key }}, {{ printf "%q" $value }})
+      {{- end }}
+   {{- end }}
    req.Method = {{ printf "%q" .Method }}
    req.ProtoMajor = 1
    req.ProtoMinor = 1

@@ -1,5 +1,3 @@
-POST http://httpbingo.org/post HTTP/1.1
-content-length: 1
-content-type: text/plain
+GET https://prod-avod-pmd-cdn77.cdn.rakuten.tv/0/e/5/0e5180006cd508eec00d535fec6c420d-mc-0-141-0-0_DS2/audio-eng-mp4a-1.isma?streaming_id=2956c889-04a2-4395-b850-3466dbbe8778&st_country=FR,MC,MQ,YT,GP,GF,RE&st_valid=1751690660&secure=v6i4uEzevVIaXcOdnDHgkA==,1751712260 HTTP/2.0
+range: bytes=0-1391
 
-hello world

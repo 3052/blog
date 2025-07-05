@@ -12,6 +12,23 @@ import (
    "text/template"
 )
 
+func (f *flag_set) write(req *http.Request) error {
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   if f.out.name != "" {
+      // 1. body to file
+      _, err = f.out.file.ReadFrom(resp.Body)
+      if err != nil {
+         return err
+      }
+      resp.ContentLength = 0
+   }
+   // 2. head to stdout
+   return resp.Write(os.Stdout)
+}
+
 func main() {
    var set flag_set
    set.New()
@@ -52,20 +69,6 @@ func main() {
    }
 }
 
-func (f *flag_set) write(req *http.Request) error {
-   resp, err := http.DefaultClient.Do(req)
-   if err != nil {
-      return err
-   }
-   if f.out.name != "" {
-      _, err = io.Copy(f.out.file, resp.Body)
-      if err != nil {
-         return err
-      }
-   }
-   return resp.Write(os.Stdout)
-}
-
 func (f *flag_set) write_go(req *http.Request) error {
    var value request
    value.Method = req.Method
@@ -96,6 +99,7 @@ func (f *flag_set) write_go(req *http.Request) error {
    }
    return temp.Execute(f.out.file, value)
 }
+
 type flag_set struct {
    golang bool
    https bool
