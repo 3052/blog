@@ -38,10 +38,6 @@ Molotov - TV en direct, replay
 
 https://play.google.com/store/apps/details?id=tv.molotov.app
 
-Movistar Plus+
-
-https://play.google.com/store/apps/details?id=es.plus.yomvi
-
 Paramount+
 
 https://play.google.com/store/apps/details?id=com.cbs.app
