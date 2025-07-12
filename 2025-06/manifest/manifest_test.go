@@ -19,12 +19,12 @@ func Test(t *testing.T) {
       if err != nil {
          t.Fatal(err)
       }
-      var manifest1 manifest
-      err = xml.Unmarshal(data, &manifest1)
+      var manifestVar manifest
+      err = xml.Unmarshal(data, &manifestVar)
       if err != nil {
          t.Fatal(err)
       }
-      for intent := range manifest1.intent_filter() {
+      for intent := range manifestVar.intent_filter() {
          fmt.Print(&intent, "\n\n")
       }
    }
