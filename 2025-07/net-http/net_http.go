@@ -2,31 +2,58 @@ package main
 
 import (
    "bufio"
+   "bytes"
    "embed"
    "flag"
    "fmt"
    "io"
    "net/http"
+   "net/textproto"
    "net/url"
    "os"
+   "strings"
    "text/template"
 )
 
-func (f *flag_set) write(req *http.Request) error {
-   resp, err := http.DefaultClient.Do(req)
+// this is needed because http.ReadRequest is trash
+func read_request(r *bufio.Reader) (*http.Request, error) {
+   var req http.Request
+   text := textproto.NewReader(r)
+   // .Method
+   raw_method_path, err := text.ReadLine()
    if err != nil {
-      return err
+      return nil, err
    }
-   if f.out.name != "" {
-      // 1. body to file
-      _, err = f.out.file.ReadFrom(resp.Body)
-      if err != nil {
-         return err
-      }
-      resp.ContentLength = 0
+   method_path := strings.Fields(raw_method_path)
+   req.Method = method_path[0]
+   // .URL
+   ref, err := url.ParseRequestURI(method_path[1])
+   if err != nil {
+      return nil, err
    }
-   // 2. head to stdout
-   return resp.Write(os.Stdout)
+   req.URL = ref
+   // .URL.Host
+   head, err := text.ReadMIMEHeader()
+   if err != nil {
+      return nil, err
+   }
+   if req.URL.Host == "" {
+      req.URL.Host = head.Get("Host")
+   }
+   // .Header
+   req.Header = http.Header(head)
+   // .Body
+   data := &bytes.Buffer{}
+   length, err := text.R.WriteTo(data)
+   if err != nil {
+      return nil, err
+   }
+   if length >= 1 {
+      req.Body = io.NopCloser(data)
+   }
+   // .ContentLength
+   req.ContentLength = length
+   return &req, nil
 }
 
 func main() {
@@ -46,11 +73,10 @@ func main() {
          panic(err)
       }
       defer set.in.file.Close()
-      req, err := http.ReadRequest(bufio.NewReader(set.in.file))
+      req, err := read_request(bufio.NewReader(set.in.file))
       if err != nil {
          panic(err)
       }
-      req.RequestURI = ""
       if req.URL.Scheme == "" {
          if set.https {
             req.URL.Scheme = "https"
@@ -67,6 +93,23 @@ func main() {
          panic(err)
       }
    }
+}
+
+func (f *flag_set) write(req *http.Request) error {
+   resp, err := http.DefaultClient.Do(req)
+   if err != nil {
+      return err
+   }
+   if f.out.name != "" {
+      // 1. body to file
+      _, err = f.out.file.ReadFrom(resp.Body)
+      if err != nil {
+         return err
+      }
+      resp.ContentLength = 0
+   }
+   // 2. head to stdout
+   return resp.Write(os.Stdout)
 }
 
 func (f *flag_set) write_go(req *http.Request) error {

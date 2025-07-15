@@ -10,6 +10,16 @@ import (
    "time"
 )
 
+func (i *info) String() string {
+   var b strings.Builder
+   b.WriteString(i.Username)
+   if i.Password != "" {
+      b.WriteByte(':')
+      b.WriteString(i.Password)
+   }
+   return b.String()
+}
+
 func (h *hosts) New() error {
    home, err := os.UserHomeDir()
    if err != nil {
@@ -81,14 +91,6 @@ func (h hosts) contains(data string, url bool) {
          }
       }
    }
-}
-
-func (i *info) String() string {
-   var b strings.Builder
-   b.WriteString(i.Username)
-   b.WriteByte(':')
-   b.WriteString(i.Password)
-   return b.String()
 }
 
 func get_line(host string, user *info) string {
