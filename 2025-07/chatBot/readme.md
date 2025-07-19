@@ -20,6 +20,12 @@ can only do a single file
 
 free version will not let me attach the six test files, no paid version
 
+## gemini flash
+
+https://gemini.google.com
+
+passes all tests, but 18 KB vs 8 KB with chatGpt
+
 ## gemini deep research
 
 https://gemini.google.com
