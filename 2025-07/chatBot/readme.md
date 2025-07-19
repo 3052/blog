@@ -20,6 +20,12 @@ can only do a single file
 
 free version will not let me attach the six test files, no paid version
 
+## gemini deep research
+
+https://gemini.google.com
+
+does not return an actual script
+
 ## grok
 
 https://grok.com
