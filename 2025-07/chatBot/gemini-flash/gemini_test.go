@@ -4,10 +4,64 @@ import (
    "encoding/json"
    "log"
    "os/exec"
-   "slices"
    "testing"
 )
 
+func Test(t *testing.T) {
+   log.SetFlags(log.Ltime)
+   for _, testVar := range tests {
+      data, err := output("go", "run", ".", testVar.name)
+      if err != nil {
+         t.Fatal(string(data))
+      }
+      var representsB map[string]struct {
+         Segments []string
+      }
+      err = json.Unmarshal(data, &representsB)
+      if err != nil {
+         t.Fatal(err)
+      }
+      for _, representA := range testVar.representation {
+         representB := representsB[representA.id].Segments
+         if len(representB) != representA.length {
+            t.Fatal(
+               representA.id,
+               "pass", representA.length,
+               "fail", len(representB),
+            )
+         }
+         if representB[len(representB)-1] != representA.url {
+            t.Fatal(
+               "\npass", representA.url,
+               "\nfail", representB[len(representB)-1],
+            )
+         }
+      }
+   }
+}
+
+func output(name string, arg ...string) ([]byte, error) {
+   command := exec.Command(name, arg...)
+   log.Print(command.Args)
+   return command.Output()
+}
+
+type content_type int
+
+const (
+   type_image content_type = iota
+   type_text
+   type_video
+)
+
+type representationA struct {
+   id           string
+   length       int
+   url          string
+   content_type content_type
+}
+
+const prefix = "http://test.test/"
 var tests = []struct {
    name           string
    representation []representationA
@@ -151,66 +205,3 @@ var tests = []struct {
       },
    },
 }
-func Test(t *testing.T) {
-   log.SetFlags(log.Ltime)
-   type representationB struct {
-      RepresentationId string
-      SegmentUrls []string
-   }
-   for _, testVar := range tests {
-      data, err := output("go", "run", ".", testVar.name)
-      if err != nil {
-         t.Fatal(string(data))
-      }
-      var representsB []*representationB
-      err = json.Unmarshal(data, &representsB)
-      if err != nil {
-         t.Fatal(err)
-      }
-      for _, representA := range testVar.representation {
-         index := slices.IndexFunc(representsB, func(r *representationB) bool {
-            return r.RepresentationId == representA.id
-         })
-         if index == -1 {
-            t.Fatal(representA.id)
-         }
-         representB := representsB[index].SegmentUrls
-         if len(representB) != representA.length {
-            t.Fatal(
-               representA.id,
-               "pass", representA.length,
-               "fail", len(representB),
-            )
-         }
-         if representB[len(representB)-1] != representA.url {
-            t.Fatal(
-               "\npass", representA.url,
-               "\nfail", representB[len(representB)-1],
-            )
-         }
-      }
-   }
-}
-
-func output(name string, arg ...string) ([]byte, error) {
-   command := exec.Command(name, arg...)
-   log.Print(command.Args)
-   return command.Output()
-}
-
-type content_type int
-
-const (
-   type_image content_type = iota
-   type_text
-   type_video
-)
-
-type representationA struct {
-   id           string
-   length       int
-   url          string
-   content_type content_type
-}
-
-const prefix = "http://test.test/"

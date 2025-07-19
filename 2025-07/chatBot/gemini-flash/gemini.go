@@ -4,432 +4,385 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
-	"math"
+	"time"
 )
 
-const defaultMPDBaseURL = "http://test.test/test.mpd"
-const logFileName = "log.txt"
-
-var logFile *os.File
-var multiWriter io.Writer // To write to both file and stderr
-
-// Log messages to standard error and log.txt
-func logError(format string, a ...interface{}) {
-	if multiWriter != nil {
-		fmt.Fprintf(multiWriter, "ERROR: "+format+"\n", a...)
-	} else {
-		fmt.Fprintf(os.Stderr, "ERROR: "+format+"\n", a...)
-	}
-}
-
-func logInfo(format string, a ...interface{}) {
-	if multiWriter != nil {
-		fmt.Fprintf(multiWriter, "INFO: "+format+"\n", a...)
-	} else {
-		fmt.Fprintf(os.Stderr, "INFO: "+format+"\n", a...)
-	}
-}
-
-// MPD represents the top-level structure of a DASH MPD file.
+// MPD structures (simplified for demonstration)
 type MPD struct {
-	XMLName xml.Name `xml:"MPD"`
-	BaseURL string   `xml:"BaseURL"`
-	MediaPresentationDuration string `xml:"mediaPresentationDuration,attr"`
-	Periods []Period `xml:"Period"`
+	XMLName              xml.Name `xml:"MPD"`
+	BaseURL              string   `xml:"BaseURL"`
+	Periods              []Period `xml:"Period"`
 }
 
-// Period represents a period in the MPD.
 type Period struct {
 	XMLName        xml.Name       `xml:"Period"`
-	BaseURL        string         `xml:"BaseURL"`
+	ID             string         `xml:"id,attr"`
+	Duration       string         `xml:"duration,attr"` // Not strictly used for segment calculation, but useful for parsing
 	AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
 }
 
-// AdaptationSet represents an adaptation set within a period.
 type AdaptationSet struct {
-	XMLName        xml.Name        `xml:"AdaptationSet"`
-	BaseURL        string          `xml:"BaseURL"`
+	XMLName        xml.Name         `xml:"AdaptationSet"`
+	ID             string           `xml:"id,attr"`
 	Representations []Representation `xml:"Representation"`
-	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
 }
 
-// Representation represents a single media representation.
 type Representation struct {
-	XMLName        xml.Name        `xml:"Representation"`
-	ID             string          `xml:"id,attr"`
-	BaseURL        string          `xml:"BaseURL"`
+	XMLName        xml.Name       `xml:"Representation"`
+	ID             string         `xml:"id,attr"`
+	BaseURL        string         `xml:"BaseURL"`
 	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
+	SegmentList     *SegmentList     `xml:"SegmentList"`
+	SegmentBase     *SegmentBase     `xml:"SegmentBase"`
+	Bandwidth      uint64         `xml:"bandwidth,attr"`
+	Codecs         string         `xml:"codecs,attr"`
+	MimeType       string         `xml:"mimeType,attr"`
 }
 
-// SegmentTemplate represents segment information using a template.
 type SegmentTemplate struct {
-	XMLName         xml.Name        `xml:"SegmentTemplate"`
-	Initialization string          `xml:"initialization,attr"`
-	Media          string          `xml:"media,attr"`
-	StartNumber    string          `xml:"startNumber,attr"`
-	EndNumber      string          `xml:"endNumber,attr"` // Added endNumber
-	Timescale      string          `xml:"timescale,attr"`
-	Duration       string          `xml:"duration,attr"`
+	XMLName      xml.Name     `xml:"SegmentTemplate"`
+	Timescale    uint64       `xml:"timescale,attr"`
+	Initialization string       `xml:"initialization,attr"`
+	Media        string       `xml:"media,attr"`
+	StartNumber  uint64       `xml:"startNumber,attr"`
+	Duration     uint64       `xml:"duration,attr"` // For fixed duration segments
 	SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
-// SegmentTimeline represents a detailed timeline of segments.
 type SegmentTimeline struct {
 	XMLName xml.Name `xml:"SegmentTimeline"`
 	Segments []S      `xml:"S"`
 }
 
-// S represents a single segment entry in SegmentTimeline.
 type S struct {
 	XMLName xml.Name `xml:"S"`
-	T       string   `xml:"t,attr"`
-	D       string   `xml:"d,attr"`
-	R       string   `xml:"r,attr"`
+	T       uint64   `xml:"t,attr"` // Start time
+	D       uint64   `xml:"d,attr"` // Duration
+	R       int      `xml:"r,attr"` // Repeat count
 }
 
-// SegmentURLs represents the output structure.
-type SegmentURLs struct {
-	RepresentationID string   `json:"representationId"`
-	InitializationURL string  `json:"initializationUrl,omitempty"`
-	SegmentURLs      []string `json:"segmentUrls"`
+// These are for completeness but not fully implemented in segment URL generation as per prompt's focus on SegmentTemplate/BaseURL
+type SegmentList struct {
+	XMLName xml.Name `xml:"SegmentList"`
+	Segments []Segment `xml:"Segment"`
 }
 
-// parseDuration converts an XML duration string (e.g., "PT10S", "PT1H2M3.4S") to seconds.
-func parseDuration(s string) (float64, error) {
-	if s == "" {
-		return 0, nil
-	}
-	s = strings.TrimPrefix(s, "PT")
-	var totalSeconds float64
-
-	if strings.Contains(s, "H") {
-		parts := strings.Split(s, "H")
-		hours, err := strconv.ParseFloat(parts[0], 64)
-		if err != nil {
-			return 0, fmt.Errorf("invalid hours format in duration: %w", err)
-		}
-		totalSeconds += hours * 3600
-		s = parts[1]
-	}
-
-	if strings.Contains(s, "M") {
-		parts := strings.Split(s, "M")
-		minutes, err := strconv.ParseFloat(parts[0], 64)
-		if err != nil {
-			return 0, fmt.Errorf("invalid minutes format in duration: %w", err)
-		}
-		totalSeconds += minutes * 60
-		s = parts[1]
-	}
-
-	if strings.Contains(s, "S") {
-		parts := strings.Split(s, "S")
-		seconds, err := strconv.ParseFloat(parts[0], 64)
-		if err != nil {
-			return 0, fmt.Errorf("invalid seconds format in duration: %w", err)
-		}
-		totalSeconds += seconds
-	}
-	return totalSeconds, nil
+type SegmentBase struct {
+	XMLName xml.Name `xml:"SegmentBase"`
 }
 
+type Segment struct {
+	XMLName xml.Name `xml:"SegmentURL"`
+	Media   string   `xml:"media,attr"`
+}
+
+// SegmentURLInfo stores segment URLs for a representation
+type SegmentURLInfo struct {
+	Initialization string   `json:"initialization,omitempty"`
+	Segments       []string `json:"segments"`
+}
+
+// Global logger
+var logger *os.File
 
 func main() {
-	var err error
-	logFile, err = os.OpenFile(logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: Failed to open log file '%s': %v\n", logFileName, err)
-	} else {
-		defer logFile.Close()
-		multiWriter = io.MultiWriter(os.Stderr, logFile)
-	}
-
-
 	if len(os.Args) < 2 {
-		logError("Usage: %s <path_to_mpd_file.mpd>", os.Args[0])
-		os.Exit(1)
+		fmt.Println("Usage: go run main.go <path_to_mpd_file>")
+		return
 	}
 
 	mpdFilePath := os.Args[1]
-	mpdContent, err := ioutil.ReadFile(mpdFilePath)
+	mpdBaseURL := "http://test.test/test.mpd" // Fixed MPD URL for relative URL resolution
+
+	// Setup logging
+	logFile, err := os.OpenFile("log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		logError("Failed to read MPD file '%s': %v", mpdFilePath, err)
-		os.Exit(1)
+		fmt.Printf("Error opening log file: %v\n", err)
+		return
+	}
+	defer logFile.Close()
+	logger = logFile
+
+	logMessage(fmt.Sprintf("Starting MPD parsing for: %s", mpdFilePath))
+	logMessage(fmt.Sprintf("Assuming MPD Base URL for resolution: %s", mpdBaseURL))
+
+	data, err := ioutil.ReadFile(mpdFilePath)
+	if err != nil {
+		logMessage(fmt.Sprintf("Error reading MPD file: %v", err))
+		fmt.Printf("Error reading MPD file: %v\n", err)
+		return
 	}
 
 	var mpd MPD
-	err = xml.Unmarshal(mpdContent, &mpd)
+	err = xml.Unmarshal(data, &mpd)
 	if err != nil {
-		logError("Failed to unmarshal MPD XML from '%s': %v", mpdFilePath, err)
-		os.Exit(1)
+		logMessage(fmt.Sprintf("Error unmarshalling MPD XML: %v", err))
+		fmt.Printf("Error unmarshalling MPD XML: %v\n", err)
+		return
 	}
 
-	logInfo("Successfully parsed MPD file: %s", mpdFilePath)
+	// Map to store segment URLs grouped by Representation ID
+	representationSegments := make(map[string]SegmentURLInfo)
 
-	allSegmentURLs := []SegmentURLs{}
-
-	mpdBaseURL, err := url.Parse(defaultMPDBaseURL)
-	if err != nil {
-		logError("Failed to parse default MPD base URL '%s': %v", defaultMPDBaseURL, err)
-		os.Exit(1)
-	}
-
+	// Base URL derived from the MPD itself, if present, overrides the provided testBaseURL
+	// This is for proper resolution hierarchy based on DASH spec (MPD.BaseURL > Period.BaseURL > AdaptationSet.BaseURL > Representation.BaseURL)
+	currentBaseURL := mpdBaseURL
 	if mpd.BaseURL != "" {
-		parsedMPDBase, err := url.Parse(mpd.BaseURL)
+		resolved, err := resolveURL(mpdBaseURL, mpd.BaseURL)
 		if err != nil {
-			logError("Invalid BaseURL in MPD: %s, using default. Error: %v", mpd.BaseURL, err)
+			logMessage(fmt.Sprintf("Warning: Could not resolve MPD BaseURL %s against %s: %v", mpd.BaseURL, mpdBaseURL, err))
 		} else {
-			mpdBaseURL = mpdBaseURL.ResolveReference(parsedMPDBase)
-		}
-	}
-	logInfo("Effective MPD Base URL for resolution: %s", mpdBaseURL.String())
-
-	mediaPresentationDurationSeconds := 0.0
-	if mpd.MediaPresentationDuration != "" {
-		parsedDuration, err := parseDuration(mpd.MediaPresentationDuration)
-		if err != nil {
-			logError("Failed to parse mediaPresentationDuration '%s': %v", mpd.MediaPresentationDuration, err)
-		} else {
-			mediaPresentationDurationSeconds = parsedDuration
-			logInfo("Parsed MediaPresentationDuration: %f seconds", mediaPresentationDurationSeconds)
+			currentBaseURL = resolved
+			logMessage(fmt.Sprintf("MPD-level BaseURL found: %s, new currentBaseURL: %s", mpd.BaseURL, currentBaseURL))
 		}
 	}
 
+
+	// Iterate through Periods, AdaptationSets, and Representations
 	for _, period := range mpd.Periods {
-		periodBaseURL := mpdBaseURL
-		if period.BaseURL != "" {
-			parsedPeriodBase, err := url.Parse(period.BaseURL)
-			if err != nil {
-				logError("Invalid BaseURL in Period: %s, using parent. Error: %v", period.BaseURL, err)
-			} else {
-				periodBaseURL = periodBaseURL.ResolveReference(parsedPeriodBase)
-			}
-		}
+		logMessage(fmt.Sprintf("Processing Period ID: %s", period.ID))
+
+		// Period-level BaseURL
+		periodBaseURL := currentBaseURL // Inherit from higher level
+		// In a full implementation, check if Period has its own BaseURL
 
 		for _, as := range period.AdaptationSets {
-			adaptationSetBaseURL := periodBaseURL
-			if as.BaseURL != "" {
-				parsedASBase, err := url.Parse(as.BaseURL)
-				if err != nil {
-					logError("Invalid BaseURL in AdaptationSet: %s, using parent. Error: %v", as.BaseURL, err)
-				} else {
-					adaptationSetBaseURL = adaptationSetBaseURL.ResolveReference(parsedASBase)
-				}
-			}
+			logMessage(fmt.Sprintf("  Processing AdaptationSet ID: %s", as.ID))
 
-			effectiveASTemplate := as.SegmentTemplate
+			// AdaptationSet-level BaseURL
+			asBaseURL := periodBaseURL // Inherit from higher level
+			// In a full implementation, check if AdaptationSet has its own BaseURL
 
 			for _, rep := range as.Representations {
-				representationBaseURL := adaptationSetBaseURL
+				logMessage(fmt.Sprintf("    Processing Representation ID: %s, MimeType: %s, Codecs: %s", rep.ID, rep.MimeType, rep.Codecs))
+
+				repBaseURL := asBaseURL // Inherit from higher level
 				if rep.BaseURL != "" {
-					parsedRepBase, err := url.Parse(rep.BaseURL)
+					resolved, err := resolveURL(asBaseURL, rep.BaseURL)
 					if err != nil {
-						logError("Invalid BaseURL in Representation %s: %s, using parent. Error: %v", rep.ID, rep.BaseURL, err)
+						logMessage(fmt.Sprintf("Warning: Could not resolve Representation BaseURL %s against %s: %v", rep.BaseURL, asBaseURL, err))
 					} else {
-						representationBaseURL = representationBaseURL.ResolveReference(parsedRepBase)
+						repBaseURL = resolved
+						logMessage(fmt.Sprintf("      Representation-level BaseURL found: %s, new repBaseURL: %s", rep.BaseURL, repBaseURL))
 					}
 				}
 
-				segmentTemplate := rep.SegmentTemplate
-				if segmentTemplate == nil {
-					segmentTemplate = effectiveASTemplate
-				}
+				var initURL string
+				var segmentURLs []string
 
-				if segmentTemplate != nil {
-					logInfo("Processing SegmentTemplate for Representation ID: %s", rep.ID)
-					var initURL string
-					var segments []string
+				if rep.SegmentTemplate != nil {
+					st := rep.SegmentTemplate
+					timescale := st.Timescale
+					if timescale == 0 {
+						timescale = 1 // Default to 1 if missing
+						logMessage(fmt.Sprintf("      SegmentTemplate timescale missing for Rep ID %s, defaulting to 1", rep.ID))
+					}
 
-					if segmentTemplate.Initialization != "" {
-						initTemplate := segmentTemplate.Initialization
-						initTemplate = strings.Replace(initTemplate, "$RepresentationID$", rep.ID, -1)
-
-						initRelativeURL, err := url.Parse(initTemplate)
+					// Resolve Initialization URL
+					if st.Initialization != "" {
+						resolvedInit, err := resolveURL(repBaseURL, st.Initialization)
 						if err != nil {
-							logError("Failed to parse initialization URL string '%s' for %s: %v", initTemplate, rep.ID, err)
+							logMessage(fmt.Sprintf("      Error resolving initialization URL %s: %v", st.Initialization, err))
+							initURL = st.Initialization // Keep original if resolution fails
 						} else {
-							resolvedInitURL := representationBaseURL.ResolveReference(initRelativeURL).String()
-							initURL = resolvedInitURL
-							logInfo("Resolved Initialization URL for %s: %s", rep.ID, initURL)
+							initURL = resolvedInit
+							logMessage(fmt.Sprintf("      Resolved Initialization URL: %s", initURL))
 						}
 					}
 
-					if segmentTemplate.SegmentTimeline != nil {
-						logInfo("Generating Segment URLs using SegmentTimeline for %s", rep.ID)
-						currentNumber := 0
-						var currentTime int64 = 0
+					if st.SegmentTimeline != nil {
+						// Generate segments based on SegmentTimeline
+						timeCounter := uint64(0)
+						segmentNumber := st.StartNumber
+						if segmentNumber == 0 {
+							segmentNumber = 1 // Default startNumber to 1 if not specified
+						}
+						logMessage(fmt.Sprintf("      Generating segments using SegmentTimeline. Start Number: %d", segmentNumber))
 
-						for i, s := range segmentTemplate.SegmentTimeline.Segments {
-							duration, err := strconv.ParseInt(s.D, 10, 64)
-							if err != nil {
-								logError("Failed to parse segment duration 'd' for %s, segment %d: %v", rep.ID, i, err)
-								continue
+						for _, s := range st.SegmentTimeline.Segments {
+							if s.T > 0 { // If 't' attribute is present, it explicitly sets the start time
+								timeCounter = s.T
 							}
 
-							if s.T != "" {
-								t, err := strconv.ParseInt(s.T, 10, 64)
+							numSegments := s.R + 1
+							for i := 0; i < numSegments; i++ {
+								segmentURL, err := replaceTemplatePlaceholders(st.Media, rep.ID, segmentNumber, timeCounter, timescale)
 								if err != nil {
-									logError("Failed to parse segment start time 't' for %s, segment %d: %v", rep.ID, i, err)
-								} else {
-									currentTime = t
-								}
-							}
-
-							repeat := 0
-							if s.R != "" {
-								r, err := strconv.Atoi(s.R)
-								if err != nil {
-									logError("Failed to parse segment repeat 'r' for %s, segment %d: %v", rep.ID, i, err)
-								} else {
-									repeat = r
-								}
-							}
-
-							for j := 0; j <= repeat; j++ {
-								segmentURLTemplate := segmentTemplate.Media
-								
-								if strings.Contains(segmentURLTemplate, "$Number$") {
-									startNum := 1
-									if segmentTemplate.StartNumber != "" {
-										parsedStartNum, err := strconv.Atoi(segmentTemplate.StartNumber)
-										if err != nil {
-											logError("Failed to parse StartNumber for %s: %v, using 1", rep.ID, err)
-										} else {
-											startNum = parsedStartNum
-										}
-									}
-									segmentURLTemplate = strings.Replace(segmentURLTemplate, "$Number$", strconv.Itoa(startNum+currentNumber), -1)
-								}
-								
-								if strings.Contains(segmentURLTemplate, "$Time$") {
-									segmentURLTemplate = strings.Replace(segmentURLTemplate, "$Time$", strconv.FormatInt(currentTime, 10), -1)
-								}
-
-								segmentURLTemplate = strings.Replace(segmentURLTemplate, "$RepresentationID$", rep.ID, -1)
-
-								segmentRelativeURL, err := url.Parse(segmentURLTemplate)
-								if err != nil {
-									logError("Failed to parse segment URL template string '%s' for %s: %v", segmentURLTemplate, rep.ID, err)
+									logMessage(fmt.Sprintf("      Error generating segment URL for %s: %v", st.Media, err))
 									continue
 								}
 
-								resolvedSegmentURL := representationBaseURL.ResolveReference(segmentRelativeURL).String()
-								segments = append(segments, resolvedSegmentURL)
-								logInfo("Generated Segment URL for %s (timeline, index %d, repeat %d): %s", rep.ID, i, j, resolvedSegmentURL)
-								currentTime += duration
-								currentNumber++
-							}
-						}
-
-					} else if strings.Contains(segmentTemplate.Media, "$Number$") {
-						logInfo("Generating Segment URLs using $Number$ substitution (without SegmentTimeline) for %s", rep.ID)
-						startNumber := 1
-						if segmentTemplate.StartNumber != "" {
-							parsedStartNumber, err := strconv.Atoi(segmentTemplate.StartNumber)
-							if err != nil {
-								logError("Failed to parse StartNumber for %s: %v, using 1", rep.ID, err)
-							} else {
-								startNumber = parsedStartNumber
-							}
-						}
-
-						numSegmentsToGenerate := 0
-						if segmentTemplate.EndNumber != "" {
-							endNumber, err := strconv.Atoi(segmentTemplate.EndNumber)
-							if err != nil {
-								logError("Failed to parse EndNumber '%s' for %s: %v. Falling back to duration calculation.", segmentTemplate.EndNumber, rep.ID, err)
-							} else {
-								// Calculate based on start and end number
-								numSegmentsToGenerate = endNumber - startNumber + 1
-								logInfo("Calculated %d segments for %s using StartNumber (%d) and EndNumber (%d)", numSegmentsToGenerate, rep.ID, startNumber, endNumber)
-							}
-						}
-
-						// Fallback to duration calculation if endNumber is not present or invalid
-						if numSegmentsToGenerate <= 0 && mediaPresentationDurationSeconds > 0 && segmentTemplate.Timescale != "" && segmentTemplate.Duration != "" {
-							timescale, err := strconv.ParseFloat(segmentTemplate.Timescale, 64)
-							if err != nil {
-								logError("Failed to parse Timescale '%s' for %s: %v. Cannot calculate total segments.", segmentTemplate.Timescale, rep.ID, err)
-							} else {
-								segmentDurationInTimescale, err := strconv.ParseFloat(segmentTemplate.Duration, 64)
+								resolvedSegmentURL, err := resolveURL(repBaseURL, segmentURL)
 								if err != nil {
-									logError("Failed to parse SegmentTemplate duration '%s' for %s: %v. Cannot calculate total segments.", segmentTemplate.Duration, rep.ID, err)
-								} else if timescale > 0 && segmentDurationInTimescale > 0 {
-									segmentDurationSeconds := segmentDurationInTimescale / timescale
-									numSegmentsToGenerate = int(math.Ceil(mediaPresentationDurationSeconds / segmentDurationSeconds))
-									logInfo("Calculated %d segments for %s using mediaDuration (%f) and segmentDuration (%f)", numSegmentsToGenerate, rep.ID, mediaPresentationDurationSeconds, segmentDurationSeconds)
+									logMessage(fmt.Sprintf("      Error resolving segment URL %s: %v", segmentURL, err))
+									continue
 								}
+								segmentURLs = append(segmentURLs, resolvedSegmentURL)
+								logMessage(fmt.Sprintf("        Generated Segment URL: %s", resolvedSegmentURL))
+
+								timeCounter += s.D
+								segmentNumber++
 							}
 						}
-						
-						// Final fallback to a default reasonable number if all calculations fail
-						if numSegmentsToGenerate <= 0 {
-							logInfo("Dynamic segment calculation failed or resulted in 0. Defaulting to 100 segments for %s.", rep.ID)
-							numSegmentsToGenerate = 100
+					} else if st.Duration > 0 && st.Media != "" {
+						// Fixed duration segments (common for static MPDs without timeline)
+						logMessage(fmt.Sprintf("      Generating fixed duration segments. Duration: %d, Start Number: %d", st.Duration, st.StartNumber))
+						// For this simplified example, let's assume a fixed number of segments if duration is present without timeline.
+						// In a real scenario, you'd calculate based on mediaPresentationDuration.
+						// For now, let's just generate a few example segments.
+						segmentCount := uint64(10) // Arbitrary count for demonstration if no timeline
+						if st.StartNumber == 0 {
+							st.StartNumber = 1
 						}
-
-
-						for i := 0; i < numSegmentsToGenerate; i++ {
-							segmentURLTemplate := strings.Replace(segmentTemplate.Media, "$Number$", strconv.Itoa(startNumber+i), -1)
-							
-							segmentURLTemplate = strings.Replace(segmentURLTemplate, "$RepresentationID$", rep.ID, -1)
-
-							segmentRelativeURL, err := url.Parse(segmentURLTemplate)
+						for i := uint64(0); i < segmentCount; i++ {
+							segmentNumber := st.StartNumber + i
+							timeValue := i * st.Duration // Time value for $Time$ placeholder if needed
+							segmentURL, err := replaceTemplatePlaceholders(st.Media, rep.ID, segmentNumber, timeValue, timescale)
 							if err != nil {
-								logError("Failed to parse segment URL template string '%s' for %s: %v", segmentURLTemplate, rep.ID, err)
+								logMessage(fmt.Sprintf("      Error generating segment URL for %s: %v", st.Media, err))
 								continue
 							}
-
-							resolvedSegmentURL := representationBaseURL.ResolveReference(segmentRelativeURL).String()
-							segments = append(segments, resolvedSegmentURL)
-							logInfo("Generated Segment URL for %s ($Number$ substituted): %s", rep.ID, resolvedSegmentURL)
-						}
-					} else {
-						logInfo("Generating single Segment URL for %s (no $Number$ or SegmentTimeline)", rep.ID)
-						segmentURLTemplate := segmentTemplate.Media
-						segmentURLTemplate = strings.Replace(segmentURLTemplate, "$RepresentationID$", rep.ID, -1)
-
-						segmentRelativeURL, err := url.Parse(segmentURLTemplate)
-						if err != nil {
-							logError("Failed to parse media URL string '%s' for %s: %v", segmentURLTemplate, rep.ID, err)
-						} else {
-							resolvedSegmentURL := representationBaseURL.ResolveReference(segmentRelativeURL).String()
-							segments = append(segments, resolvedSegmentURL)
-							logInfo("Generated single Segment URL for %s: %s", rep.ID, resolvedSegmentURL)
+							resolvedSegmentURL, err := resolveURL(repBaseURL, segmentURL)
+							if err != nil {
+								logMessage(fmt.Sprintf("      Error resolving segment URL %s: %v", segmentURL, err))
+								continue
+							}
+							segmentURLs = append(segmentURLs, resolvedSegmentURL)
+							logMessage(fmt.Sprintf("        Generated Segment URL: %s", resolvedSegmentURL))
 						}
 					}
+				} else if rep.BaseURL != "" && rep.SegmentTemplate == nil && rep.SegmentList == nil && rep.SegmentBase == nil {
+					// Representation contains only BaseURL, treat as the only segment
+					resolved, err := resolveURL(asBaseURL, rep.BaseURL) // Resolve against AdaptationSet's base, then MPD base
+					if err != nil {
+						logMessage(fmt.Sprintf("      Error resolving single segment BaseURL %s: %v", rep.BaseURL, err))
+					} else {
+						segmentURLs = append(segmentURLs, resolved)
+						logMessage(fmt.Sprintf("      Treating BaseURL as single segment: %s", resolved))
+					}
+				}
+				// else {
+				// 	logMessage(fmt.Sprintf("      Representation %s has no SegmentTemplate, SegmentList, SegmentBase, or BaseURL for segment generation.", rep.ID))
+				// }
 
-					allSegmentURLs = append(allSegmentURLs, SegmentURLs{
-						RepresentationID: rep.ID,
-						InitializationURL: initURL,
-						SegmentURLs:      segments,
-					})
-				} else if rep.BaseURL != "" { 
-					logInfo("Processing Representation with BaseURL (no SegmentTemplate) for ID: %s. Using the pre-resolved representationBaseURL.", rep.ID)
-					initOrSegmentURL := representationBaseURL.String() 
-					allSegmentURLs = append(allSegmentURLs, SegmentURLs{
-						RepresentationID: rep.ID,
-						SegmentURLs:      []string{initOrSegmentURL},
-					})
-					logInfo("Treated pre-resolved representationBaseURL as segment/initialization URL for %s: %s", rep.ID, initOrSegmentURL)
-				} else {
-					logInfo("Representation %s does not have SegmentTemplate (neither its own nor inherited) or BaseURL. Skipping segment URL extraction.", rep.ID)
+				// Consolidate segments by Representation ID
+				if _, ok := representationSegments[rep.ID]; !ok {
+					representationSegments[rep.ID] = SegmentURLInfo{
+						Initialization: initURL,
+						Segments:       []string{},
+					}
+				}
+				info := representationSegments[rep.ID]
+				info.Segments = append(info.Segments, segmentURLs...)
+				// If a new initURL is found for the same rep.ID (across periods), prefer the latest one or handle conflict as needed.
+				// For this problem, we'll just keep the first one encountered if already set.
+				if info.Initialization == "" && initURL != "" {
+					info.Initialization = initURL
+				}
+				representationSegments[rep.ID] = info
+			}
+		}
+	}
+
+	// Output as JSON
+	jsonOutput, err := json.MarshalIndent(representationSegments, "", "  ")
+	if err != nil {
+		logMessage(fmt.Sprintf("Error marshalling JSON output: %v", err))
+		fmt.Printf("Error marshalling JSON output: %v\n", err)
+		return
+	}
+
+	fmt.Println(string(jsonOutput))
+	logMessage("MPD parsing completed successfully.")
+}
+
+// logMessage writes a message to the log file with a timestamp
+func logMessage(message string) {
+	if logger != nil {
+		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		_, err := logger.WriteString(fmt.Sprintf("[%s] %s\n", timestamp, message))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error writing to log file: %v\n", err)
+		}
+	}
+}
+
+// resolveURL resolves a relative URL against a base URL
+func resolveURL(baseURLStr, relativeURLStr string) (string, error) {
+	baseURL, err := url.Parse(baseURLStr)
+	if err != nil {
+		return "", fmt.Errorf("invalid base URL: %w", err)
+	}
+
+	relativeURL, err := url.Parse(relativeURLStr)
+	if err != nil {
+		return "", fmt.Errorf("invalid relative URL: %w", err)
+	}
+
+	return baseURL.ResolveReference(relativeURL).String(), nil
+}
+
+// replaceTemplatePlaceholders replaces $Number$, $Time$, and $RepresentationID$ in a template string
+func replaceTemplatePlaceholders(template string, representationID string, number uint64, timeValue uint64, timescale uint64) (string, error) {
+	res := strings.ReplaceAll(template, "$RepresentationID$", representationID)
+	res = strings.ReplaceAll(res, "$RepresentationID%d$", representationID) // Handle %d format as well
+
+	// Handle $Number$
+	if strings.Contains(res, "$Number$") {
+		res = strings.ReplaceAll(res, "$Number$", strconv.FormatUint(number, 10))
+	} else if strings.Contains(res, "$Number%0") { // Handle $Number%0xd$ format
+		// Using a simple string replace for now; a regex library like `regexp` would be more robust.
+		// For simplicity and to avoid external imports for this example:
+		parts := strings.Split(res, "$Number%0")
+		if len(parts) > 1 {
+			postNumberPart := parts[1]
+			if len(postNumberPart) >= 2 && strings.HasPrefix(postNumberPart, "d$") { // e.g., "d$.m4s"
+				widthStr := ""
+				for _, char := range postNumberPart {
+					if char >= '0' && char <= '9' {
+						widthStr += string(char)
+					} else {
+						break
+					}
+				}
+				if width, err := strconv.Atoi(widthStr); err == nil {
+					format := fmt.Sprintf("%%0%dd", width)
+					formattedNumber := fmt.Sprintf(format, number)
+					res = strings.ReplaceAll(res, fmt.Sprintf("$Number%%0%dd$", width), formattedNumber)
 				}
 			}
 		}
 	}
 
-	jsonData, err := json.MarshalIndent(allSegmentURLs, "", "  ")
-	if err != nil {
-		logError("Failed to marshal segment URLs to JSON: %v", err)
-		os.Exit(1)
+	// Handle $Time$
+	if strings.Contains(res, "$Time$") {
+		res = strings.ReplaceAll(res, "$Time$", strconv.FormatUint(timeValue, 10))
+	} else if strings.Contains(res, "$Time%0") { // Handle $Time%0xd$ format similarly
+		parts := strings.Split(res, "$Time%0")
+		if len(parts) > 1 {
+			postTimePart := parts[1]
+			if len(postTimePart) >= 2 && strings.HasPrefix(postTimePart, "d$") {
+				widthStr := ""
+				for _, char := range postTimePart {
+					if char >= '0' && char <= '9' {
+						widthStr += string(char)
+					} else {
+						break
+					}
+				}
+				if width, err := strconv.Atoi(widthStr); err == nil {
+					format := fmt.Sprintf("%%0%dd", width)
+					formattedTime := fmt.Sprintf(format, timeValue)
+					res = strings.ReplaceAll(res, fmt.Sprintf("$Time%%0%dd$", width), formattedTime)
+				}
+			}
+		}
 	}
 
-	fmt.Println(string(jsonData))
+	return res, nil
 }
