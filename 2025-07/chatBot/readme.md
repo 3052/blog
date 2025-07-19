@@ -26,6 +26,13 @@ https://gemini.google.com
 
 does not return an actual script
 
+## gemini pro
+
+https://gemini.google.com
+
+You’ve reached your limit on 2.5 Pro until Jul 19, 3:12 PM. Try Google AI Pro
+for higher limits.
+
 ## grok
 
 https://grok.com

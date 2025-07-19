@@ -24,7 +24,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 1114 + 1
                return initialization + media
             }(),
