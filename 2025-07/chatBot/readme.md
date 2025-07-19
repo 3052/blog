@@ -20,18 +20,6 @@ can only do a single file
 
 free version will not let me attach the six test files, no paid version
 
-## gemini flash
-
-https://gemini.google.com
-
-passes all tests, but 18 KB vs 8 KB with chatGpt
-
-## gemini deep research
-
-https://gemini.google.com
-
-does not return an actual script
-
 ## gemini pro
 
 https://gemini.google.com
@@ -39,12 +27,11 @@ https://gemini.google.com
 You’ve reached your limit on 2.5 Pro until Jul 19, 3:12 PM. Try Google AI Pro
 for higher limits.
 
-## grok
+## gemini deep research
 
-https://grok.com
+https://gemini.google.com
 
-Apologies, your request is currently too long for our circuits to process.
-Please, try a shorter version, won't you?
+does not return an actual script
 
 ## kimi
 
@@ -58,3 +45,10 @@ API is trash:
 
 - https://platform.moonshot.ai/docs/api/caching
 - https://platform.moonshot.ai/docs/api/files
+
+## grok
+
+https://grok.com
+
+Apologies, your request is currently too long for our circuits to process.
+Please, try a shorter version, won't you?
