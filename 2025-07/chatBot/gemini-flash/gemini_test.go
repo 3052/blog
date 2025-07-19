@@ -4,16 +4,17 @@ import (
    "encoding/json"
    "log"
    "os/exec"
+   "slices"
    "testing"
 )
 
 var tests = []struct {
    name           string
-   representation []representation
+   representation []representationA
 }{
    {
       name: "criterion.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_text,
             id:           "subs-7433271",
@@ -24,7 +25,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 1114 + 1
                return initialization + media
             }(),
@@ -34,7 +35,7 @@ var tests = []struct {
    },
    {
       name: "molotov.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_text,
             id:           "3=1000",
@@ -59,7 +60,7 @@ var tests = []struct {
    },
    {
       name: "paramount.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_image,
             id:           "thumb_320x180",
@@ -90,7 +91,7 @@ var tests = []struct {
    },
    {
       name: "pluto.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_text,
             id:           "7",
@@ -115,7 +116,7 @@ var tests = []struct {
    },
    {
       name: "rakuten.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_video,
             id:           "video-avc1-6",
@@ -126,7 +127,7 @@ var tests = []struct {
    },
    {
       name: "rtbf.txt",
-      representation: []representation{
+      representation: []representationA{
          {
             content_type: type_video,
             id:           "video=5200000",
@@ -150,21 +151,30 @@ var tests = []struct {
       },
    },
 }
-
 func Test(t *testing.T) {
    log.SetFlags(log.Ltime)
+   type representationB struct {
+      RepresentationId string
+      SegmentUrls []string
+   }
    for _, testVar := range tests {
       data, err := output("go", "run", ".", testVar.name)
       if err != nil {
          t.Fatal(string(data))
       }
-      var representsB map[string][]string
+      var representsB []*representationB
       err = json.Unmarshal(data, &representsB)
       if err != nil {
          t.Fatal(err)
       }
       for _, representA := range testVar.representation {
-         representB := representsB[representA.id]
+         index := slices.IndexFunc(representsB, func(r *representationB) bool {
+            return r.RepresentationId == representA.id
+         })
+         if index == -1 {
+            t.Fatal(representA.id)
+         }
+         representB := representsB[index].SegmentUrls
          if len(representB) != representA.length {
             t.Fatal(
                representA.id,
@@ -196,7 +206,7 @@ const (
    type_video
 )
 
-type representation struct {
+type representationA struct {
    id           string
    length       int
    url          string
