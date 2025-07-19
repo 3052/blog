@@ -40,7 +40,7 @@ var tests = []struct {
             content_type: type_text,
             id:           "3=1000",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 3339
                return initialization + media
             }(),
@@ -50,7 +50,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "video=4800000",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 3555
                return initialization + media
             }(),
@@ -71,7 +71,7 @@ var tests = []struct {
             content_type: type_text,
             id:           "8",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 540 + 1 + 22
                return initialization + media
             }(),
@@ -82,7 +82,7 @@ var tests = []struct {
             id:           "5",
             url:          prefix + "TPIR_0722_100824_2997DF_1920x1080_178_2CH_PRORESHQ_2CH_2939373_4500/seg_571.m4s",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 539 + 1 + 1 + 29 + 1
                return initialization + media
             }(),
@@ -96,7 +96,7 @@ var tests = []struct {
             content_type: type_text,
             id:           "7",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 1153
                return initialization + media
             }(),
@@ -106,7 +106,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "5",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 1205 + 1
                return initialization + media
             }(),
@@ -132,7 +132,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "video=5200000",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 1011 + 1
                return initialization + media
             }(),
@@ -142,7 +142,7 @@ var tests = []struct {
             content_type: type_text,
             id:           "textstream_fra_1=1000",
             length: func() int {
-               initialization := 1
+               initialization := 0
                media := 1 + 974 + 1
                return initialization + media
             }(),
