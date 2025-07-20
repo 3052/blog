@@ -4,25 +4,27 @@
 - https://copilot.microsoft.com
 
 1. Go language script, input is path to local DASH MPD file
-2. output is JSON object, key is Representation ID, value is segment URLs
-3. use MPD URL http://test.test/test.mpd to resolve relative URLs
-4. SegmentTemplate is a child of AdaptationSet or Representation
-5. if Representation is missing SegmentList and SegmentTemplate, return
+2. output is map, key is Representation ID, value is segment URLs
+3. format output with json.Marshal
+4. use MPD URL http://test.test/test.mpd to resolve relative URLs
+5. SegmentTemplate is a child of AdaptationSet or Representation
+6. if Representation is missing SegmentList and SegmentTemplate, return
    Representation@BaseURL
-6. if SegmentTimeline exists use to determine segments
 7. use net/url.Parse or net/url.URL.Parse to create URLs
+8. if SegmentTimeline exists, use to determine segments
+9. if SegmentTemplate@endNumber exists, use to determine segments
+10. each S element will be used 1 + S@r times
+11. SegmentTemplate@startNumber is 1 if missing
+12. replace $RepresentationID$ with Representation@id
+13. respect Period@BaseURL
 
 ---
 
 8. all errors should be fatal
 9. if logging use standard error
 10. standard library only
-11. respect Period@BaseURL
 12. if Representation spans Periods, append URLs
 13. SegmentTemplate@timescale is 1 if missing
-14. SegmentTemplate@startNumber is 1 if missing
-15. replace $RepresentationID$ with Representation@id
 16. $Number$ value should increase by 1 each iteration
-17. SegmentTemplate@endNumber can exist. if so it defines the last segment
 18. if no SegmentTimeline use
    math.Ceil(asSeconds(Period@duration) * SegmentTemplate@timescale / SegmentTemplate@duration)
