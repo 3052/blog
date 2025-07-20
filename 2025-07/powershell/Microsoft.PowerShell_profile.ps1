@@ -1,10 +1,9 @@
-# 2025-05-14
-$env:path = 'C:\Program Files\Rust stable GNU 1.86\bin'
+# 2025-07-20
+$env:path = 'C:\Program Files (x86)\Python311-32'
+$env:path += ';C:\Program Files (x86)\Python311-32\scripts'
 
-# 2025-01-19
-$env:path += ';C:\Program Files\Python311'
-$env:path += ';C:\Program Files\Python311\Scripts'
-$env:path += ';c:\users\steven\appdata\roaming\python\python311\scripts'
+# 2025-05-14
+$env:path += ';C:\Program Files\Rust stable GNU 1.86\bin'
 
 # 2025-01-18
 $env:path += ';C:\Program Files\Mullvad VPN\resources'

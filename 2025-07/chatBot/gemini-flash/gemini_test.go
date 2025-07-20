@@ -7,6 +7,61 @@ import (
    "testing"
 )
 
+func Test(t *testing.T) {
+   log.SetFlags(log.Ltime)
+   for _, testVar := range tests {
+      data, err := output("go", "run", ".", testVar.name)
+      if err != nil {
+         t.Fatal(string(data))
+      }
+      var representsB map[string][]string
+      err = json.Unmarshal(data, &representsB)
+      if err != nil {
+         t.Fatal(err)
+      }
+      for _, representA := range testVar.representation {
+         representB := representsB[representA.id]
+         if len(representB) != representA.length {
+            t.Fatal(
+               representA.id,
+               "pass", representA.length,
+               "fail", len(representB),
+            )
+         }
+         if representB[len(representB)-1] != representA.url {
+            t.Fatal(
+               "\npass", representA.url,
+               "\nfail", representB[len(representB)-1],
+            )
+         }
+      }
+   }
+}
+
+func output(name string, arg ...string) ([]byte, error) {
+   command := exec.Command(name, arg...)
+   log.Print(command.Args)
+   return command.Output()
+}
+
+type content_type int
+
+const (
+   type_image content_type = iota
+   type_text
+   type_video
+)
+
+type representationA struct {
+   id           string
+   length       int
+   url          string
+   content_type content_type
+}
+
+const prefix = "http://test.test/"
+const initialization = 0
+
 var tests = []struct {
    name           string
    representation []representationA
@@ -95,61 +150,3 @@ var tests = []struct {
       },
    },
 }
-
-const initialization = 1
-
-func Test(t *testing.T) {
-   log.SetFlags(log.Ltime)
-   for _, testVar := range tests {
-      data, err := output("go", "run", ".", testVar.name)
-      if err != nil {
-         t.Fatal(string(data))
-      }
-      var representsB struct {
-         Representations map[string][]string
-      }
-      err = json.Unmarshal(data, &representsB)
-      if err != nil {
-         t.Fatal(err)
-      }
-      for _, representA := range testVar.representation {
-         representB := representsB.Representations[representA.id]
-         if len(representB) != representA.length {
-            t.Fatal(
-               representA.id,
-               "pass", representA.length,
-               "fail", len(representB),
-            )
-         }
-         if representB[len(representB)-1] != representA.url {
-            t.Fatal(
-               "\npass", representA.url,
-               "\nfail", representB[len(representB)-1],
-            )
-         }
-      }
-   }
-}
-
-func output(name string, arg ...string) ([]byte, error) {
-   command := exec.Command(name, arg...)
-   log.Print(command.Args)
-   return command.Output()
-}
-
-type content_type int
-
-const (
-   type_image content_type = iota
-   type_text
-   type_video
-)
-
-type representationA struct {
-   id           string
-   length       int
-   url          string
-   content_type content_type
-}
-
-const prefix = "http://test.test/"
