@@ -1,376 +1,247 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/json" // Use encoding/json for proper JSON output
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math"
 	"net/url"
 	"os"
 	"strconv"
-	"strings"
+	"strings" // Added for strings.ReplaceAll
+
+	"time" // Added for time.ParseDuration where applicable
 )
 
-// MPD represents the root element of a DASH MPD file.
+// MPD represents the top-level element of a Media Presentation Description.
 type MPD struct {
 	XMLName  xml.Name `xml:"MPD"`
 	BaseURL  string   `xml:"BaseURL"`
 	Periods  []Period `xml:"Period"`
-	XMLNs    string   `xml:"xmlns,attr"`
-	Type     string   `xml:"type,attr"`
-	MediaPresentationDuration string `xml:"mediaPresentationDuration,attr"`
+	Profiles string   `xml:"profiles,attr"`
 }
 
 // Period represents a period in the MPD.
 type Period struct {
-	XMLName      xml.Name       `xml:"Period"`
-	ID           string         `xml:"id,attr"`
-	Duration     string         `xml:"duration,attr"`
-	BaseURL      string         `xml:"BaseURL"`
+	XMLName        xml.Name       `xml:"Period"`
+	Duration       string         `xml:"duration,attr"`
 	AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
 }
 
 // AdaptationSet represents an adaptation set within a period.
 type AdaptationSet struct {
-	XMLName        xml.Name         `xml:"AdaptationSet"`
-	ID             string           `xml:"id,attr"`
-	BaseURL        string           `xml:"BaseURL"`
-	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"` // Can be child of AdaptationSet
+	XMLName         xml.Name         `xml:"AdaptationSet"`
+	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
 	Representations []Representation `xml:"Representation"`
 }
 
-// Representation represents a single media representation.
+// Representation represents a representation within an adaptation set.
 type Representation struct {
-	XMLName        xml.Name         `xml:"Representation"`
-	ID             string           `xml:"id,attr"`
-	BaseURL        string           `xml:"BaseURL"`
-	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"` // Can be child of Representation
-	Bandwidth      int              `xml:"bandwidth,attr"`
-	MimeType       string           `xml:"mimeType,attr"`
-	Codecs         string           `xml:"codecs,attr"`
+	XMLName         xml.Name         `xml:"Representation"`
+	ID              string           `xml:"id,attr"`
+	BaseURL         string           `xml:"BaseURL"`
+	SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
 }
 
-// SegmentTemplate defines the segment URL pattern.
+// SegmentTemplate represents a segment template.
 type SegmentTemplate struct {
-	XMLName      xml.Name      `xml:"SegmentTemplate"`
-	Media        string        `xml:"media,attr"`
-	Initialization string      `xml:"initialization,attr"`
-	StartNumber  string        `xml:"startNumber,attr"`
-	Timescale    string        `xml:"timescale,attr"`
-	Duration     string        `xml:"duration,attr"` // Segment duration
-	EndNumber    string        `xml:"endNumber,attr"`
+	XMLName       xml.Name       `xml:"SegmentTemplate"`
+	Media         string         `xml:"media,attr"`
+	Initialization string         `xml:"initialization,attr"`
+	Timescale     uint64         `xml:"timescale,attr"`
+	Duration      uint64         `xml:"duration,attr"`
+	StartNumber   uint64         `xml:"startNumber,attr"`
+	EndNumber     uint64         `xml:"endNumber,attr"`
 	SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
-// SegmentTimeline defines a list of segments.
+// SegmentTimeline represents a segment timeline.
 type SegmentTimeline struct {
 	XMLName xml.Name `xml:"SegmentTimeline"`
-	S       []S      `xml:"S"`
+	Ss      []S      `xml:"S"`
 }
 
-// S represents a segment in the timeline.
+// S represents an 'S' element within a SegmentTimeline.
 type S struct {
 	XMLName xml.Name `xml:"S"`
-	T       string   `xml:"t,attr"` // Start time
-	D       string   `xml:"d,attr"` // Duration
-	R       string   `xml:"r,attr"` // Repeat count
+	T       uint64   `xml:"t,attr"`
+	D       uint64   `xml:"d,attr"`
+	R       int      `xml:"r,attr"`
 }
 
-// parseDuration parses an ISO 8601 duration string (e.g., "PT10S") into seconds.
-// This is a simplified parser and may not handle all edge cases of ISO 8601.
-func parseDuration(s string) (float64, error) {
-	if s == "" {
-		return 0, fmt.Errorf("empty duration string")
-	}
-
-	// Remove "P" prefix for period
-	s = strings.TrimPrefix(s, "P")
-
-	var totalSeconds float64
-
-	// Handle Time components (T)
-	if strings.Contains(s, "T") {
-		parts := strings.Split(s, "T")
-		datePart := parts[0]
-		timePart := parts[1]
-
-		// Parse date part (for days)
-		if strings.Contains(datePart, "D") {
-			dParts := strings.Split(datePart, "D")
-			days, err := strconv.ParseFloat(dParts[0], 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid days in duration: %w", err)
-			}
-			totalSeconds += days * 24 * 3600
-		}
-
-		// Parse time part
-		if strings.Contains(timePart, "H") {
-			hParts := strings.Split(timePart, "H")
-			hours, err := strconv.ParseFloat(hParts[0], 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid hours in duration: %w", err)
-			}
-			totalSeconds += hours * 3600
-			timePart = hParts[1]
-		}
-		if strings.Contains(timePart, "M") {
-			mParts := strings.Split(timePart, "M")
-			minutes, err := strconv.ParseFloat(mParts[0], 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid minutes in duration: %w", err)
-			}
-			totalSeconds += minutes * 60
-			timePart = mParts[1]
-		}
-		if strings.Contains(timePart, "S") {
-			sParts := strings.Split(timePart, "S")
-			seconds, err := strconv.ParseFloat(sParts[0], 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid seconds in duration: %w", err)
-			}
-			totalSeconds += seconds
-		}
-	} else {
-		// Only date part, or simple seconds (e.g., "10S")
-		if strings.Contains(s, "D") {
-			dParts := strings.Split(s, "D")
-			days, err := strconv.ParseFloat(dParts[0], 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid days in duration: %w", err)
-			}
-			totalSeconds += days * 24 * 3600
-		} else if strings.HasSuffix(s, "S") {
-			seconds, err := strconv.ParseFloat(strings.TrimSuffix(s, "S"), 64)
-			if err != nil {
-				return 0, fmt.Errorf("invalid seconds in duration: %w", err)
-			}
-			totalSeconds += seconds
-		}
-	}
-
-	return totalSeconds, nil
-}
-
-// resolveURL resolves a relative URL against a base URL.
-func resolveURL(baseURL *url.URL, relativePath string) string {
-	if relativePath == "" {
-		return baseURL.String()
-	}
-	rel, err := url.Parse(relativePath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error parsing relative path %s: %v\n", relativePath, err)
-		return ""
-	}
-	return baseURL.ResolveReference(rel).String()
-}
+// ResultJSON represents the structure of the desired JSON output.
+type ResultJSON map[string][]string
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s <path_to_mpd_file>\n", os.Args[0])
+		fmt.Fprintln(os.Stderr, "Usage: go run dash_parser.go <path_to_mpd_file>")
 		os.Exit(1)
 	}
 
 	mpdFilePath := os.Args[1]
-
-	// Read the MPD file
-	xmlFile, err := os.Open(mpdFilePath)
+	mpdData, err := ioutil.ReadFile(mpdFilePath)
 	if err != nil {
-		log.Fatalf("Error opening MPD file %s: %v\n", mpdFilePath, err)
-	}
-	defer xmlFile.Close()
-
-	byteValue, err := ioutil.ReadAll(xmlFile)
-	if err != nil {
-		log.Fatalf("Error reading MPD file %s: %v\n", mpdFilePath, err)
+		fmt.Fprintf(os.Stderr, "Error reading MPD file: %v\n", err)
+		os.Exit(1)
 	}
 
 	var mpd MPD
-	err = xml.Unmarshal(byteValue, &mpd)
+	err = xml.Unmarshal(mpdData, &mpd)
 	if err != nil {
-		log.Fatalf("Error unmarshaling MPD XML: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error unmarshaling MPD: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Assume MPD URL is http://test.test/test.mpd
+	segmentURLs := make(ResultJSON)
+	// Rule 5: assume MPD URL is http://test.test/test.mpd
 	mpdBaseURL, err := url.Parse("http://test.test/test.mpd")
 	if err != nil {
-		log.Fatalf("Error parsing base MPD URL: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error parsing base MPD URL: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Initialize results map
-	segmentURLs := make(map[string][]string)
-
-	// Traverse the MPD structure
 	for _, period := range mpd.Periods {
-		// Resolve Period BaseURL
-		currentPeriodBaseURL := mpdBaseURL
-		if mpd.BaseURL != "" {
-			currentPeriodBaseURL, _ = url.Parse(resolveURL(currentPeriodBaseURL, mpd.BaseURL))
-		}
-		if period.BaseURL != "" {
-			currentPeriodBaseURL, _ = url.Parse(resolveURL(currentPeriodBaseURL, period.BaseURL))
-		}
-
-		periodDurationSeconds := 0.0
-		if period.Duration != "" {
-			d, err := parseDuration(period.Duration)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Warning: Could not parse period duration '%s': %v\n", period.Duration, err)
-			} else {
-				periodDurationSeconds = d
-			}
+		periodDuration, err := parseISODuration(period.Duration)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: Could not parse Period duration '%s': %v. Skipping period calculations for duration-based segment generation.\n", period.Duration, err)
+			periodDuration = 0 // Set to 0 if parsing fails to avoid errors in calculation
 		}
 
 		for _, as := range period.AdaptationSets {
-			// Resolve AdaptationSet BaseURL
-			currentASBaseURL := currentPeriodBaseURL
-			if as.BaseURL != "" {
-				currentASBaseURL, _ = url.Parse(resolveURL(currentASBaseURL, as.BaseURL))
-			}
-
-			// Get SegmentTemplate from AdaptationSet if present
-			asSegmentTemplate := as.SegmentTemplate
-
 			for _, rep := range as.Representations {
-				// Resolve Representation BaseURL
-				currentRepBaseURL := currentASBaseURL
-				if rep.BaseURL != "" {
-					currentRepBaseURL, _ = url.Parse(resolveURL(currentRepBaseURL, rep.BaseURL))
+				repID := rep.ID
+				if repID == "" {
+					fmt.Fprintln(os.Stderr, "Warning: Representation missing ID, skipping.")
+					continue
 				}
 
-				// Determine the effective SegmentTemplate (Representation's takes precedence)
-				effectiveSegmentTemplate := rep.SegmentTemplate
-				if effectiveSegmentTemplate == nil {
-					effectiveSegmentTemplate = asSegmentTemplate
+				var segTemplate *SegmentTemplate
+				if rep.SegmentTemplate != nil {
+					segTemplate = rep.SegmentTemplate
+				} else if as.SegmentTemplate != nil {
+					segTemplate = as.SegmentTemplate
 				}
 
-				if effectiveSegmentTemplate == nil {
-					// Case 8: Representation with only BaseURL means one segment
+				// Rule 9: if Representation is missing SegmentBase, SegmentList, SegmentTemplate, return Representation@BaseURL
+				if segTemplate == nil {
 					if rep.BaseURL != "" {
-						segmentURLs[rep.ID] = []string{resolveURL(currentRepBaseURL, "")}
-					} else {
-						// If no BaseURL and no SegmentTemplate, it's an error or malformed MPD for segment retrieval
-						fmt.Fprintf(os.Stderr, "Warning: Representation %s has no BaseURL and no SegmentTemplate. Skipping.\n", rep.ID)
-					}
-					continue // Move to the next representation
-				}
-
-				// Parse SegmentTemplate attributes with defaults
-				timescale := 1.0
-				if effectiveSegmentTemplate.Timescale != "" {
-					t, err := strconv.ParseFloat(effectiveSegmentTemplate.Timescale, 64)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "Warning: Invalid timescale '%s' for Representation %s, using default 1: %v\n", effectiveSegmentTemplate.Timescale, rep.ID, err)
-					} else {
-						timescale = t
-					}
-				}
-
-				startNumber := 1
-				if effectiveSegmentTemplate.StartNumber != "" {
-					sN, err := strconv.Atoi(effectiveSegmentTemplate.StartNumber)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "Warning: Invalid startNumber '%s' for Representation %s, using default 1: %v\n", effectiveSegmentTemplate.StartNumber, rep.ID, err)
-					} else {
-						startNumber = sN
-					}
-				}
-
-				var repSegmentURLs []string
-
-				if effectiveSegmentTemplate.EndNumber != "" {
-					// Case 14: SegmentTemplate@endNumber defines the last segment
-					endNumber, err := strconv.Atoi(effectiveSegmentTemplate.EndNumber)
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "Warning: Invalid endNumber '%s' for Representation %s. Falling back to SegmentTimeline/duration calculation: %v\n", effectiveSegmentTemplate.EndNumber, rep.ID, err)
-						// Fallback logic will be handled below if SegmentTimeline or Duration exists
-					} else {
-						for i := startNumber; i <= endNumber; i++ {
-							segmentName := strings.Replace(effectiveSegmentTemplate.Media, "$Number$", strconv.Itoa(i), -1)
-							segmentName = strings.Replace(segmentName, "$RepresentationID$", rep.ID, -1) // Handle $RepresentationID$ if present
-							fullURL := resolveURL(currentRepBaseURL, segmentName)
-							if fullURL != "" {
-								repSegmentURLs = append(repSegmentURLs, fullURL)
-							}
-						}
-					}
-				}
-
-				if len(repSegmentURLs) == 0 { // If endNumber didn't resolve or was invalid
-					if effectiveSegmentTemplate.SegmentTimeline != nil && len(effectiveSegmentTemplate.SegmentTimeline.S) > 0 {
-						// Case 15: Use SegmentTimeline
-						currentSegmentNumber := startNumber
-						for _, s := range effectiveSegmentTemplate.SegmentTimeline.S {
-							// Parse 'd' (duration) but the value itself is not used for segment URL generation
-							// as per the requirement for $Number$ increment based on repeat counts.
-							_, err := strconv.ParseFloat(s.D, 64)
-							if err != nil {
-								fmt.Fprintf(os.Stderr, "Warning: Invalid segment duration 'd' in SegmentTimeline for Representation %s: %v\n", rep.ID, err)
-								continue
-							}
-							r := 0 // Default repeat count
-							if s.R != "" {
-								rInt, err := strconv.Atoi(s.R)
-								if err != nil {
-									fmt.Fprintf(os.Stderr, "Warning: Invalid repeat count 'r' in SegmentTimeline for Representation %s: %v\n", rep.ID, err)
-								} else {
-									r = rInt
-								}
-							}
-
-							// Add the current segment
-							segmentName := strings.Replace(effectiveSegmentTemplate.Media, "$Number$", strconv.Itoa(currentSegmentNumber), -1)
-							segmentName = strings.Replace(segmentName, "$RepresentationID$", rep.ID, -1)
-							fullURL := resolveURL(currentRepBaseURL, segmentName)
-							if fullURL != "" {
-								repSegmentURLs = append(repSegmentURLs, fullURL)
-							}
-							currentSegmentNumber++
-
-							// Add repeated segments
-							for j := 0; j < r; j++ {
-								segmentName = strings.Replace(effectiveSegmentTemplate.Media, "$Number$", strconv.Itoa(currentSegmentNumber), -1)
-								segmentName = strings.Replace(segmentName, "$RepresentationID$", rep.ID, -1)
-								fullURL = resolveURL(currentRepBaseURL, segmentName)
-								if fullURL != "" {
-									repSegmentURLs = append(repSegmentURLs, fullURL)
-								}
-								currentSegmentNumber++
-							}
-						}
-					} else if effectiveSegmentTemplate.Duration != "" && periodDurationSeconds > 0 {
-						// Case 16: No SegmentTimeline, use Period@duration and SegmentTemplate@duration
-						segmentDuration, err := strconv.ParseFloat(effectiveSegmentTemplate.Duration, 64)
+						parsedURL, err := mpdBaseURL.Parse(rep.BaseURL)
 						if err != nil {
-							fmt.Fprintf(os.Stderr, "Warning: Invalid segment duration '%s' for Representation %s. Cannot calculate segments: %v\n", effectiveSegmentTemplate.Duration, rep.ID, err)
-						} else if segmentDuration > 0 {
-							numSegments := int(math.Ceil(periodDurationSeconds * timescale / segmentDuration))
-							for i := 0; i < numSegments; i++ {
-								segmentNumber := startNumber + i
-								segmentName := strings.Replace(effectiveSegmentTemplate.Media, "$Number$", strconv.Itoa(segmentNumber), -1)
-								segmentName = strings.Replace(segmentName, "$RepresentationID$", rep.ID, -1)
-								fullURL := resolveURL(currentRepBaseURL, segmentName)
-								if fullURL != "" {
-									repSegmentURLs = append(repSegmentURLs, fullURL)
-								}
-							}
+							fmt.Fprintf(os.Stderr, "Error parsing Representation BaseURL '%s': %v\n", rep.BaseURL, err)
+							continue
 						}
-					} else {
-						fmt.Fprintf(os.Stderr, "Warning: Representation %s has SegmentTemplate but no endNumber, SegmentTimeline, or calculable duration. Skipping segment generation.\n", rep.ID)
+						segmentURLs[repID] = append(segmentURLs[repID], parsedURL.String())
 					}
+					continue
 				}
-				segmentURLs[rep.ID] = repSegmentURLs
+
+				// Rule 12: SegmentTemplate@timescale is 1 if missing
+				timescale := uint64(1)
+				if segTemplate.Timescale != 0 {
+					timescale = segTemplate.Timescale
+				}
+
+				// Rule 13: SegmentTemplate@startNumber is 1 if missing
+				startNumber := uint64(1)
+				if segTemplate.StartNumber != 0 {
+					startNumber = segTemplate.StartNumber
+				}
+
+				var numSegments uint64
+				if segTemplate.EndNumber != 0 {
+					// Rule 16: SegmentTemplate@endNumber can exist. if so it defines the last segment
+					if segTemplate.EndNumber < startNumber {
+						fmt.Fprintf(os.Stderr, "Warning: Representation %s has EndNumber (%d) less than StartNumber (%d). Skipping.\n", repID, segTemplate.EndNumber, startNumber)
+						continue
+					}
+					numSegments = segTemplate.EndNumber - startNumber + 1
+				} else if segTemplate.SegmentTimeline != nil {
+					// Rule 17: if no SegmentTemplate@endNumber use SegmentTimeline
+					for _, s := range segTemplate.SegmentTimeline.Ss {
+						numSegments += uint64(s.R + 1)
+					}
+				} else if segTemplate.Duration != 0 && periodDuration > 0 {
+					// Rule 18: if no SegmentTimeline use ceil(asSeconds(Period@duration) * SegmentTemplate@timescale / SegmentTemplate@duration)
+					numSegments = uint64(math.Ceil(float64(periodDuration.Seconds()) * float64(timescale) / float64(segTemplate.Duration)))
+				} else {
+					fmt.Fprintf(os.Stderr, "Warning: Representation %s has SegmentTemplate but no Duration, EndNumber, or SegmentTimeline, or Period duration could not be parsed. Skipping segment generation for this representation.\n", repID)
+					continue
+				}
+
+				for i := uint64(0); i < numSegments; i++ {
+					segmentNumber := startNumber + i
+					mediaURL := segTemplate.Media
+					// Rule 14: replace $RepresentationID$ with Representation@id
+					mediaURL = strings.ReplaceAll(mediaURL, "$RepresentationID$", repID)
+					// Rule 15: $Number$ value should increase by 1 each iteration
+					mediaURL = strings.ReplaceAll(mediaURL, "$Number$", strconv.FormatUint(segmentNumber, 10))
+
+					parsedURL, err := mpdBaseURL.Parse(mediaURL)
+					if err != nil {
+						fmt.Fprintf(os.Stderr, "Error parsing segment URL for %s: %v\n", repID, err)
+						continue
+					}
+					// Rule 10: if Representation spans Periods, append URLs (handled by appending to slice)
+					segmentURLs[repID] = append(segmentURLs[repID], parsedURL.String())
+				}
 			}
 		}
 	}
 
-	// Marshal the results to JSON and print
-	jsonData, err := json.MarshalIndent(segmentURLs, "", "  ")
+	// Output as JSON
+	jsonOutput, err := json.MarshalIndent(segmentURLs, "", "  ")
 	if err != nil {
-		log.Fatalf("Error marshaling JSON: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error marshaling JSON: %v\n", err)
+		os.Exit(1)
 	}
+	fmt.Println(string(jsonOutput))
+}
 
-	fmt.Println(string(jsonData))
+// parseISODuration parses a simplified ISO 8601 duration string (e.g., PT1H30M5S)
+// It handles P, T, H, M (minutes), S. Years, Months, Weeks, Days are ignored for simplicity as time.Duration doesn't directly support them.
+func parseISODuration(s string) (time.Duration, error) {
+	if s == "" {
+		return 0, fmt.Errorf("empty duration string")
+	}
+	if s[0] != 'P' {
+		return 0, fmt.Errorf("duration string must start with 'P'")
+	}
+	s = s[1:] // Remove 'P'
+
+	var duration time.Duration
+	var currentNumStr string
+	inTime := false // Flag to differentiate between Month and Minute
+
+	for _, r := range s {
+		switch r {
+		case 'T':
+			inTime = true
+		case 'H':
+			if val, err := strconv.ParseInt(currentNumStr, 10, 64); err == nil {
+				duration += time.Duration(val) * time.Hour
+			}
+			currentNumStr = ""
+		case 'M': // This 'M' is for Month if before 'T', or Minute if after 'T'
+			if inTime { // If we're past 'T', it's minutes
+				if val, err := strconv.ParseInt(currentNumStr, 10, 64); err == nil {
+					duration += time.Duration(val) * time.Minute
+				}
+			}
+			// If not inTime, it's a Month, which we currently ignore for time.Duration
+			currentNumStr = ""
+		case 'S':
+			if val, err := strconv.ParseFloat(currentNumStr, 64); err == nil {
+				duration += time.Duration(val * float64(time.Second))
+			}
+			currentNumStr = ""
+		case 'Y', 'W', 'D': // Ignore Years, Weeks, Days for time.Duration
+			currentNumStr = ""
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.':
+			currentNumStr += string(r)
+		default:
+			return 0, fmt.Errorf("unsupported character in duration: %c", r)
+		}
+	}
+	return duration, nil
 }
