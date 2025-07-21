@@ -12,6 +12,23 @@ var tests = []struct {
    representation []representationA
 }{
    {
+      name: "canal.mpd",
+      representation: []representationA{
+         {
+            content_type: type_video,
+            id:           "video=3399914",
+            length: initialization + 1 + 1332 + 1,
+            url: prefix + "dash/appletvcz_A007300100102_2464C3BF9652075492E7CF48A400F243_HD-video=3399914-4798800.dash?serviceid=298f95e1bf91361258c44a2b1f4a2425",
+         },
+         {
+            content_type: type_image,
+            id:           "thumbnail",
+            length:       80,
+            url: prefix + "dash/thumbnail/tile_80.jpeg?serviceid=298f95e1bf91361258c44a2b1f4a2425",
+         },
+      },
+   },
+   {
       name: "criterion.mpd",
       representation: []representationA{
          {
@@ -23,10 +40,7 @@ var tests = []struct {
          {
             content_type: type_video,
             id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
-            length: func() int {
-               media := 1 + 1114 + 1
-               return initialization + media
-            }(),
+            length: initialization + 1 + 1114 + 1,
             url: prefix + "drm/cenc,derived,325579370,e4576465a745213f336c1ef1bf5d513e/remux/avf/888d2bc7-75b5-4264-bf57-08e3dc24ecbb/segment.mp4?pathsig=8c953e4f~vEyD7FR7NMtgBhRbRGol6tYRL0pVp7AQxjE5pUlKliI&r=dXMtY2VudHJhbDE%3D&sid=1116&st=video",
          },
       },
@@ -37,19 +51,13 @@ var tests = []struct {
          {
             content_type: type_text,
             id:           "3=1000",
-            length: func() int {
-               media := 3339
-               return initialization + media
-            }(),
+            length: initialization +  3339,
             url: prefix + "dash/32e3c47902de4911dca77b0ad73e9ac34965a1d8-3=1000-3339.m4s",
          },
          {
             content_type: type_video,
             id:           "video=4800000",
-            length: func() int {
-               media := 3555
-               return initialization + media
-            }(),
+            length: initialization +  3555,
             url: prefix + "dash/32e3c47902de4911dca77b0ad73e9ac34965a1d8-video=4800000-3555.m4s",
          },
       },
@@ -66,20 +74,14 @@ var tests = []struct {
          {
             content_type: type_text,
             id:           "8",
-            length: func() int {
-               media := 540 + 1 + 22
-               return initialization + media
-            }(),
+            length:  initialization +  540 + 1 + 22,
             url: prefix + "TPIR_0722_2997_2CH_DF_1728406422/seg_563.m4s",
          },
          {
             content_type: type_video,
             id:           "5",
             url:          prefix + "TPIR_0722_100824_2997DF_1920x1080_178_2CH_PRORESHQ_2CH_2939373_4500/seg_571.m4s",
-            length: func() int {
-               media := 539 + 1 + 1 + 29 + 1
-               return initialization + media
-            }(),
+            length:  initialization +  539 + 1 + 1 + 29 + 1,
          },
       },
    },

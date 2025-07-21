@@ -1,19 +1,19 @@
 package main
 
 import (
-    "encoding/xml"
     "encoding/json"
+    "encoding/xml"
     "fmt"
     "io/ioutil"
     "log"
     "math"
     "net/url"
     "os"
+    "strconv"
     "strings"
-   "strconv"
 )
 
-// Structs for MPD XML
+type SegmentMap map[string][]string
 
 type MPD struct {
     XMLName xml.Name `xml:"MPD"`
@@ -22,38 +22,41 @@ type MPD struct {
 }
 
 type Period struct {
-    BaseURL        string           `xml:"BaseURL"`
-    Duration       string           `xml:"duration,attr"`
-    AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
+    XMLName  xml.Name     `xml:"Period"`
+    Duration string       `xml:"duration,attr"`
+    BaseURL  string       `xml:"BaseURL"`
+    AdaptSet []Adaptation `xml:"AdaptationSet"`
 }
 
-type AdaptationSet struct {
+type Adaptation struct {
+    XMLName         xml.Name         `xml:"AdaptationSet"`
+    BaseURL         string           `xml:"BaseURL"`
     SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
     Representations []Representation `xml:"Representation"`
 }
 
 type Representation struct {
-    ID              string            `xml:"id,attr"`
-    BaseURL         string            `xml:"BaseURL"`
-    SegmentTemplate *SegmentTemplate  `xml:"SegmentTemplate"`
-    SegmentList     *SegmentList      `xml:"SegmentList"`
+    XMLName         xml.Name         `xml:"Representation"`
+    ID              string           `xml:"id,attr"`
+    BaseURL         string           `xml:"BaseURL"`
+    SegmentList     *SegmentList     `xml:"SegmentList"`
+    SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
 }
 
 type SegmentList struct {
-    // Placeholder if needed later
+    SegmentURLs []struct {
+        Media string `xml:"media,attr"`
+    } `xml:"SegmentURL"`
 }
 
 type SegmentTemplate struct {
-    Media          string           `xml:"media,attr"`
-    Timescale      int              `xml:"timescale,attr"`
-    Duration       int              `xml:"duration,attr"`
-    StartNumber    int              `xml:"startNumber,attr"`
-    EndNumber      int              `xml:"endNumber,attr"`
-    SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
-}
-
-type SegmentTimeline struct {
-    Segments []S `xml:"S"`
+    Timescale     int    `xml:"timescale,attr"`
+    Duration      int    `xml:"duration,attr"`
+    StartNumber   int    `xml:"startNumber,attr"`
+    EndNumber     int    `xml:"endNumber,attr"`
+    Initialization string `xml:"initialization,attr"`
+    Media         string  `xml:"media,attr"`
+    Timeline      []S     `xml:"SegmentTimeline>S"`
 }
 
 type S struct {
@@ -62,116 +65,146 @@ type S struct {
     R int `xml:"r,attr"`
 }
 
+func parseDuration(dur string) float64 {
+    dur = strings.TrimPrefix(dur, "PT")
+    if strings.HasSuffix(dur, "S") {
+        dur = strings.TrimSuffix(dur, "S")
+        f, _ := strconv.ParseFloat(dur, 64)
+        return f
+    }
+    return 0
+}
+
+func resolveURL(base, ref string) string {
+    u, err := url.Parse(ref)
+    if err != nil || u.IsAbs() {
+        return ref
+    }
+    b, err := url.Parse(base)
+    if err != nil {
+        return ref
+    }
+    return b.ResolveReference(u).String()
+}
+
+func layeredResolveURL(relative, mpdBase, periodBase string) string {
+    base := "http://test.test/test.mpd"
+    if mpdBase != "" {
+        base = resolveURL(base, mpdBase)
+    }
+    if periodBase != "" {
+        base = resolveURL(base, periodBase)
+    }
+    return resolveURL(base, relative)
+}
+
 func main() {
     if len(os.Args) < 2 {
-        log.Fatalf("Usage: %s path/to/mpdfile.mpd\n", os.Args[0])
+        log.Fatal("Usage: go run main.go <path-to-mpd>")
     }
-    mpdPath := os.Args[1]
-    data, err := ioutil.ReadFile(mpdPath)
+
+    data, err := ioutil.ReadFile(os.Args[1])
     if err != nil {
-        log.Fatal(err)
+        log.Fatalf("Failed to read MPD file: %v", err)
     }
 
     var mpd MPD
     if err := xml.Unmarshal(data, &mpd); err != nil {
-        log.Fatal(err)
+        log.Fatalf("Failed to parse MPD XML: %v", err)
     }
 
-    base, _ := url.Parse("http://test.test/test.mpd")
-    output := make(map[string][]string)
+    segmentMap := make(SegmentMap)
 
     for _, period := range mpd.Periods {
-        for _, as := range period.AdaptationSets {
-            for _, rep := range as.Representations {
+        for _, ad := range period.AdaptSet {
+            for _, rep := range ad.Representations {
+                id := rep.ID
+                var urls []string
+
+                // Pick SegmentTemplate if available
                 template := rep.SegmentTemplate
-                if template == nil && as.SegmentTemplate != nil {
-                    template = as.SegmentTemplate
+                if template == nil {
+                    template = ad.SegmentTemplate
                 }
 
-                var segments []string
+                // Layered base URL resolution
+                rBase := rep.BaseURL
+                aBase := ad.BaseURL
+                pBase := period.BaseURL
+                mBase := mpd.BaseURL
 
-                if template != nil {
+                base := layeredResolveURL("", mBase, pBase)
+                if aBase != "" {
+                    base = resolveURL(base, aBase)
+                }
+                if rBase != "" {
+                    base = resolveURL(base, rBase)
+                }
+
+                if rep.SegmentList != nil {
+                    for _, seg := range rep.SegmentList.SegmentURLs {
+                        urls = append(urls, layeredResolveURL(seg.Media, mBase, pBase))
+                    }
+                } else if template != nil {
                     timescale := template.Timescale
                     if timescale == 0 {
                         timescale = 1
                     }
-                    start := template.StartNumber
-                    if start == 0 {
-                        start = 1
+                    duration := template.Duration
+                    startNum := template.StartNumber
+                    if startNum == 0 {
+                        startNum = 1
                     }
-                    var count int
-                    if template.EndNumber > 0 {
-                        count = template.EndNumber - start + 1
-                    } else if template.SegmentTimeline != nil {
-                        for _, s := range template.SegmentTimeline.Segments {
-                            r := s.R
-                            if r < 0 {
-                                r = 0
+                    endNum := template.EndNumber
+                    media := template.Media
+
+                    if len(template.Timeline) > 0 {
+                        num := startNum
+                        timelineTime := 0
+                        for _, s := range template.Timeline {
+                            repeat := s.R
+                            if repeat < 0 {
+                                repeat = 0
                             }
-                            for i := 0; i <= r; i++ {
-                                num := start + len(segments)
-                                urlStr := strings.ReplaceAll(template.Media, "$RepresentationID$", rep.ID)
-                                urlStr = strings.ReplaceAll(urlStr, "$Number$", fmt.Sprintf("%d", num))
-                                segments = append(segments, resolveURL(base, mpd.BaseURL, period.BaseURL, rep.BaseURL, urlStr))
+                            if s.T != 0 {
+                                timelineTime = s.T
+                            }
+                            for i := 0; i <= repeat; i++ {
+                                url := strings.ReplaceAll(media, "$RepresentationID$", id)
+                                url = strings.ReplaceAll(url, "$Number$", fmt.Sprintf("%d", num))
+                                url = strings.ReplaceAll(url, "$Time$", fmt.Sprintf("%d", timelineTime))
+                                urls = append(urls, resolveURL(base, url))
+                                timelineTime += s.D
+                                num++
                             }
                         }
-                    } else if template.Duration > 0 && period.Duration != "" {
-                        // rough estimation, assuming duration is in PT[n]S
-                        dur := parseDuration(period.Duration)
-                        count = int(math.Ceil(dur * float64(timescale) / float64(template.Duration)))
+                    } else if endNum > 0 {
+                        for i := startNum; i <= endNum; i++ {
+                            url := strings.ReplaceAll(media, "$RepresentationID$", id)
+                            url = strings.ReplaceAll(url, "$Number$", fmt.Sprintf("%d", i))
+                            urls = append(urls, resolveURL(base, url))
+                        }
+                    } else {
+                        periodDur := parseDuration(period.Duration)
+                        count := int(math.Ceil(periodDur * float64(timescale) / float64(duration)))
+                        for i := 0; i < count; i++ {
+                            url := strings.ReplaceAll(media, "$RepresentationID$", id)
+                            url = strings.ReplaceAll(url, "$Number$", fmt.Sprintf("%d", startNum+i))
+                            urls = append(urls, resolveURL(base, url))
+                        }
                     }
-
-                    for i := 0; i < count; i++ {
-                        num := start + i
-                        urlStr := strings.ReplaceAll(template.Media, "$RepresentationID$", rep.ID)
-                        urlStr = strings.ReplaceAll(urlStr, "$Number$", fmt.Sprintf("%d", num))
-                        segments = append(segments, resolveURL(base, mpd.BaseURL, period.BaseURL, rep.BaseURL, urlStr))
-                    }
-                } else if rep.SegmentList == nil {
-                    segments = append(segments, resolveURL(base, mpd.BaseURL, period.BaseURL, rep.BaseURL, ""))
+                } else {
+                    urls = append(urls, base)
                 }
 
-                output[rep.ID] = append(output[rep.ID], segments...)
+                segmentMap[id] = append(segmentMap[id], urls...)
             }
         }
     }
 
-    b, err := json.MarshalIndent(output, "", "  ")
+    output, err := json.MarshalIndent(segmentMap, "", "  ")
     if err != nil {
-        log.Fatal(err)
+        log.Fatalf("Failed to marshal JSON: %v", err)
     }
-    fmt.Println(string(b))
-}
-
-
-func resolveURL(base *url.URL, mpdBase, periodBase, repBase, seg string) string {
-    u := base
-    if mpdBase != "" {
-        ref, _ := url.Parse(mpdBase)
-        u = u.ResolveReference(ref)
-    }
-    if periodBase != "" {
-        ref, _ := url.Parse(periodBase)
-        u = u.ResolveReference(ref)
-    }
-    if repBase != "" {
-        ref, _ := url.Parse(repBase)
-        u = u.ResolveReference(ref)
-    }
-    if seg != "" {
-        ref, _ := url.Parse(seg)
-        u = u.ResolveReference(ref)
-    }
-    return u.String()
-}
-
-
-func parseDuration(d string) float64 {
-    // very basic PT[n]S parser
-    if strings.HasPrefix(d, "PT") && strings.HasSuffix(d, "S") {
-        num := strings.TrimSuffix(strings.TrimPrefix(d, "PT"), "S")
-        val, _ := strconv.ParseFloat(num, 64)
-        return val
-    }
-    return 0.0
+    fmt.Println(string(output))
 }
