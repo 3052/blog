@@ -3,7 +3,7 @@
 - <https://wikipedia.org/wiki/Microsoft_Copilot>
 - https://copilot.microsoft.com
 
-1. Go language script, input is path to local DASH MPD file
+1. Go language script, user input is path to local DASH MPD file
 2. output is map, key is Representation ID, value is segment URLs
 3. format output with json.Marshal
 4. use MPD URL http://test.test/test.mpd to resolve relative URLs
@@ -17,14 +17,15 @@
 11. SegmentTemplate@startNumber is 1 if missing
 12. replace $RepresentationID$ with Representation@id
 13. respect Period@BaseURL
+14. if no SegmentTemplate@endNumber and no SegmentTimeline use
+   math.Ceil(asSeconds(Period@duration) * SegmentTemplate@timescale / SegmentTemplate@duration)
+15. SegmentTemplate@timescale is 1 if missing
+16. struct fields must include a tag unless the name matches
+17. $Number$ value should increase by 1 each iteration
+18. standard library only
+19. if Representation spans Periods, append URLs
 
 ---
 
 8. all errors should be fatal
 9. if logging use standard error
-10. standard library only
-12. if Representation spans Periods, append URLs
-13. SegmentTemplate@timescale is 1 if missing
-16. $Number$ value should increase by 1 each iteration
-18. if no SegmentTimeline use
-   math.Ceil(asSeconds(Period@duration) * SegmentTemplate@timescale / SegmentTemplate@duration)
