@@ -60,10 +60,6 @@ https://claude.ai
 - https://chat.deepseek.com
 - https://wikipedia.org/wiki/DeepSeek
 
-## kimi
-
-https://kimi.com
-
 ## grok
 
 https://grok.com
