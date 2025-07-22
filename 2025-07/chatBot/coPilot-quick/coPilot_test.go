@@ -7,6 +7,8 @@ import (
    "testing"
 )
 
+const initialization = 0
+
 var tests = []struct {
    name           string
    representation []representationA
@@ -32,16 +34,39 @@ var tests = []struct {
       name: "criterion.mpd",
       representation: []representationA{
          {
+            content_type: type_video,
+            id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
+            length: initialization + 1 + 1114 + 1,
+            url: prefix + "drm/cenc,derived,325579370,e4576465a745213f336c1ef1bf5d513e/remux/avf/888d2bc7-75b5-4264-bf57-08e3dc24ecbb/segment.mp4?pathsig=8c953e4f~vEyD7FR7NMtgBhRbRGol6tYRL0pVp7AQxjE5pUlKliI&r=dXMtY2VudHJhbDE%3D&sid=1116&st=video",
+         },
+         {
             content_type: type_text,
             id:           "subs-7433271",
             length:       1,
             url:          prefix + "texttrack/sub/7433271.vtt?pathsig=8c953e4f~UO056QMhmjVj394TCzXUSJJ4GI4BcpMoXktkwXsYSjw&r=dXMtY2VudHJhbDE%3D",
          },
+      },
+   },
+   {
+      name: "max.mpd",
+      representation: []representationA{
          {
             content_type: type_video,
-            id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
-            length: initialization + 1 + 1114 + 1,
-            url: prefix + "drm/cenc,derived,325579370,e4576465a745213f336c1ef1bf5d513e/remux/avf/888d2bc7-75b5-4264-bf57-08e3dc24ecbb/segment.mp4?pathsig=8c953e4f~vEyD7FR7NMtgBhRbRGol6tYRL0pVp7AQxjE5pUlKliI&r=dXMtY2VudHJhbDE%3D&sid=1116&st=video",
+            id:           "v31",
+            length: initialization + 1,
+            url: prefix + "v/1_584f52/v31.mp4",
+         },
+         {
+            content_type: type_image,
+            id:           "images_1",
+            length: initialization + 1864,
+            url: prefix + "i/1_6c0f17/images_1_00001863.jpg",
+         },
+         {
+            content_type: type_text,
+            id:           "t2",
+            length: initialization + 8,
+            url: prefix + "t/0_d2d294/t2/8.vtt",
          },
       },
    },
@@ -49,22 +74,28 @@ var tests = []struct {
       name: "molotov.mpd",
       representation: []representationA{
          {
-            content_type: type_text,
-            id:           "3=1000",
-            length: initialization +  3339,
-            url: prefix + "dash/32e3c47902de4911dca77b0ad73e9ac34965a1d8-3=1000-3339.m4s",
-         },
-         {
             content_type: type_video,
             id:           "video=4800000",
             length: initialization +  3555,
             url: prefix + "dash/32e3c47902de4911dca77b0ad73e9ac34965a1d8-video=4800000-3555.m4s",
+         },
+         {
+            content_type: type_text,
+            id:           "3=1000",
+            length: initialization +  3339,
+            url: prefix + "dash/32e3c47902de4911dca77b0ad73e9ac34965a1d8-3=1000-3339.m4s",
          },
       },
    },
    {
       name: "paramount.mpd",
       representation: []representationA{
+         {
+            content_type: type_video,
+            id:           "5",
+            url:          prefix + "TPIR_0722_100824_2997DF_1920x1080_178_2CH_PRORESHQ_2CH_2939373_4500/seg_571.m4s",
+            length:  initialization +  539 + 1 + 1 + 29 + 1,
+         },
          {
             content_type: type_image,
             id:           "thumb_320x180",
@@ -76,12 +107,6 @@ var tests = []struct {
             id:           "8",
             length:  initialization +  540 + 1 + 22,
             url: prefix + "TPIR_0722_2997_2CH_DF_1728406422/seg_563.m4s",
-         },
-         {
-            content_type: type_video,
-            id:           "5",
-            url:          prefix + "TPIR_0722_100824_2997DF_1920x1080_178_2CH_PRORESHQ_2CH_2939373_4500/seg_571.m4s",
-            length:  initialization +  539 + 1 + 1 + 29 + 1,
          },
       },
    },
@@ -151,6 +176,3 @@ type representationA struct {
 }
 
 const prefix = "http://test.test/"
-
-const initialization = 0
-
