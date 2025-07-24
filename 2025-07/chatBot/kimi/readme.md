@@ -2,12 +2,16 @@
 
 https://kimi.com
 
-Give me the complete Go program that
-- reads a local `.mpd` file (first CLI arg),
-- starts from the original MPD URL `http://test.test/test.mpd`,
-- resolves the BaseURL hierarchy (MPD → Period → AdaptationSet → Representation) using **only** `net/url.Parse` + `ResolveReference`,
-- expands `SegmentTemplate` with `SegmentTimeline`, `$RepresentationID$`, `$Bandwidth$`, `$Number$`, `$Time$`, `%0xd` padding, and honours `@endNumber` when present,
-- outputs pure JSON `{ "RepresentationID": [ "absolute_url", … ] }`.
+currently passing with two test files
+
+Return the **single-file Go program** that:  
+1. Accepts the path to a local `.mpd` file as its **first CLI argument**.  
+2. Starts from the original MPD URL `http://test.test/test.mpd`.  
+3. Resolves the **BaseURL hierarchy** (`MPD → Period → AdaptationSet → Representation`) **exclusively** with `net/url.Parse` + `ResolveReference`.  
+4. Expands any `<SegmentTemplate>` that may appear on `<AdaptationSet>` **or** `<Representation>`: supports `<SegmentTimeline>` and simple `@startNumber…@endNumber` modes, expands `$RepresentationID$`, `$Number$`, `$Time$`, and `%0xd` padding, and honors `@endNumber` when present.  
+5. **If a `<Representation>` has no `<SegmentTemplate>`**, emits the single absolute URL derived from its own `<BaseURL>` (or inherited BaseURLs).  
+6. Outputs **pure JSON** to stdout: `{"RepresentationID":["absolute_url",…],…}`  
+7. All other diagnostics (usage help, errors) go to stderr.  
 
 provide prompt in markdown I can give you in the future to return this script
 
