@@ -35,15 +35,15 @@ var tests = []struct {
       representation: []representationA{
          {
             content_type: type_video,
-            id:           "video-888d2bc7-75b5-4264-bf57-08e3dc24ecbb",
-            length:       initialization + 1 + 1114 + 1,
-            url:          prefix + "drm/cenc,derived,325579370,e4576465a745213f336c1ef1bf5d513e/remux/avf/888d2bc7-75b5-4264-bf57-08e3dc24ecbb/segment.mp4?pathsig=8c953e4f~vEyD7FR7NMtgBhRbRGol6tYRL0pVp7AQxjE5pUlKliI&r=dXMtY2VudHJhbDE%3D&sid=1116&st=video",
+            id:           "video-31e3417b-d163-45ba-9d7d-c356ef7aca57",
+            length:       initialization + 1084,
+            url:          prefix + "drm/cenc,derived,1039101898,70c108dd0a77b48f8738a37ed402d1e3/range/prot/aW5pdF9yYW5nZT0wLTgwNCZyYW5nZT0xODYzNTk5MTk1LTE4NjM4MTU0Mzk/avf/31e3417b-d163-45ba-9d7d-c356ef7aca57.mp4?init_range=0-804&pathsig=8c953e4f~H4likJuUcpljeDjz1r1ky7d3kH28faTdejTPfwh_5DY&r=dXMtZWFzdDE%3D&range=1863599195-1863815439",
          },
          {
             content_type: type_text,
-            id:           "subs-7433271",
+            id:           "subs-202936084",
             length:       1,
-            url:          prefix + "texttrack/sub/7433271.vtt?pathsig=8c953e4f~UO056QMhmjVj394TCzXUSJJ4GI4BcpMoXktkwXsYSjw&r=dXMtY2VudHJhbDE%3D",
+            url:          prefix + "texttrack/sub/202936084.vtt?pathsig=8c953e4f~VmhEmE4Ge9n9S9R4gdPqJo02oUhoM8-o1o0iBVypx3k&r=dXMtY2VudHJhbDE%3D",
          },
       },
    },
