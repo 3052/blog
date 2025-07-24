@@ -1,188 +1,250 @@
 package main
 
 import (
-   "encoding/json"
-   "encoding/xml"
-   "fmt"
-   "net/url"
-   "os"
-   "strconv"
-   "strings"
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
+	"math"
+	"net/url"
+	"os"
+	"strconv"
+	"strings"
+	"time"
 )
 
-// ---------- MPD structs ------------------------------------------------------
+// ------------------------------------------------------------------
+// XML essentials
+// ------------------------------------------------------------------
 
 type MPD struct {
-   XMLName xml.Name `xml:"MPD"`
-   BaseURL string   `xml:"BaseURL"`
-   Periods []Period `xml:"Period"`
+	XMLName  xml.Name `xml:"MPD"`
+	BaseURL  string   `xml:"BaseURL"`
+	Duration string   `xml:"mediaPresentationDuration,attr"`
+	Periods  []Period `xml:"Period"`
 }
 
 type Period struct {
-   BaseURL string          `xml:"BaseURL"`
-   Sets    []AdaptationSet `xml:"AdaptationSet"`
+	Duration string       `xml:"duration,attr"`
+	BaseURL  string       `xml:"BaseURL"`
+	Adapt    []Adaptation `xml:"AdaptationSet"`
 }
 
-type AdaptationSet struct {
-   BaseURL         string           `xml:"BaseURL"`
-   SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
-   Reps            []Representation `xml:"Representation"`
+type Adaptation struct {
+	BaseURL string           `xml:"BaseURL"`
+	Tmpl    *SegmentTemplate `xml:"SegmentTemplate"`
+	Reps    []Representation `xml:"Representation"`
 }
 
 type Representation struct {
-   ID              string            `xml:"id,attr"`
-   BaseURL         string            `xml:"BaseURL"`
-   SegmentTemplate *SegmentTemplate  `xml:"SegmentTemplate"`
+	ID   string           `xml:"id,attr"`
+	BURL string           `xml:"BaseURL"`
+	Tmpl *SegmentTemplate `xml:"SegmentTemplate"`
 }
 
 type SegmentTemplate struct {
-   Media           string           `xml:"media,attr"`
-   Initialization  string           `xml:"initialization,attr"`
-   Timescale       int              `xml:"timescale,attr"`
-   StartNumber     *int             `xml:"startNumber,attr"`
-   EndNumber       *int             `xml:"endNumber,attr"`
-   SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
+	Media       string           `xml:"media,attr"`
+	Duration    int              `xml:"duration,attr"`
+	Timescale   int              `xml:"timescale,attr"`
+	StartNumber *int             `xml:"startNumber,attr"` // pointer distinguishes missing vs 0
+	EndNumber   int              `xml:"endNumber,attr"`
+	Timeline    *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
 type SegmentTimeline struct {
-   S []S `xml:"S"`
+	S []S `xml:"S"`
 }
 
 type S struct {
-   T int `xml:"t,attr"`
-   D int `xml:"d,attr"`
-   R int `xml:"r,attr"` // default 0
+	T int `xml:"t,attr"`
+	D int `xml:"d,attr"`
+	R int `xml:"r,attr"`
 }
 
-// ---------- helpers ----------------------------------------------------------
-
-func joinPath(base, p string) string {
-   u, _ := url.Parse(base)
-   r, _ := url.Parse(p)
-   return u.ResolveReference(r).String()
-}
-
-func fillTemplate(tpl string, repID string, n int, t int64) string {
-   s := tpl
-   s = strings.ReplaceAll(s, "$RepresentationID$", repID)
-   s = strings.ReplaceAll(s, "$Number$", strconv.Itoa(n))
-   s = strings.ReplaceAll(s, "$Time$", strconv.FormatInt(t, 10))
-
-   // %0xd padding
-   for {
-      start := strings.Index(s, "%0")
-      if start == -1 {
-         break
-      }
-      end := strings.Index(s[start:], "d")
-      if end == -1 {
-         break
-      }
-      width, _ := strconv.Atoi(s[start+2 : start+end])
-      s = strings.Replace(s, s[start:start+end+1], fmt.Sprintf("%0*d", width, n), 1)
-   }
-   return s
-}
-
-// effectiveTemplate returns the lowest-level SegmentTemplate (Representation wins, else AdaptationSet)
-func effectiveTemplate(as AdaptationSet, rep Representation) *SegmentTemplate {
-   if rep.SegmentTemplate != nil {
-      return rep.SegmentTemplate
-   }
-   return as.SegmentTemplate
-}
-
-// ---------- main -------------------------------------------------------------
+// ------------------------------------------------------------------
+// main
+// ------------------------------------------------------------------
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "usage: go run main.go local.mpd")
+	if len(os.Args) != 2 {
+		fmt.Fprintln(os.Stderr, "Usage: mpd2urls <path-to-mpd>")
+		os.Exit(1)
+	}
+	mpdPath := os.Args[1]
+
+	data, err := os.ReadFile(mpdPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "read file: %v\n", err)
 		os.Exit(1)
 	}
 
-	f, err := os.Open(os.Args[1])
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
 	var mpd MPD
-	if err := xml.NewDecoder(f).Decode(&mpd); err != nil {
-		panic(err)
+	if err := xml.Unmarshal(data, &mpd); err != nil {
+		fmt.Fprintf(os.Stderr, "unmarshal mpd: %v\n", err)
+		os.Exit(1)
 	}
 
-	original, _ := url.Parse("http://test.test/test.mpd")
-	out := make(map[string][]string)
+	base, err := url.Parse("http://test.test/test.mpd")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "initial url: %v\n", err)
+		os.Exit(1)
+	}
+
+	result := map[string][]string{}
 
 	for _, p := range mpd.Periods {
-		periodBase := original.String()
-		if p.BaseURL != "" {
-			periodBase = joinPath(periodBase, p.BaseURL)
+		periodBase := resolveBase(resolveBase(base, mpd.BaseURL), p.BaseURL)
+		periodDur := parseISODuration(p.Duration)
+		if periodDur == 0 {
+			periodDur = parseISODuration(mpd.Duration)
 		}
 
-		for _, as := range p.Sets {
-			asBase := periodBase
-			if as.BaseURL != "" {
-				asBase = joinPath(asBase, as.BaseURL)
-			}
+		for _, as := range p.Adapt {
+			adaptBase := resolveBase(periodBase, as.BaseURL)
 
 			for _, rep := range as.Reps {
-				repBase := asBase
-				if rep.BaseURL != "" {
-					repBase = joinPath(repBase, rep.BaseURL)
+				repBase := resolveBase(adaptBase, rep.BURL)
+
+				tmpl := as.Tmpl
+				if rep.Tmpl != nil {
+					tmpl = rep.Tmpl
 				}
-
-				st := effectiveTemplate(as, rep)
-
-				// CASE 1: Representation has no SegmentTemplate
-				if st == nil {
-					// Just emit the single BaseURL
-					out[rep.ID] = []string{repBase}
+				if tmpl == nil {
+					abs := repBase.String()
+					result[rep.ID] = appendUnique(result[rep.ID], abs)
 					continue
 				}
 
-				// CASE 2: Expand SegmentTemplate
-				startN := 1
-				if st.StartNumber != nil {
-					startN = *st.StartNumber
+				media := tmpl.Media
+				timescale := tmpl.Timescale
+				if timescale == 0 {
+					timescale = 1
 				}
 
-				var segments []string
-
-				if st.SegmentTimeline != nil {
-					segNum := startN
-					time := int64(0)
-					for _, s := range st.SegmentTimeline.S {
-						t := int64(s.T)
-						if t != 0 {
-							time = t
-						}
-						for i := 0; i <= s.R; i++ {
-							media := fillTemplate(st.Media, rep.ID, segNum, time)
-							segments = append(segments, joinPath(repBase, media))
-							time += int64(s.D)
-							segNum++
-						}
-					}
-				} else {
-					endN := startN
-					if st.EndNumber != nil {
-						endN = *st.EndNumber
-					}
-					for n := startN; n <= endN; n++ {
-						media := fillTemplate(st.Media, rep.ID, n, 0)
-						segments = append(segments, joinPath(repBase, media))
-					}
+				startNumber := 1
+				if tmpl.StartNumber != nil {
+					startNumber = *tmpl.StartNumber
 				}
 
-				out[rep.ID] = segments
+				// ---- SegmentTimeline mode --------------------------------------
+				if tmpl.Timeline != nil && len(tmpl.Timeline.S) > 0 {
+					time := 0
+					num := startNumber
+					for _, s := range tmpl.Timeline.S {
+						if s.T != 0 {
+							time = s.T
+						}
+						repeat := 1 + s.R
+						for i := 0; i < repeat; i++ {
+							urlStr := resolveBase(repBase,
+								expandTemplate(media, rep.ID, num, time, timescale)).String()
+							result[rep.ID] = appendUnique(result[rep.ID], urlStr)
+							time += s.D
+							num++
+						}
+					}
+					continue
+				}
+
+				// ---- Simple / derived @endNumber -------------------------------
+				end := tmpl.EndNumber
+				if end == 0 {
+					if tmpl.Duration == 0 || periodDur == 0 {
+						end = startNumber + 1000 // fallback
+					} else {
+						segments := math.Ceil(periodDur.Seconds() * float64(timescale) / float64(tmpl.Duration))
+						end = startNumber + int(segments) - 1
+					}
+				}
+				for n := startNumber; n <= end; n++ {
+					urlStr := resolveBase(repBase,
+						expandTemplate(media, rep.ID, n, 0, timescale)).String()
+					result[rep.ID] = appendUnique(result[rep.ID], urlStr)
+				}
 			}
 		}
 	}
 
 	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	if err := enc.Encode(out); err != nil {
-		panic(err)
+	enc.SetEscapeHTML(false)
+	if err := enc.Encode(result); err != nil {
+		fmt.Fprintf(os.Stderr, "encode json: %v\n", err)
+		os.Exit(1)
 	}
+}
+
+// ------------------------------------------------------------------
+// helpers
+// ------------------------------------------------------------------
+
+func resolveBase(base *url.URL, ref string) *url.URL {
+	if ref == "" {
+		return base
+	}
+	r, _ := url.Parse(ref)
+	return base.ResolveReference(r)
+}
+
+func expandTemplate(tpl, rid string, num, time, timescale int) string {
+	tpl = replaceToken(tpl, "Number", num)
+	tpl = replaceToken(tpl, "Time", time)
+	tpl = strings.ReplaceAll(tpl, "$RepresentationID$", rid)
+	return tpl
+}
+
+func replaceToken(tpl, token string, val int) string {
+	start := 0
+	prefix := "$" + token
+	for {
+		i := strings.Index(tpl[start:], prefix)
+		if i == -1 {
+			break
+		}
+		i += start
+		j := i + len(prefix)
+
+		width := 0
+		if j < len(tpl) && tpl[j] == '%' {
+			k := j + 1
+			for k < len(tpl) && tpl[k] >= '0' && tpl[k] <= '9' {
+				k++
+			}
+			if k < len(tpl) && tpl[k] == 'd' {
+				width, _ = strconv.Atoi(tpl[j+1 : k])
+				j = k + 1
+			}
+		}
+		if j < len(tpl) && tpl[j] == '$' {
+			j++
+		} else {
+			start = i + 1
+			continue
+		}
+
+		repl := strconv.Itoa(val)
+		if width > 0 {
+			repl = fmt.Sprintf("%0*d", width, val)
+		}
+		tpl = tpl[:i] + repl + tpl[j:]
+		start = i + len(repl)
+	}
+	return tpl
+}
+
+func appendUnique(slice []string, s string) []string {
+	for _, v := range slice {
+		if v == s {
+			return slice
+		}
+	}
+	return append(slice, s)
+}
+
+func parseISODuration(s string) time.Duration {
+	if s == "" {
+		return 0
+	}
+	s = strings.TrimPrefix(s, "PT")
+	s = strings.TrimSuffix(s, "S")
+	secs, _ := strconv.ParseFloat(s, 64)
+	return time.Duration(secs * float64(time.Second))
 }
