@@ -1,14 +1,14 @@
 # kimi
 
+provide prompt in markdown I can give you in the future to return this script
+
 https://kimi.com
 
-works with three files
-
-Return the **complete, final Go source** for the DASH MPD segment expander that satisfies **every** point below.
+Return the **complete, final Go source** for the DASH MPD segment expander that satisfies **every** requirement below.  Do **not** ignore any errors; every `strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated with `return "", err` or equivalent.
 
 1. Accepts the **path to a local `.mpd` file** as the **first CLI argument**.  
 2. Starts the BaseURL resolution chain from the original MPD URL  
-   `http://test.test/test.mpd` **regardless** of any `BaseURL` attribute inside the document.  
+   `http://test.test/test.mpd ` **regardless** of any `BaseURL` attribute inside the document.  
 3. Resolves the BaseURL hierarchy (`MPD → Period → AdaptationSet → Representation`) using `url.URL.ResolveReference`.  
 4. Expands:
    - `<SegmentTemplate>` that may appear on `<AdaptationSet>` **or** `<Representation>`  
@@ -28,6 +28,6 @@ Return the **complete, final Go source** for the DASH MPD segment expander that 
 10. **Appends** segments for the same Representation ID if it appears in multiple Periods.  
 11. Correctly **increments `$Time$`** across `<S>` elements in a `<SegmentTimeline>`.  
 12. Handles full ISO-8601 durations (e.g., `PT2H13M19.040S`).  
-13. Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`.
-
-provide prompt in markdown I can give you in the future to return this script
+13. Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`.  
+14. `$Number$` **always** equals the segment number (starting from `startNumber`).  
+15. `$Time$` **always** equals the presentation-time offset (in timescale units).
