@@ -20,6 +20,13 @@ https://grok.com
 Grok was unable to finish replying.
 Please try again later or use a different model.
 
+## coPilot quick response
+
+https://copilot.microsoft.com
+
+coPilot is so stupid that it cannot even generate valid markdown to describe
+its own prompt
+
 ---
 
 ## coPilot think deeper
