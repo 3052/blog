@@ -27,6 +27,12 @@ https://copilot.microsoft.com
 coPilot is so stupid that it cannot even generate valid markdown to describe
 its own prompt
 
+## coPilot think deeper
+
+https://copilot.microsoft.com
+
+AI is a fucking idiot it cannot even provide valid markdown for its own prompts
+
 ---
 
 ## gemini pro
