@@ -7,7 +7,7 @@ import (
    "testing"
 )
 
-const initialization = 0
+const initialization = 1
 
 var tests = []struct {
    name           string
