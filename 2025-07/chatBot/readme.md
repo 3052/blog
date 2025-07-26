@@ -50,10 +50,6 @@ https://gemini.google.com
 
 https://claude.ai
 
-## deepSeek
-
-https://chat.deepseek.com
-
 ## chatGpt
 
 https://chatgpt.com
