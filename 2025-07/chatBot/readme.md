@@ -41,3 +41,8 @@ https://chatgpt.com
 ## coPilot think deeper
 
 https://copilot.microsoft.com
+
+## coPilot quick response
+
+- <https://wikipedia.org/wiki/Microsoft_Copilot>
+- https://copilot.microsoft.com
