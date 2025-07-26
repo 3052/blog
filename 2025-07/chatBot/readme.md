@@ -22,6 +22,10 @@ Please try again later or use a different model.
 
 ---
 
+## coPilot think deeper
+
+https://copilot.microsoft.com
+
 ## gemini pro
 
 https://gemini.google.com
@@ -44,12 +48,3 @@ https://chat.deepseek.com
 ## chatGpt
 
 https://chatgpt.com
-
-## coPilot think deeper
-
-https://copilot.microsoft.com
-
-## coPilot quick response
-
-- <https://wikipedia.org/wiki/Microsoft_Copilot>
-- https://copilot.microsoft.com
