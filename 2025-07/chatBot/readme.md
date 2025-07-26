@@ -57,9 +57,4 @@ https://claude.ai
 
 ## deepSeek
 
-- https://chat.deepseek.com
-- https://wikipedia.org/wiki/DeepSeek
-
-## grok
-
-https://grok.com
+https://chat.deepseek.com
