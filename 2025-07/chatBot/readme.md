@@ -29,10 +29,6 @@ its own prompt
 
 ---
 
-## coPilot think deeper
-
-https://copilot.microsoft.com
-
 ## gemini pro
 
 https://gemini.google.com
