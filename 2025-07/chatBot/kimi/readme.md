@@ -4,11 +4,10 @@ provide prompt in markdown I can give you in the future to return this script
 
 https://kimi.com
 
-works with two files
+works with three files
 
-Return the **complete, final Go source** for the DASH MPD segment expander that
-satisfies **every** requirement below. Do **not** ignore any errors (every
-`strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated).
+Return the **complete, final Go source** for the DASH MPD segment expander that satisfies **every** requirement below.  
+Do **not** ignore any errors (every `strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated).
 
 1. Accepts the **path to a local `.mpd` file** as the **first CLI argument**.  
 2. Starts the BaseURL resolution chain from the original MPD URL  
@@ -28,7 +27,7 @@ satisfies **every** requirement below. Do **not** ignore any errors (every
 6. Outputs **pure JSON** to stdout:  
    `{"RepresentationID":["absolute_url",…],…}`  
 7. All other diagnostics (usage help, errors) go to stderr.  
-8. Eliminates duplicate segment URLs for each representation.  
+8. **Eliminates duplicate segment URLs for each representation**, even when the same Representation ID appears in multiple Periods.  
 9. **No external dependencies** beyond the Go standard library.  
 10. **Appends** segments for the same Representation ID if it appears in multiple Periods.  
 11. Correctly **increments `$Time$`** across `<S>` elements in a `<SegmentTimeline>`.  
@@ -36,3 +35,4 @@ satisfies **every** requirement below. Do **not** ignore any errors (every
 13. Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`.  
 14. `$Number$` **always** equals the segment number (starting from `startNumber`).  
 15. `$Time$` **always** equals the presentation-time offset (in timescale units).  
+16. Correctly replaces `$Number%0xd$` and `$Time%0xd$` with zero-padded values.
