@@ -4,15 +4,13 @@ provide prompt in markdown I can give you in the future to return this script
 
 https://kimi.com
 
-works with three files
-
-Return the **complete, final Go source** for the DASH MPD segment expander that satisfies **every** requirement below.  
+Return the complete, final Go source for the DASH MPD segment expander that satisfies **every** requirement below.  
 Do **not** ignore any errors (every `strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated).
 
 1. Accepts the **path to a local `.mpd` file** as the **first CLI argument**.  
 2. Starts the BaseURL resolution chain from the original MPD URL  
    `http://test.test/test.mpd `  
-   **regardless** of any `BaseURL` attribute inside the document.  
+   regardless of any `BaseURL` attribute inside the document.  
 3. Resolves the BaseURL hierarchy (`MPD → Period → AdaptationSet → Representation`).  
 4. Expands:  
    - `<SegmentTemplate>` that may appear on `<AdaptationSet>` **or** `<Representation>`  
@@ -35,4 +33,6 @@ Do **not** ignore any errors (every `strconv.Atoi`, `url.Parse`, etc. **must** b
 13. Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`.  
 14. `$Number$` **always** equals the segment number (starting from `startNumber`).  
 15. `$Time$` **always** equals the presentation-time offset (in timescale units).  
-16. Correctly replaces `$Number%0xd$` and `$Time%0xd$` with zero-padded values.
+16. Correctly replaces `$Number%0xd$` and `$Time%0xd$` with zero-padded values.  
+17. **All URL resolution** must be performed exclusively with `net/url.URL.ResolveReference`—no custom or other URL logic.  
+18. Every `strconv`, `url.Parse`, `ParseFloat`, etc. **must** be checked and its error propagated.
