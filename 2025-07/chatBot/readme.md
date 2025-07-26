@@ -37,3 +37,7 @@ https://chat.deepseek.com
 ## chatGpt
 
 https://chatgpt.com
+
+## coPilot think deeper
+
+https://copilot.microsoft.com
