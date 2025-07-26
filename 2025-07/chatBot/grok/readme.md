@@ -4,18 +4,20 @@ provide prompt in markdown I can give you in the future to return this script
 
 https://grok.com
 
-Return the **complete, final Go source** for the DASH MPD segment expander that satisfies **every** requirement below.  Do **not** ignore any errors; every `strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated with `return "", err` or equivalent.
+Return the **complete, final Go source** for the DASH MPD segment expander that
+satisfies **every** requirement below.  Do **not** ignore any errors; every
+`strconv.Atoi`, `url.Parse`, etc. **must** be checked and propagated
 
 1. Accepts the **path to a local `.mpd` file** as the **first CLI argument**.  
 2. Starts the BaseURL resolution chain from the original MPD URL  
    `http://test.test/test.mpd ` **regardless** of any `BaseURL` attribute inside the document.  
-3. Resolves the BaseURL hierarchy (`MPD → Period → AdaptationSet → Representation`) using `url.URL.ResolveReference`.  
+3. Resolves the BaseURL hierarchy (`MPD → Period → AdaptationSet → Representation`)
 4. Expands:
    - `<SegmentTemplate>` that may appear on `<AdaptationSet>` **or** `<Representation>`  
    - `<SegmentList>` that may appear on `<AdaptationSet>` **or** `<Representation>`  
    - Supports both `<SegmentTimeline>` and simple `@startNumber … @endNumber` modes.  
    - Expands `$RepresentationID$`, `$Number$`, `$Time$`, and `%0xd` padding.  
-   - When neither `@endNumber` nor `<SegmentTimeline>` are present, derives the last segment number as  
+   - When neither `@endNumber` nor `<SegmentTimeline>` are present, derives the segment count as
      `ceil(PeriodDurationInSeconds * SegmentTemplate@timescale / SegmentTemplate@duration)`  
      (use `SegmentTemplate@timescale = 1` if absent).  
    - Missing `@startNumber` (attribute absent) defaults to **1**; explicit `startNumber="0"` is honoured.  
