@@ -13,14 +13,21 @@ API is trash:
 - https://platform.moonshot.ai/docs/api/caching
 - https://platform.moonshot.ai/docs/api/files
 
+## grok
+
+https://grok.com
+
+Grok was unable to finish replying.
+Please try again later or use a different model.
+
+---
+
 ## gemini pro
 
 https://gemini.google.com
 
 You’ve reached your limit on 2.5 Pro until Jul 19, 3:12 PM. Try Google AI Pro
 for higher limits.
-
----
 
 ## gemini flash
 
