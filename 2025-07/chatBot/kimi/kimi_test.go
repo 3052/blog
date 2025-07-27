@@ -3,11 +3,12 @@ package main
 import (
    "encoding/json"
    "log"
+   "math"
    "os/exec"
    "testing"
 )
 
-const initialization = 0
+const initialization = 1
 
 var tests = []struct {
    name           string
@@ -53,20 +54,30 @@ var tests = []struct {
          {
             content_type: type_video,
             id:           "v31",
-            length:       initialization + 1,
+            length:       8, // allow duplicates
             url:          prefix + "v/1_584f52/v31.mp4",
-         },
-         {
-            content_type: type_image,
-            id:           "images_1",
-            length:       initialization + 1864,
-            url:          prefix + "i/1_6c0f17/images_1_00001863.jpg",
          },
          {
             content_type: type_text,
             id:           "t2",
-            length:       initialization + 8,
+            length:       8,
             url:          prefix + "t/0_d2d294/t2/8.vtt",
+         },
+         {
+            content_type: type_image,
+            id:           "images_1",
+            length: func() int { // allow duplicates
+               media := math.Ceil(1100.34925 / 5)
+               media += math.Ceil(1122.2044166666667 / 5)
+               media += math.Ceil(1104.1864166666664 / 5)
+               media += math.Ceil(1017.5582083333338 / 5)
+               media += math.Ceil(1058.9328749999995 / 5)
+               media += math.Ceil(1011.9692916666672 / 5)
+               media += math.Ceil(994.4934999999996 / 5)
+               media += math.Ceil(1914.2873749999999 / 5)
+               return initialization + int(media)
+            }(),
+            url: prefix + "i/1_6c0f17/images_1_00001863.jpg",
          },
       },
    },
