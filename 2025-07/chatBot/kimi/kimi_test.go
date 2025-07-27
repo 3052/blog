@@ -75,7 +75,7 @@ var tests = []struct {
                media += math.Ceil(1011.9692916666672 / 5)
                media += math.Ceil(994.4934999999996 / 5)
                media += math.Ceil(1914.2873749999999 / 5)
-               return initialization + int(media)
+               return int(media)
             }(),
             url: prefix + "i/1_6c0f17/images_1_00001863.jpg",
          },
