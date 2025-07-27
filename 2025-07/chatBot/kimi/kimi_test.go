@@ -105,7 +105,7 @@ var tests = []struct {
             content_type: type_video,
             id:           "5",
             url:          prefix + "TPIR_0722_100824_2997DF_1920x1080_178_2CH_PRORESHQ_2CH_2939373_4500/seg_571.m4s",
-            length:       initialization + 539 + 1 + 1 + 29 + 1,
+            length:       9*initialization + 539 + 1 + 1 + 29 + 1,
          },
          {
             content_type: type_image,
@@ -116,7 +116,7 @@ var tests = []struct {
          {
             content_type: type_text,
             id:           "8",
-            length:       initialization + 540 + 1 + 22,
+            length:       9*initialization + 540 + 1 + 22,
             url:          prefix + "TPIR_0722_2997_2CH_DF_1728406422/seg_563.m4s",
          },
       },
