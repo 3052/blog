@@ -20,6 +20,14 @@ https://grok.com
 Grok was unable to finish replying.
 Please try again later or use a different model.
 
+## deepSeek
+
+site is a piece of shit, repeatedly get this:
+
+Server busy, please try again later.
+
+https://chat.deepseek.com
+
 ## coPilot quick response
 
 https://copilot.microsoft.com
