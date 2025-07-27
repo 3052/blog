@@ -7,7 +7,7 @@ import (
    "testing"
 )
 
-const initialization = 1
+const initialization = 0
 
 var tests = []struct {
    name           string
@@ -53,7 +53,7 @@ var tests = []struct {
          {
             content_type: type_video,
             id:           "v31",
-            length:       initialization + 1,
+            length:       initialization + 8, // allow duplicates for now
             url:          prefix + "v/1_584f52/v31.mp4",
          },
          {

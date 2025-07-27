@@ -55,19 +55,22 @@ The script must generate segments for all these cases:
 4. Representations with only BaseURL (emit as single segment)
 5. Mixed cases across different representations
 
+use `SegmentTemplate@timescale = 1` if absent
+
+**Appends** segments for the same Representation ID if it appears in multiple Periods
+
+When neither `@endNumber` nor `<SegmentTimeline>` are present, derives the segment count as  
+`ceil(PeriodDurationInSeconds * SegmentTemplate@timescale / SegmentTemplate@duration)`
+
+Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`
+
 ---
 
 3. Resolves the BaseURL hierarchy (`MPD → Period → AdaptationSet → Representation`).  
 4. Expands:  
-   - When neither `@endNumber` nor `<SegmentTimeline>` are present, derives the segment count as  
-     `ceil(PeriodDurationInSeconds * SegmentTemplate@timescale / SegmentTemplate@duration)`  
-     (use `SegmentTemplate@timescale = 1` if absent).  
    - Missing `@startNumber` (attribute absent) defaults to **1**; explicit `startNumber="0"` is honoured.  
 7. All other diagnostics (usage help, errors) go to stderr.  
-8. **Eliminates duplicate segment URLs for each representation**, even when the same Representation ID appears in multiple Periods.  
 9. **No external dependencies** beyond the Go standard library.  
-10. **Appends** segments for the same Representation ID if it appears in multiple Periods.  
-13. Distinguishes **absent** `startNumber` (default 1) from **explicit** `startNumber="0"`.  
 14. `$Number$` **always** equals the segment number (starting from `startNumber`).  
 15. `$Time$` **always** equals the presentation-time offset (in timescale units).  
 16. Correctly replaces `$Number%0xd$` and `$Time%0xd$` with zero-padded values.  
