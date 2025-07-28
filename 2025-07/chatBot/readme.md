@@ -41,8 +41,6 @@ https://copilot.microsoft.com
 
 AI is a fucking idiot it cannot even provide valid markdown for its own prompts
 
----
-
 ## gemini pro
 
 https://gemini.google.com
@@ -50,9 +48,7 @@ https://gemini.google.com
 You’ve reached your limit on 2.5 Pro until Jul 19, 3:12 PM. Try Google AI Pro
 for higher limits.
 
-## claude
-
-https://claude.ai
+---
 
 ## chatGpt
 
