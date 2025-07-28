@@ -4,11 +4,9 @@ provide markdown prompt I can give you in the future to return this script
 
 https://gemini.google.com
 
-one file pass
+two file pass
 
-Generate a GoLang script to parse a DASH MPD file from a local path and extract all playable media URLs (initialization and segments) for each Representation.
-
-**Strict Requirements:**
+Generate a GoLang script that parses a DASH MPD file according to these strict requirements:
 
 1.  **Input:** The script must accept a single command-line argument: the local path to an MPD XML file.
 2.  **Base URL Resolution:**
@@ -28,7 +26,7 @@ Generate a GoLang script to parse a DASH MPD file from a local path and extract 
         * **Else if `@endNumber` is present:** Iterate from `@startNumber` (defaulting to 1) up to and including `@endNumber`, generating segment URLs using `$Number$` and `$RepresentationID$` placeholders. If `$Time$` is present in the template, issue a warning to `stderr` that it might not be resolved, as a `SegmentTimeline` is typically needed for precise `$Time$` calculation.
         * **Else if `@duration` and `@timescale` are present:** Issue a warning to `stderr` that not all segments can be resolved without a `SegmentTimeline` or `EndNumber`, and output the raw `Media` template string for that representation.
         * **Else (insufficient `SegmentTemplate` attributes):** Issue a warning to `stderr` that no segments can be extracted and output the raw `Media` template string.
-    * **Missing Segment Info:** If a `Representation` has neither a `SegmentList` nor a `SegmentTemplate`, issue a warning to `stderr`.
+    * **Missing Segment Info:** If a `Representation` has neither a `SegmentList` nor a `SegmentTemplate`, emit the absolute URL derived from its effective `BaseURL`. If there's no effective `BaseURL` in this case, issue a warning to `stderr` that no playable URL can be derived.
 6.  **Output:**
     * **Pure JSON to `stdout`:** The script must output ONLY the JSON data to standard output. No other text (including warnings or info messages) should be printed to `stdout`.
     * **JSON Format:** The JSON output must be a single object where keys are `RepresentationID`s (string) and values are arrays of fully resolved segment URLs (strings), in order (initialization first, then segments).
@@ -49,7 +47,6 @@ Generate a GoLang script to parse a DASH MPD file from a local path and extract 
     where **Period@duration is preferred** over MPD@mediaPresentationDuration.
 - Emits the initialization URL (`@initialization` or `<Initialization sourceURL="">`) when present.
 - Never ignores any error—panic on failure is acceptable.
-- If a `<Representation>` has neither template nor list, emit the absolute URL derived from its effective BaseURL.
 - Distinguishes absent `startNumber` (default 1) from explicit `startNumber="0"`.
 - Appends segments for the same Representation ID if it appears in multiple Periods.
 - Respects `MPD@BaseURL`, `Period@BaseURL`, `AdaptationSet@BaseURL`, and `Representation@BaseURL`.
