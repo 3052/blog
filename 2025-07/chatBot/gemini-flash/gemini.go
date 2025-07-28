@@ -5,332 +5,480 @@ import (
    "encoding/xml"
    "fmt"
    "io/ioutil"
+   "math"
    "net/url"
    "os"
    "strconv"
    "strings"
 )
 
-// Define simplified structs to parse common MPD elements
+// MPD represents the root element of the MPEG-DASH MPD.
 type MPD struct {
-   XMLName xml.Name `xml:"MPD"`
-   BaseURL string   `xml:"BaseURL"`
-   Periods []Period `xml:"Period"`
+   XMLName                   xml.Name `xml:"MPD"`
+   BaseURL                   string   `xml:"BaseURL"`
+   Periods                   []Period `xml:"Period"`
+   MediaPresentationDuration string   `xml:"mediaPresentationDuration,attr"`
+   MinimumUpdatePeriod       string   `xml:"minimumUpdatePeriod,attr"`
+   Type                      string   `xml:"type,attr"`
+   Profiles                  string   `xml:"profiles,attr"`
+   PublishTime               string   `xml:"publishTime,attr"`
 }
 
+// Period represents a Period element within the MPD.
 type Period struct {
    XMLName        xml.Name        `xml:"Period"`
-   ID             string          `xml:"id,attr"`
-   AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
    BaseURL        string          `xml:"BaseURL"`
+   AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
+   ID             string          `xml:"id,attr"`
+   Start          string          `xml:"start,attr"`
+   Duration       string          `xml:"duration,attr"` // Period duration
 }
 
+// AdaptationSet represents an AdaptationSet element.
 type AdaptationSet struct {
    XMLName         xml.Name         `xml:"AdaptationSet"`
-   ContentType     string           `xml:"contentType,attr"`
-   Representations []Representation `xml:"Representation"`
    BaseURL         string           `xml:"BaseURL"`
-   SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"` // Inherited SegmentTemplate
-}
-
-type Representation struct {
-   XMLName         xml.Name         `xml:"Representation"`
+   Representations []Representation `xml:"Representation"`
+   SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
    ID              string           `xml:"id,attr"`
+   ContentType     string           `xml:"contentType,attr"`
    MimeType        string           `xml:"mimeType,attr"`
    Codecs          string           `xml:"codecs,attr"`
-   Bandwidth       uint64           `xml:"bandwidth,attr"`
-   Initialization  *Initialization  `xml:"Initialization"`
-   SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"` // Specific SegmentTemplate
-   SegmentList     *SegmentList     `xml:"SegmentList"`
+   Bitrate         string           `xml:"bitrate,attr"`
+}
+
+// Representation represents a Representation element.
+type Representation struct {
+   XMLName         xml.Name         `xml:"Representation"`
    BaseURL         string           `xml:"BaseURL"`
+   SegmentList     *SegmentList     `xml:"SegmentList"`
+   SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
+   ID              string           `xml:"id,attr"`
+   Bandwidth       string           `xml:"bandwidth,attr"`
+   Width           string           `xml:"width,attr"`
+   Height          string           `xml:"height,attr"`
+   Codecs          string           `xml:"codecs,attr"`
+   MimeType        string           `xml:"mimeType,attr"`
 }
 
-type Initialization struct {
-   XMLName   xml.Name `xml:"Initialization"`
-   SourceURL string   `xml:"sourceURL,attr"`
-   Range     string   `xml:"range,attr"`
-}
-
-type SegmentTemplate struct {
-   XMLName         xml.Name         `xml:"SegmentTemplate"`
-   Media           string           `xml:"media,attr"`
-   Initialization  string           `xml:"initialization,attr"`
-   StartNumber     uint64           `xml:"startNumber,attr"`
-   EndNumber       uint64           `xml:"endNumber,attr"`
-   Timescale       uint64           `xml:"timescale,attr"`
-   Duration        uint64           `xml:"duration,attr"`
-   SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
-}
-
-type SegmentTimeline struct {
-   XMLName xml.Name `xml:"SegmentTimeline"`
-   Ss      []S      `xml:"S"`
-}
-
-type S struct {
-   XMLName xml.Name `xml:"S"`
-   T       *int64   `xml:"t,attr"` // Use pointer to differentiate between absent and zero
-   D       uint64   `xml:"d,attr"`
-   R       int      `xml:"r,attr"`
-}
-
+// SegmentList represents a SegmentList element.
 type SegmentList struct {
    XMLName        xml.Name        `xml:"SegmentList"`
    Initialization *Initialization `xml:"Initialization"`
    SegmentURLs    []SegmentURL    `xml:"SegmentURL"`
 }
 
+// Initialization represents an Initialization element within SegmentList or SegmentBase.
+type Initialization struct {
+   XMLName   xml.Name `xml:"Initialization"`
+   SourceURL string   `xml:"sourceURL,attr"`
+   Range     string   `xml:"range,attr"`
+}
+
+// SegmentURL represents a SegmentURL element.
 type SegmentURL struct {
    XMLName xml.Name `xml:"SegmentURL"`
    Media   string   `xml:"media,attr"`
+   Index   string   `xml:"index,attr"`
 }
 
-// Global base URL for initial resolution
-var initialBaseURL *url.URL
-
-func init() {
-   var err error
-   initialBaseURL, err = url.Parse("http://test.test/test.mpd")
-   if err != nil {
-      fmt.Fprintf(os.Stderr, "Fatal error parsing initial base URL: %v\n", err)
-      os.Exit(1)
-   }
+// SegmentTemplate represents a SegmentTemplate element.
+type SegmentTemplate struct {
+   XMLName         xml.Name         `xml:"SegmentTemplate"`
+   Initialization  string           `xml:"initialization,attr"`
+   Media           string           `xml:"media,attr"`
+   Duration        string           `xml:"duration,attr"` // Segment duration in timescale units
+   Timescale       string           `xml:"timescale,attr"`
+   StartNumber     string           `xml:"startNumber,attr"`
+   EndNumber       string           `xml:"endNumber,attr"`
+   SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
-// resolveURL resolves a relative URL against a base URL.
-func resolveURL(base *url.URL, ref string) (*url.URL, error) {
-   parsedRef, err := url.Parse(ref)
-   if err != nil {
-      return nil, fmt.Errorf("error parsing reference URL '%s': %w", ref, err)
+// SegmentTimeline represents a SegmentTimeline element.
+type SegmentTimeline struct {
+   XMLName xml.Name `xml:"SegmentTimeline"`
+   S       []S      `xml:"S"`
+}
+
+// S represents an S element within SegmentTimeline.
+type S struct {
+   XMLName xml.Name `xml:"S"`
+   T       string   `xml:"t,attr"`
+   D       string   `xml:"d,attr"`
+   R       string   `xml:"r,attr"`
+}
+
+// ParsedSegments stores the resolved segment URLs for each Representation.
+type ParsedSegments map[string][]string
+
+// parseDuration parses an ISO 8601 duration string (e.g., "PT1H2M3S") and returns total seconds.
+func parseDuration(isoDuration string) (float64, error) {
+   if !strings.HasPrefix(isoDuration, "PT") {
+      return 0, fmt.Errorf("invalid ISO 8601 duration format, must start with 'PT': %s", isoDuration)
    }
-   return base.ResolveReference(parsedRef), nil
+
+   totalSeconds := 0.0
+   temp := isoDuration[2:]
+
+   var h, m, s string
+   var currentVal string
+
+   for _, r := range temp {
+      if r == 'H' {
+         if currentVal != "" {
+            val, err := strconv.ParseFloat(currentVal, 64)
+            if err != nil {
+               return 0, fmt.Errorf("invalid hours value in duration: %s", currentVal)
+            }
+            h = fmt.Sprintf("%f", val)
+            currentVal = ""
+         }
+      } else if r == 'M' {
+         if currentVal != "" {
+            val, err := strconv.ParseFloat(currentVal, 64)
+            if err != nil {
+               return 0, fmt.Errorf("invalid minutes value in duration: %s", currentVal)
+            }
+            m = fmt.Sprintf("%f", val)
+            currentVal = ""
+         }
+      } else if r == 'S' {
+         if currentVal != "" {
+            val, err := strconv.ParseFloat(currentVal, 64)
+            if err != nil {
+               return 0, fmt.Errorf("invalid seconds value in duration: %s", currentVal)
+            }
+            s = fmt.Sprintf("%f", val)
+            currentVal = ""
+         }
+      } else {
+         currentVal += string(r)
+      }
+   }
+
+   if h != "" {
+      val, _ := strconv.ParseFloat(h, 64)
+      totalSeconds += val * 3600
+   }
+   if m != "" {
+      val, _ := strconv.ParseFloat(m, 64)
+      totalSeconds += val * 60
+   }
+   if s != "" {
+      val, _ := strconv.ParseFloat(s, 64)
+      totalSeconds += val
+   }
+
+   return totalSeconds, nil
 }
 
 func main() {
-   if len(os.Args) < 2 {
+   if len(os.Args) != 2 {
       fmt.Fprintf(os.Stderr, "Usage: %s <path_to_mpd_file>\n", os.Args[0])
       os.Exit(1)
    }
 
    mpdFilePath := os.Args[1]
 
-   // Read the MPD file
-   xmlFile, err := os.Open(mpdFilePath)
+   data, err := ioutil.ReadFile(mpdFilePath)
    if err != nil {
-      fmt.Fprintf(os.Stderr, "Error opening MPD file '%s': %v\n", mpdFilePath, err)
-      os.Exit(1)
-   }
-   defer xmlFile.Close()
-
-   byteValue, err := ioutil.ReadAll(xmlFile)
-   if err != nil {
-      fmt.Fprintf(os.Stderr, "Error reading MPD file '%s': %v\n", mpdFilePath, err)
+      fmt.Fprintf(os.Stderr, "Error reading MPD file: %v\n", err)
       os.Exit(1)
    }
 
    var mpd MPD
-   err = xml.Unmarshal(byteValue, &mpd)
+   err = xml.Unmarshal(data, &mpd)
    if err != nil {
-      fmt.Fprintf(os.Stderr, "Error unmarshalling MPD: %v\n", err)
+      fmt.Fprintf(os.Stderr, "Error unmarshaling MPD XML: %v\n", err)
       os.Exit(1)
    }
 
-   outputURLs := make(map[string][]string)
+   initialBaseURL, err := url.Parse("http://test.test/test.mpd")
+   if err != nil {
+      fmt.Fprintf(os.Stderr, "Fatal: Could not parse initial base URL: %v\n", err)
+      os.Exit(1)
+   }
+
+   allSegments := make(ParsedSegments)
 
    currentBaseURL := initialBaseURL
-
-   // Resolve MPD's BaseURL
    if mpd.BaseURL != "" {
-      resolvedURL, err := resolveURL(currentBaseURL, mpd.BaseURL)
-      if err != nil {
-         fmt.Fprintf(os.Stderr, "Warning: Could not resolve MPD BaseURL '%s': %v\n", mpd.BaseURL, err)
+      refURL, parseErr := url.Parse(mpd.BaseURL)
+      if parseErr != nil {
+         fmt.Fprintf(os.Stderr, "Warning: MPD BaseURL '%s' is malformed and skipped: %v\n", mpd.BaseURL, parseErr)
       } else {
-         currentBaseURL = resolvedURL
+         currentBaseURL = currentBaseURL.ResolveReference(refURL)
       }
    }
 
    for _, period := range mpd.Periods {
       periodBaseURL := currentBaseURL
       if period.BaseURL != "" {
-         resolvedURL, err := resolveURL(currentBaseURL, period.BaseURL)
-         if err != nil {
-            fmt.Fprintf(os.Stderr, "Warning: Could not resolve Period BaseURL '%s' (Period ID: %s): %v\n", period.BaseURL, period.ID, err)
+         refURL, parseErr := url.Parse(period.BaseURL)
+         if parseErr != nil {
+            fmt.Fprintf(os.Stderr, "Warning: Period BaseURL '%s' is malformed and skipped: %v\n", period.BaseURL, parseErr)
          } else {
-            periodBaseURL = resolvedURL
+            periodBaseURL = periodBaseURL.ResolveReference(refURL)
+         }
+      }
+
+      periodDurationSeconds := 0.0
+      if period.Duration != "" {
+         parsedDur, err := parseDuration(period.Duration)
+         if err != nil {
+            fmt.Fprintf(os.Stderr, "Warning: Period '%s': Could not parse duration '%s': %v. Segment count calculation might be inaccurate.\n", period.ID, period.Duration, err)
+         } else {
+            periodDurationSeconds = parsedDur
+         }
+      } else if mpd.MediaPresentationDuration != "" {
+         parsedDur, err := parseDuration(mpd.MediaPresentationDuration)
+         if err != nil {
+            fmt.Fprintf(os.Stderr, "Warning: MPD MediaPresentationDuration '%s': Could not parse duration: %v. Segment count calculation might be inaccurate.\n", mpd.MediaPresentationDuration, err)
+         } else {
+            periodDurationSeconds = parsedDur
          }
       }
 
       for _, as := range period.AdaptationSets {
          asBaseURL := periodBaseURL
          if as.BaseURL != "" {
-            resolvedURL, err := resolveURL(periodBaseURL, as.BaseURL)
-            if err != nil {
-               fmt.Fprintf(os.Stderr, "Warning: Could not resolve AdaptationSet BaseURL '%s' (Period ID: %s, ContentType: %s): %v\n", as.BaseURL, period.ID, as.ContentType, err)
+            refURL, parseErr := url.Parse(as.BaseURL)
+            if parseErr != nil {
+               fmt.Fprintf(os.Stderr, "Warning: AdaptationSet BaseURL '%s' is malformed and skipped: %v\n", as.BaseURL, parseErr)
             } else {
-               asBaseURL = resolvedURL
+               asBaseURL = asBaseURL.ResolveReference(refURL)
             }
          }
 
-         // Inherited SegmentTemplate from AdaptationSet
-         inheritedSegmentTemplate := as.SegmentTemplate
+         effectiveSegmentTemplate := as.SegmentTemplate
 
          for _, rep := range as.Representations {
             repBaseURL := asBaseURL
             if rep.BaseURL != "" {
-               resolvedURL, err := resolveURL(asBaseURL, rep.BaseURL)
-               if err != nil {
-                  fmt.Fprintf(os.Stderr, "Warning: Could not resolve Representation BaseURL '%s' (Period ID: %s, AdaptationSet ContentType: %s, Representation ID: %s): %v\n", rep.BaseURL, period.ID, as.ContentType, rep.ID, err)
+               refURL, parseErr := url.Parse(rep.BaseURL)
+               if parseErr != nil {
+                  fmt.Fprintf(os.Stderr, "Warning: Representation BaseURL '%s' is malformed and skipped: %v\n", rep.BaseURL, parseErr)
                } else {
-                  repBaseURL = resolvedURL
+                  repBaseURL = repBaseURL.ResolveReference(refURL)
                }
             }
 
-            var urls []string
+            currentRepSegments := []string{}
+            representationID := rep.ID
+            if representationID == "" {
+               representationID = fmt.Sprintf("representation-fallback-%p", &rep)
+               fmt.Fprintf(os.Stderr, "Warning: Representation missing ID, using fallback: %s\n", representationID)
+            }
 
-            // Prioritize SegmentList
+            currentRepSegmentTemplate := rep.SegmentTemplate
+            if currentRepSegmentTemplate == nil {
+               currentRepSegmentTemplate = effectiveSegmentTemplate
+            }
+
             if rep.SegmentList != nil {
-               // Handle Initialization for SegmentList
                if rep.SegmentList.Initialization != nil && rep.SegmentList.Initialization.SourceURL != "" {
-                  resolvedInitURL, err := resolveURL(repBaseURL, rep.SegmentList.Initialization.SourceURL)
-                  if err != nil {
-                     fmt.Fprintf(os.Stderr, "Warning: Could not resolve SegmentList Initialization URL '%s' (Rep ID: %s): %v\n", rep.SegmentList.Initialization.SourceURL, rep.ID, err)
+                  refURL, parseErr := url.Parse(rep.SegmentList.Initialization.SourceURL)
+                  if parseErr != nil {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentList Initialization SourceURL '%s' is malformed and skipped: %v\n", representationID, rep.SegmentList.Initialization.SourceURL, parseErr)
                   } else {
-                     urls = append(urls, resolvedInitURL.String())
+                     resolvedURL := repBaseURL.ResolveReference(refURL)
+                     currentRepSegments = append(currentRepSegments, resolvedURL.String())
                   }
                }
-               // Handle SegmentURLs
-               for _, segURL := range rep.SegmentList.SegmentURLs {
-                  if segURL.Media == "" {
-                     fmt.Fprintf(os.Stderr, "Warning: SegmentList SegmentURL 'media' attribute is empty (Rep ID: %s)\n", rep.ID)
+               if len(rep.SegmentList.SegmentURLs) > 0 {
+                  for _, segURL := range rep.SegmentList.SegmentURLs {
+                     if segURL.Media != "" {
+                        refURL, parseErr := url.Parse(segURL.Media)
+                        if parseErr != nil {
+                           fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentURL media '%s' is malformed and skipped: %v\n", representationID, segURL.Media, parseErr)
+                           continue
+                        }
+                        resolvedURL := repBaseURL.ResolveReference(refURL)
+                        currentRepSegments = append(currentRepSegments, resolvedURL.String())
+                     }
+                  }
+               }
+            } else if currentRepSegmentTemplate != nil {
+               if currentRepSegmentTemplate.Initialization != "" {
+                  refURL, parseErr := url.Parse(currentRepSegmentTemplate.Initialization)
+                  if parseErr != nil {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentTemplate initialization URL '%s' is malformed and skipped: %v\n", representationID, currentRepSegmentTemplate.Initialization, parseErr)
+                  } else {
+                     resolvedURL := repBaseURL.ResolveReference(refURL)
+                     currentRepSegments = append(currentRepSegments, resolvedURL.String())
+                  }
+               }
+
+               segmentStartNumber := 1
+               if currentRepSegmentTemplate.StartNumber != "" {
+                  parsedStartNumber, err := strconv.Atoi(currentRepSegmentTemplate.StartNumber)
+                  if err != nil {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid 'startNumber' attribute '%s' in SegmentTemplate, defaulting to 1: %v\n", representationID, currentRepSegmentTemplate.StartNumber, err)
+                  } else {
+                     segmentStartNumber = parsedStartNumber
+                  }
+               }
+
+               // Get effective timescale (default to 1)
+               segTimescale := 1.0
+               if currentRepSegmentTemplate.Timescale != "" {
+                  parsedTimescale, errTimescale := strconv.ParseFloat(currentRepSegmentTemplate.Timescale, 64)
+                  if errTimescale == nil && parsedTimescale > 0 {
+                     segTimescale = parsedTimescale
+                  } else {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid or zero 'timescale' attribute '%s' in SegmentTemplate, defaulting to 1: %v\n", representationID, currentRepSegmentTemplate.Timescale, errTimescale)
+                  }
+               }
+
+               if currentRepSegmentTemplate.SegmentTimeline != nil && len(currentRepSegmentTemplate.SegmentTimeline.S) > 0 {
+                  segmentNumber := segmentStartNumber
+                  currentTime := 0
+
+                  for _, s := range currentRepSegmentTemplate.SegmentTimeline.S {
+                     if s.T != "" {
+                        tVal, err := strconv.Atoi(s.T)
+                        if err != nil {
+                           fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid 't' attribute in SegmentTimeline 'S' element '%s', continuing from last time: %v\n", representationID, s.T, err)
+                        } else {
+                           currentTime = tVal
+                        }
+                     }
+
+                     dVal, err := strconv.Atoi(s.D)
+                     if err != nil {
+                        fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid 'd' attribute in SegmentTimeline 'S' element '%s', skipping segment: %v\n", representationID, s.D, err)
+                        continue
+                     }
+
+                     rVal := 0
+                     if s.R != "" {
+                        rVal, err = strconv.Atoi(s.R)
+                        if err != nil {
+                           fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid 'r' attribute in SegmentTimeline 'S' element '%s', defaulting to 0 repeats: %v\n", representationID, s.R, err)
+                        }
+                     }
+
+                     for i := 0; i <= rVal; i++ {
+                        segmentURLTemplate := currentRepSegmentTemplate.Media
+
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$RepresentationID$", representationID)
+
+                        for x := 9; x >= 2; x-- {
+                           paddedNumPlaceholder := fmt.Sprintf("$Number%%0%dd$", x)
+                           if strings.Contains(segmentURLTemplate, paddedNumPlaceholder) {
+                              formatStr := fmt.Sprintf("%%0%dd", x)
+                              segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, paddedNumPlaceholder, fmt.Sprintf(formatStr, segmentNumber))
+                           }
+                        }
+
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Number$", fmt.Sprintf("%d", segmentNumber))
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Time$", fmt.Sprintf("%d", currentTime))
+
+                        refURL, parseErr := url.Parse(segmentURLTemplate)
+                        if parseErr != nil {
+                           fmt.Fprintf(os.Stderr, "Warning: Representation %s: Generated segment URL '%s' is malformed and skipped: %v\n", representationID, segmentURLTemplate, parseErr)
+                           continue
+                        }
+                        resolvedURL := repBaseURL.ResolveReference(refURL)
+                        currentRepSegments = append(currentRepSegments, resolvedURL.String())
+                        segmentNumber++
+                        currentTime += dVal
+                     }
+                  }
+               } else if currentRepSegmentTemplate.EndNumber != "" {
+                  endNumber, err := strconv.Atoi(currentRepSegmentTemplate.EndNumber)
+                  if err != nil {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: Invalid 'endNumber' attribute in SegmentTemplate '%s', cannot generate segments: %v\n", representationID, currentRepSegmentTemplate.EndNumber, err)
                      continue
                   }
-                  resolvedSegURL, err := resolveURL(repBaseURL, segURL.Media)
-                  if err != nil {
-                     fmt.Fprintf(os.Stderr, "Warning: Could not resolve SegmentList SegmentURL '%s' (Rep ID: %s): %v\n", segURL.Media, rep.ID, err)
-                  } else {
-                     urls = append(urls, resolvedSegURL.String())
-                  }
-               }
-            } else if rep.SegmentTemplate != nil || inheritedSegmentTemplate != nil {
-               var currentST *SegmentTemplate
-               if rep.SegmentTemplate != nil {
-                  currentST = rep.SegmentTemplate
-               } else { // Use inherited
-                  currentST = inheritedSegmentTemplate
-               }
 
-               if currentST.Media == "" {
-                  fmt.Fprintf(os.Stderr, "Warning: SegmentTemplate 'media' attribute is empty for Representation ID: %s. No segments can be extracted.\n", rep.ID)
-                  outputURLs[rep.ID] = urls
-                  continue
-               }
-
-               // Handle Initialization for SegmentTemplate
-               if currentST.Initialization != "" {
-                  initTemplate := currentST.Initialization
-                  initTemplate = strings.ReplaceAll(initTemplate, "$RepresentationID$", rep.ID)
-                  initTemplate = strings.ReplaceAll(initTemplate, "$Bandwidth$", strconv.FormatUint(rep.Bandwidth, 10))
-
-                  resolvedInitURL, err := resolveURL(repBaseURL, initTemplate)
-                  if err != nil {
-                     fmt.Fprintf(os.Stderr, "Warning: Could not resolve SegmentTemplate Initialization URL '%s' (Rep ID: %s): %v\n", initTemplate, rep.ID, err)
-                  } else {
-                     urls = append(urls, resolvedInitURL.String())
-                  }
-               }
-
-               // Handle Segment URLs based on SegmentTemplate
-               mediaTemplate := currentST.Media
-               mediaTemplate = strings.ReplaceAll(mediaTemplate, "$RepresentationID$", rep.ID)
-               mediaTemplate = strings.ReplaceAll(mediaTemplate, "$Bandwidth$", strconv.FormatUint(rep.Bandwidth, 10))
-
-               if currentST.SegmentTimeline != nil {
-                  time := uint64(0)
-                  if currentST.StartNumber != 0 {
-                     time = currentST.StartNumber * currentST.Timescale // Use startNumber if present for initial time
-                  }
-                  currentSegmentNumber := currentST.StartNumber
-                  if currentSegmentNumber == 0 {
-                     currentSegmentNumber = 1 // Default startNumber is 1 if not specified
+                  if strings.Contains(currentRepSegmentTemplate.Media, "$Time$") {
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentTemplate media contains '$Time$' placeholder but no SegmentTimeline is present. Time cannot be precisely resolved and will be replaced with '0'.\n", representationID)
                   }
 
-                  for idx, s := range currentST.SegmentTimeline.Ss {
-                     // If 't' attribute is present, it explicitly sets the start time
-                     if s.T != nil {
-                        time = uint64(*s.T)
-                     }
+                  for i := segmentStartNumber; i <= endNumber; i++ {
+                     segmentURLTemplate := currentRepSegmentTemplate.Media
 
-                     numSegments := s.R + 1 // r="0" means 1 segment, r="1" means 2 segments, etc.
-                     for i := 0; i < numSegments; i++ {
-                        segmentURLStr := strings.ReplaceAll(mediaTemplate, "$Time$", strconv.FormatUint(time, 10))
-                        segmentURLStr = strings.ReplaceAll(segmentURLStr, "$Number$", strconv.FormatUint(currentSegmentNumber, 10))
+                     segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$RepresentationID$", representationID)
 
-                        resolvedSegURL, err := resolveURL(repBaseURL, segmentURLStr)
-                        if err != nil {
-                           fmt.Fprintf(os.Stderr, "Warning: Could not resolve SegmentTemplate Segment URL '%s' (Rep ID: %s, SegmentTimeline S index: %d, repeat: %d): %v\n", segmentURLStr, rep.ID, idx, i, err)
-                        } else {
-                           urls = append(urls, resolvedSegURL.String())
+                     for x := 9; x >= 2; x-- {
+                        paddedNumPlaceholder := fmt.Sprintf("$Number%%0%dd$", x)
+                        if strings.Contains(segmentURLTemplate, paddedNumPlaceholder) {
+                           formatStr := fmt.Sprintf("%%0%dd", x)
+                           segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, paddedNumPlaceholder, fmt.Sprintf(formatStr, i))
                         }
-                        time += s.D
-                        currentSegmentNumber++
                      }
-                  }
-               } else if currentST.EndNumber != 0 {
-                  startNumber := currentST.StartNumber
-                  if startNumber == 0 {
-                     startNumber = 1 // Default startNumber is 1 if not specified
-                  }
-                  for i := startNumber; i <= currentST.EndNumber; i++ {
-                     segmentURLStr := strings.ReplaceAll(mediaTemplate, "$Number$", strconv.FormatUint(i, 10))
-                     if strings.Contains(segmentURLStr, "$Time$") {
-                        fmt.Fprintf(os.Stderr, "Warning: $Time$ placeholder found in SegmentTemplate media without SegmentTimeline (Rep ID: %s). May not be resolved correctly.\n", rep.ID)
+
+                     segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Number$", fmt.Sprintf("%d", i))
+                     segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Time$", "0")
+
+                     refURL, parseErr := url.Parse(segmentURLTemplate)
+                     if parseErr != nil {
+                        fmt.Fprintf(os.Stderr, "Warning: Representation %s: Generated segment URL '%s' is malformed and skipped: %v\n", representationID, segmentURLTemplate, parseErr)
+                        continue
                      }
-                     resolvedSegURL, err := resolveURL(repBaseURL, segmentURLStr)
-                     if err != nil {
-                        fmt.Fprintf(os.Stderr, "Warning: Could not resolve SegmentTemplate Segment URL '%s' (Rep ID: %s, Segment Number: %d): %v\n", segmentURLStr, rep.ID, i, err)
-                     } else {
-                        urls = append(urls, resolvedSegURL.String())
-                     }
+                     resolvedURL := repBaseURL.ResolveReference(refURL)
+                     currentRepSegments = append(currentRepSegments, resolvedURL.String())
                   }
-               } else if currentST.Duration != 0 && currentST.Timescale != 0 {
-                  fmt.Fprintf(os.Stderr, "Warning: SegmentTemplate has @duration and @timescale but no SegmentTimeline or @endNumber for Representation ID: %s. Cannot resolve all segments. Raw Media template: %s\n", rep.ID, mediaTemplate)
-                  // Output the raw media template as per requirement if segments cannot be fully resolved
-                  resolvedSegURL, err := resolveURL(repBaseURL, mediaTemplate)
-                  if err != nil {
-                     fmt.Fprintf(os.Stderr, "Warning: Could not resolve raw media template '%s' (Rep ID: %s): %v\n", mediaTemplate, rep.ID, err)
+               } else if currentRepSegmentTemplate.Duration != "" {
+                  segDuration, errDuration := strconv.ParseFloat(currentRepSegmentTemplate.Duration, 64)
+
+                  // segTimescale is already determined above (default to 1 or parsed value)
+
+                  if errDuration == nil && segDuration > 0 && periodDurationSeconds > 0 {
+                     segmentDurationInSeconds := segDuration / segTimescale
+                     count := int(math.Ceil(periodDurationSeconds / segmentDurationInSeconds))
+
+                     if strings.Contains(currentRepSegmentTemplate.Media, "$Time$") {
+                        fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentTemplate media contains '$Time$' placeholder, but no SegmentTimeline. Time will be replaced with '0' for calculated segments.\n", representationID)
+                     }
+
+                     for i := 0; i < count; i++ {
+                        segmentURLTemplate := currentRepSegmentTemplate.Media
+
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$RepresentationID$", representationID)
+
+                        for x := 9; x >= 2; x-- {
+                           paddedNumPlaceholder := fmt.Sprintf("$Number%%0%dd$", x)
+                           if strings.Contains(segmentURLTemplate, paddedNumPlaceholder) {
+                              formatStr := fmt.Sprintf("%%0%dd", x)
+                              segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, paddedNumPlaceholder, fmt.Sprintf(formatStr, segmentStartNumber+i))
+                           }
+                        }
+
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Number$", fmt.Sprintf("%d", segmentStartNumber+i))
+                        segmentURLTemplate = strings.ReplaceAll(segmentURLTemplate, "$Time$", "0")
+
+                        refURL, parseErr := url.Parse(segmentURLTemplate)
+                        if parseErr != nil {
+                           fmt.Fprintf(os.Stderr, "Warning: Representation %s: Generated segment URL '%s' is malformed and skipped: %v\n", representationID, segmentURLTemplate, parseErr)
+                           continue
+                        }
+                        resolvedURL := repBaseURL.ResolveReference(refURL)
+                        currentRepSegments = append(currentRepSegments, resolvedURL.String())
+                     }
                   } else {
-                     urls = append(urls, resolvedSegURL.String())
+                     fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentTemplate has 'duration'='%s' or 'timescale'='%s', but period duration (%.2f s) or segment parameters are invalid for calculating segment count. Outputting raw Media template: %s\n", representationID, currentRepSegmentTemplate.Duration, currentRepSegmentTemplate.Timescale, periodDurationSeconds, currentRepSegmentTemplate.Media)
                   }
                } else {
-                  fmt.Fprintf(os.Stderr, "Warning: Insufficient SegmentTemplate attributes (no SegmentTimeline, @endNumber, @duration/@timescale) for Representation ID: %s. No segments can be extracted. Raw Media template: %s\n", rep.ID, mediaTemplate)
-                  // Output the raw media template as per requirement if segments cannot be fully extracted
-                  resolvedSegURL, err := resolveURL(repBaseURL, mediaTemplate)
-                  if err != nil {
-                     fmt.Fprintf(os.Stderr, "Warning: Could not resolve raw media template '%s' (Rep ID: %s): %v\n", mediaTemplate, rep.ID, err)
-                  } else {
-                     urls = append(urls, resolvedSegURL.String())
-                  }
+                  fmt.Fprintf(os.Stderr, "Warning: Representation %s: SegmentTemplate has insufficient attributes ('endNumber', 'SegmentTimeline', 'duration' or 'timescale' missing) to extract segments. Outputting raw Media template: %s\n", representationID, currentRepSegmentTemplate.Media)
                }
             } else {
-               // Case: Representation has neither SegmentList nor SegmentTemplate
-               // Emit the absolute URL derived from its effective BaseURL
-               if repBaseURL != nil {
-                  fmt.Fprintf(os.Stderr, "Warning: Representation ID: %s has neither SegmentList nor SegmentTemplate. Emitting effective BaseURL as the playable URL.\n", rep.ID)
-                  urls = append(urls, repBaseURL.String())
+               if repBaseURL.String() != "" && repBaseURL.String() != initialBaseURL.String() {
+                  currentRepSegments = append(currentRepSegments, repBaseURL.String())
                } else {
-                  fmt.Fprintf(os.Stderr, "Warning: Representation ID: %s has neither SegmentList nor SegmentTemplate, and no effective BaseURL to derive a playable URL.\n", rep.ID)
+                  fmt.Fprintf(os.Stderr, "Warning: Representation %s: No SegmentList, SegmentTemplate, or meaningful effective BaseURL found to derive playable URLs.\n", representationID)
                }
             }
-            outputURLs[rep.ID] = urls
+            allSegments[representationID] = append(allSegments[representationID], currentRepSegments...)
          }
       }
    }
 
-   jsonOutput, err := json.MarshalIndent(outputURLs, "", "  ")
+   jsonOutput, err := json.MarshalIndent(allSegments, "", "  ")
    if err != nil {
-      fmt.Fprintf(os.Stderr, "Error marshalling JSON output: %v\n", err)
+      fmt.Fprintf(os.Stderr, "Error marshaling JSON output: %v\n", err)
       os.Exit(1)
    }
-
-   fmt.Fprintln(os.Stdout, string(jsonOutput))
+   fmt.Println(string(jsonOutput))
 }
