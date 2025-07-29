@@ -4,40 +4,35 @@ provide markdown prompt I can give you in the future to return this script
 
 https://chatgpt.com
 
-two file pass
+three file pass
 
-Please provide a full Go script that:
+Please provide the full Go script that:
 
 - Parses a local MPEG-DASH MPD file from a path passed as a CLI argument: `go run main.go <mpd_file_path>`
-- Uses a starting base URL: `http://test.test/test.mpd`
-- Correctly resolves `<BaseURL>` elements hierarchically in this order: MPD → Period → AdaptationSet → Representation
-- Supports `<SegmentTemplate>` on both `Representation` and `AdaptationSet` with proper inheritance
+- Uses base URL: `http://test.test/test.mpd`
+- Resolves `<BaseURL>` elements hierarchically: MPD → Period → AdaptationSet → Representation
+- Supports `<SegmentTemplate>` on both AdaptationSet and Representation, with inheritance
 - Handles:
-  - `$Number$` templates including `startNumber` and a custom `endNumber` attribute
-  - `$Time$` templates with `<SegmentTimeline>` (including support for `@r` repetitions)
-  - `<SegmentList>` and `<Initialization>` elements
-  - Representations that only have a `<BaseURL>`
-- Outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs, with the initialization segment first if present
-- The JSON format should be: `{"rep_id": ["init_url", "seg1", "seg2", ...]}`
+  - `$RepresentationID$`, `$Number$`, `$Time$` substitutions
+  - `startNumber` and `endNumber`
+  - `$Time$` using `<SegmentTimeline>` and `@r` repetitions
+  - If both `SegmentTimeline` and `endNumber` are missing, and `duration` + `timescale` are present, calculate number of segments as:
+    `ceil(PeriodDurationInSeconds * timescale / duration)`
+  - Defaults `timescale` to `1` if omitted
+- Supports `<SegmentList>` and `<Initialization>` elements
+- Falls back to `<BaseURL>` segments if nothing else exists
+- Appends segments for the same `Representation@id` if it appears in multiple `<Period>` elements
+- Outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs, with the initialization segment first if present:
+  `{ "rep_id": ["init_url", "seg1", "seg2", ...] }`
 
 ---------------------------------------------------------------------------------
 
 ### Segment Extraction
 - Support **SegmentList** with direct `<SegmentURL>` elements
-- Support **SegmentTemplate** with template variable substitution:
-  - `$RepresentationID$` → Representation ID
-  - `$Number$` → Segment number (respects `startNumber` and `endNumber`)
-  - `$Time$` → Segment timestamp (accumulates across `<S>` elements in SegmentTimeline)
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
 - Include initialization URLs when present (grouped with segment URLs as first item)
 - Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
-### Segment Aggregation
-- Append segments for the same `Representation ID` if it appears in multiple `Periods`
-
-### Calculated Count
-- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present in `SegmentTemplate`, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
-- `SegmentTemplate@timescale` should default to `1` if missing
 
 ### XML Structure Handling
 - Properly handle nested `<Initialization sourceURL="..."/>` elements in SegmentList

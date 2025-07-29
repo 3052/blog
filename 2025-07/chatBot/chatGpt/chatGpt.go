@@ -4,28 +4,37 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
-   "io/ioutil"
+   "io"
+   "math"
    "net/url"
    "os"
+   "path/filepath"
+   "regexp"
    "strconv"
    "strings"
+   "time"
 )
 
-const baseURL = "http://test.test/test.mpd"
+func fatal(err error) {
+   fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)
+   os.Exit(1)
+}
 
 type MPD struct {
-   XMLName xml.Name `xml:"MPD"`
-   BaseURL *string  `xml:"BaseURL"`
-   Periods []Period `xml:"Period"`
+   XMLName                   xml.Name `xml:"MPD"`
+   BaseURL                   string   `xml:"BaseURL"`
+   MediaPresentationDuration string   `xml:"mediaPresentationDuration,attr"`
+   Periods                   []Period `xml:"Period"`
 }
 
 type Period struct {
-   BaseURL        *string         `xml:"BaseURL"`
-   AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
+   BaseURL       string          `xml:"BaseURL"`
+   Duration      string          `xml:"duration,attr"`
+   AdaptationSet []AdaptationSet `xml:"AdaptationSet"`
 }
 
 type AdaptationSet struct {
-   BaseURL         *string          `xml:"BaseURL"`
+   BaseURL         string           `xml:"BaseURL"`
    SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
    SegmentList     *SegmentList     `xml:"SegmentList"`
    Representations []Representation `xml:"Representation"`
@@ -33,7 +42,7 @@ type AdaptationSet struct {
 
 type Representation struct {
    ID              string           `xml:"id,attr"`
-   BaseURL         *string          `xml:"BaseURL"`
+   BaseURL         string           `xml:"BaseURL"`
    SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
    SegmentList     *SegmentList     `xml:"SegmentList"`
 }
@@ -41,11 +50,11 @@ type Representation struct {
 type SegmentTemplate struct {
    Media           string           `xml:"media,attr"`
    Initialization  string           `xml:"initialization,attr"`
-   StartNumber     int              `xml:"startNumber,attr"`
-   Duration        int              `xml:"duration,attr"`
-   Timescale       int              `xml:"timescale,attr"`
+   Timescale       uint64           `xml:"timescale,attr"`
+   StartNumber     uint64           `xml:"startNumber,attr"`
+   EndNumber       *uint64          `xml:"endNumber,attr"`
+   Duration        uint64           `xml:"duration,attr"`
    SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
-   EndNumber       int              `xml:"endNumber,attr"` // custom extension
 }
 
 type SegmentTimeline struct {
@@ -53,188 +62,314 @@ type SegmentTimeline struct {
 }
 
 type S struct {
-   T int64 `xml:"t,attr"`
-   D int64 `xml:"d,attr"`
-   R int   `xml:"r,attr"`
+   T *uint64 `xml:"t,attr"`
+   D uint64  `xml:"d,attr"`
+   R *int64  `xml:"r,attr"`
 }
 
 type SegmentList struct {
-   Initialization *URL  `xml:"Initialization"`
-   SegmentURLs    []URL `xml:"SegmentURL"`
+   Initialization *Initialization `xml:"Initialization"`
+   SegmentURL     []SegmentURL    `xml:"SegmentURL"`
 }
 
-type URL struct {
+type Initialization struct {
+   SourceURL string `xml:"sourceURL,attr"`
+}
+
+type SegmentURL struct {
    Media string `xml:"media,attr"`
 }
 
-// resolveHierarchicalBaseURL resolves the BaseURLs from MPD -> Period -> AdaptationSet -> Representation properly.
-func resolveHierarchicalBaseURL(mpd *MPD, period *Period, as *AdaptationSet, rep *Representation) string {
-   u, err := url.Parse(baseURL)
+func joinBaseURLs(baseURLs ...string) string {
+   u, err := url.Parse(baseURLs[0])
    if err != nil {
-      panic("invalid baseURL constant")
+      return baseURLs[0]
    }
-
-   if mpd.BaseURL != nil {
-      u = u.ResolveReference(urlMustParse(*mpd.BaseURL))
+   for _, bu := range baseURLs[1:] {
+      if bu == "" {
+         continue
+      }
+      ref, err := url.Parse(bu)
+      if err != nil {
+         continue
+      }
+      u = u.ResolveReference(ref)
    }
-   if period.BaseURL != nil {
-      u = u.ResolveReference(urlMustParse(*period.BaseURL))
-   }
-   if as.BaseURL != nil {
-      u = u.ResolveReference(urlMustParse(*as.BaseURL))
-   }
-   if rep.BaseURL != nil {
-      u = u.ResolveReference(urlMustParse(*rep.BaseURL))
-   }
-
    return u.String()
 }
 
-func urlMustParse(s string) *url.URL {
-   u, err := url.Parse(s)
+func resolveURL(base, ref string) (string, error) {
+   baseURL, err := url.Parse(base)
    if err != nil {
-      panic(fmt.Sprintf("Invalid URL: %s", s))
+      return "", err
    }
-   return u
+   refURL, err := url.Parse(ref)
+   if err != nil {
+      return "", err
+   }
+   return baseURL.ResolveReference(refURL).String(), nil
 }
 
-func buildSegmentURLs(rep Representation, as AdaptationSet, period Period, mpd MPD) []string {
-   base := resolveHierarchicalBaseURL(&mpd, &period, &as, &rep)
+var reNumber = regexp.MustCompile(`\$Number(%0(\d+)d)?\$`)
+var reTime = regexp.MustCompile(`\$Time(%0(\d+)d)?\$`)
+
+func substituteTemplate(template string, number uint64, timestamp uint64, repID string) string {
+   s := reNumber.ReplaceAllStringFunc(template, func(m string) string {
+      sub := reNumber.FindStringSubmatch(m)
+      if sub[2] != "" {
+         width, _ := strconv.Atoi(sub[2])
+         return fmt.Sprintf("%0*d", width, number)
+      }
+      return fmt.Sprintf("%d", number)
+   })
+   s = reTime.ReplaceAllStringFunc(s, func(m string) string {
+      sub := reTime.FindStringSubmatch(m)
+      if sub[2] != "" {
+         width, _ := strconv.Atoi(sub[2])
+         return fmt.Sprintf("%0*d", width, timestamp)
+      }
+      return fmt.Sprintf("%d", timestamp)
+   })
+   s = strings.ReplaceAll(s, "$RepresentationID$", repID)
+   return s
+}
+
+func segmentTemplateInitializationURL(baseURL string, st *SegmentTemplate, repID string) (string, error) {
+   if st.Initialization == "" {
+      return "", nil
+   }
+   initURL := substituteTemplate(st.Initialization, st.StartNumber, 0, repID)
+   return resolveURL(baseURL, initURL)
+}
+
+func segmentTemplateURLs(baseURL string, st *SegmentTemplate, repID string, periodDurationSec float64) ([]string, error) {
+   media := st.Media
+   if media == "" {
+      return nil, fmt.Errorf("SegmentTemplate missing media")
+   }
+   startNumber := st.StartNumber
+   if startNumber == 0 {
+      startNumber = 1
+   }
+   endNumber := uint64(0)
+   if st.EndNumber != nil {
+      endNumber = *st.EndNumber
+   }
+
    var urls []string
 
-   // SegmentList takes precedence over SegmentTemplate
-   if rep.SegmentList != nil {
-      if rep.SegmentList.Initialization != nil {
-         urls = append(urls, baseURLJoin(base, rep.SegmentList.Initialization.Media))
-      }
-      for _, s := range rep.SegmentList.SegmentURLs {
-         urls = append(urls, baseURLJoin(base, s.Media))
-      }
-      return urls
-   } else if as.SegmentList != nil {
-      if as.SegmentList.Initialization != nil {
-         urls = append(urls, baseURLJoin(base, as.SegmentList.Initialization.Media))
-      }
-      for _, s := range as.SegmentList.SegmentURLs {
-         urls = append(urls, baseURLJoin(base, s.Media))
-      }
-      return urls
-   }
-
-   // SegmentTemplate fallback (Representation > AdaptationSet)
-   st := rep.SegmentTemplate
-   if st == nil {
-      st = as.SegmentTemplate
-   }
-
-   if st == nil {
-      // fallback to base URL only, if no segment info available
-      return []string{base}
-   }
-
-   // Initialization segment
-   if st.Initialization != "" {
-      initURL := strings.ReplaceAll(st.Initialization, "$RepresentationID$", rep.ID)
-      urls = append(urls, baseURLJoin(base, initURL))
-   }
-
-   // $Number$ template
-   if strings.Contains(st.Media, "$Number$") {
-      start := st.StartNumber
-      if start == 0 {
-         start = 1
-      }
-      end := st.EndNumber
-      if end == 0 {
-         // If no endNumber given, fallback to 5 segments max
-         end = start + 4
-      }
-      for i := start; i <= end; i++ {
-         segURL := strings.ReplaceAll(st.Media, "$Number$", strconv.Itoa(i))
-         segURL = strings.ReplaceAll(segURL, "$RepresentationID$", rep.ID)
-         urls = append(urls, baseURLJoin(base, segURL))
-      }
-      return urls
-   }
-
-   // $Time$ template with SegmentTimeline
-   if strings.Contains(st.Media, "$Time$") && st.SegmentTimeline != nil {
-      time := int64(0)
-      for _, s := range st.SegmentTimeline.S {
-         repeat := 0
-         if s.R > 0 {
-            repeat = s.R
+   if st.SegmentTimeline != nil && len(st.SegmentTimeline.S) > 0 {
+      number := startNumber
+      var timestamps []uint64
+      for i, s := range st.SegmentTimeline.S {
+         var t uint64
+         if s.T != nil {
+            t = *s.T
+         } else if i == 0 {
+            t = 0
+         } else {
+            t = timestamps[len(timestamps)-1] + st.SegmentTimeline.S[i-1].D
          }
-         if s.T != 0 {
-            time = s.T
+         repeat := int64(0)
+         if s.R != nil {
+            repeat = *s.R
          }
-         for i := 0; i <= repeat; i++ {
-            segURL := strings.ReplaceAll(st.Media, "$Time$", fmt.Sprintf("%d", time))
-            segURL = strings.ReplaceAll(segURL, "$RepresentationID$", rep.ID)
-            urls = append(urls, baseURLJoin(base, segURL))
-            time += s.D
+         for j := int64(0); j <= repeat; j++ {
+            ts := t + uint64(j)*s.D
+            url := substituteTemplate(media, number, ts, repID)
+            full, err := resolveURL(baseURL, url)
+            if err != nil {
+               return nil, err
+            }
+            timestamps = append(timestamps, ts)
+            urls = append(urls, full)
+            number++
          }
       }
-      return urls
+      return urls, nil
    }
 
-   // If media attribute exists but no recognized template, just append it
-   if st.Media != "" {
-      segURL := strings.ReplaceAll(st.Media, "$RepresentationID$", rep.ID)
-      urls = append(urls, baseURLJoin(base, segURL))
-      return urls
+   if strings.Contains(media, "$Number") {
+
+      timescale := st.Timescale
+      if timescale == 0 {
+         timescale = 1
+      }
+      if st.Duration != 0 && periodDurationSec > 0 {
+         segCount := uint64(math.Ceil(periodDurationSec * float64(timescale) / float64(st.Duration)))
+         endNumber = startNumber + segCount - 1
+      }
+
+      for i := startNumber; i <= endNumber; i++ {
+         url := substituteTemplate(media, i, 0, repID)
+         full, err := resolveURL(baseURL, url)
+         if err != nil {
+            return nil, err
+         }
+         urls = append(urls, full)
+      }
+      return urls, nil
    }
 
-   // fallback: just return base URL
-   return []string{base}
+   full, err := resolveURL(baseURL, media)
+   if err != nil {
+      return nil, err
+   }
+   return []string{full}, nil
 }
 
-func baseURLJoin(base, ref string) string {
-   u, err := url.Parse(base)
-   if err != nil {
-      return ""
+func segmentListInitializationURL(baseURL string, sl *SegmentList) (string, error) {
+   if sl == nil || sl.Initialization == nil {
+      return "", nil
    }
-   r, err := url.Parse(ref)
-   if err != nil {
-      return ""
+   return resolveURL(baseURL, sl.Initialization.SourceURL)
+}
+
+func parseISODuration(s string) (time.Duration, error) {
+   if !strings.HasPrefix(s, "PT") {
+      return 0, fmt.Errorf("unsupported duration format: %s", s)
    }
-   return u.ResolveReference(r).String()
+   s = strings.TrimPrefix(s, "PT")
+   var dur time.Duration
+   var num float64
+   for len(s) > 0 {
+      for i, r := range s {
+         if r < '0' || r > '9' {
+            if r == '.' {
+               continue
+            }
+            numPart := s[:i+1]
+            var unit rune
+            fmt.Sscanf(numPart, "%f%c", &num, &unit)
+            switch unit {
+            case 'H':
+               dur += time.Duration(num * float64(time.Hour))
+            case 'M':
+               dur += time.Duration(num * float64(time.Minute))
+            case 'S':
+               dur += time.Duration(num * float64(time.Second))
+            default:
+               return 0, fmt.Errorf("unsupported time unit: %c", unit)
+            }
+            s = s[i+1:]
+            break
+         }
+      }
+   }
+   return dur, nil
+}
+
+func segmentsForRepresentation(mpdBase, periodBase, asetBase, repBase string, aset *AdaptationSet, rep *Representation, periodDurationSec float64) ([]string, error) {
+   baseURL := joinBaseURLs(mpdBase, periodBase, asetBase, repBase)
+   repID := rep.ID
+
+   var st *SegmentTemplate
+   if rep.SegmentTemplate != nil {
+      st = rep.SegmentTemplate
+   } else {
+      st = aset.SegmentTemplate
+   }
+
+   var sl *SegmentList
+   if rep.SegmentList != nil {
+      sl = rep.SegmentList
+   } else {
+      sl = aset.SegmentList
+   }
+
+   var urls []string
+
+   if st != nil {
+      initURL, err := segmentTemplateInitializationURL(baseURL, st, repID)
+      if err != nil {
+         return nil, err
+      }
+      if initURL != "" {
+         urls = append(urls, initURL)
+      }
+      segURLs, err := segmentTemplateURLs(baseURL, st, repID, periodDurationSec)
+      if err != nil {
+         return nil, err
+      }
+      urls = append(urls, segURLs...)
+   } else if sl != nil {
+      initURL, err := segmentListInitializationURL(baseURL, sl)
+      if err != nil {
+         return nil, err
+      }
+      if initURL != "" {
+         urls = append(urls, initURL)
+      }
+      for _, seg := range sl.SegmentURL {
+         full, err := resolveURL(baseURL, seg.Media)
+         if err != nil {
+            return nil, err
+         }
+         urls = append(urls, full)
+      }
+   } else if rep.BaseURL != "" {
+      full, err := resolveURL(joinBaseURLs(mpdBase, periodBase, asetBase), rep.BaseURL)
+      if err != nil {
+         return nil, err
+      }
+      urls = append(urls, full)
+   }
+
+   return urls, nil
 }
 
 func main() {
-   if len(os.Args) != 2 {
-      fmt.Println("Usage: go run main.go <mpd_file_path>")
-      return
+   if len(os.Args) < 2 {
+      fmt.Fprintf(os.Stderr, "Usage: %s <mpd_file_path>\n", filepath.Base(os.Args[0]))
+      os.Exit(1)
    }
 
-   filePath := os.Args[1]
-   data, err := ioutil.ReadFile(filePath)
+   f, err := os.Open(os.Args[1])
    if err != nil {
-      fmt.Println("Error reading MPD file:", err)
-      return
+      fatal(err)
+   }
+   defer f.Close()
+
+   data, err := io.ReadAll(f)
+   if err != nil {
+      fatal(err)
    }
 
    var mpd MPD
    if err := xml.Unmarshal(data, &mpd); err != nil {
-      fmt.Println("Error parsing MPD:", err)
-      return
+      fatal(err)
    }
 
-   result := make(map[string][]string)
+   const mpdBase = "http://test.test/test.mpd"
+   out := map[string][]string{}
 
    for _, period := range mpd.Periods {
-      for _, as := range period.AdaptationSets {
-         for _, rep := range as.Representations {
-            urls := buildSegmentURLs(rep, as, period, mpd)
-            result[rep.ID] = urls
+      periodDur := 0.0
+      if d, err := parseISODuration(period.Duration); err == nil {
+         periodDur = d.Seconds()
+      } else if d, err := parseISODuration(mpd.MediaPresentationDuration); err == nil {
+         periodDur = d.Seconds()
+      }
+      for _, aset := range period.AdaptationSet {
+         for _, rep := range aset.Representations {
+            if rep.ID == "" {
+               continue
+            }
+            segments, err := segmentsForRepresentation(
+               mpdBase, period.BaseURL, aset.BaseURL, rep.BaseURL,
+               &aset, &rep, periodDur,
+            )
+            if err != nil {
+               fatal(fmt.Errorf("representation %s: %w", rep.ID, err))
+            }
+            out[rep.ID] = append(out[rep.ID], segments...)
          }
       }
    }
 
-   output, err := json.MarshalIndent(result, "", "  ")
+   b, err := json.MarshalIndent(out, "", "  ")
    if err != nil {
-      fmt.Println("Error encoding JSON:", err)
-      return
+      fatal(err)
    }
-   fmt.Println(string(output))
+   fmt.Println(string(b))
 }
