@@ -6,7 +6,8 @@ https://gemini.google.com
 
 two file pass
 
-Please provide a complete, self-contained Go script in a single `main.go` file that performs the following actions:
+Please provide a complete, self-contained Go script in a single `main.go` file
+that performs the following actions:
 
 ## 📜 Script Requirements
 
