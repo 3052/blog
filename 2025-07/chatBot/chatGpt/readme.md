@@ -4,22 +4,21 @@ provide markdown prompt I can give you in the future to return this script
 
 https://chatgpt.com
 
-one file pass
+two file pass
 
-Please provide the full Go script that:
+Please provide a full Go script that:
 
 - Parses a local MPEG-DASH MPD file from a path passed as a CLI argument: `go run main.go <mpd_file_path>`
 - Uses a starting base URL: `http://test.test/test.mpd`
-- Resolves `BaseURL` hierarchically: MPD → Period → AdaptationSet → Representation
-- Supports `<SegmentTemplate>` on both `Representation` and `AdaptationSet` (with proper inheritance)
+- Correctly resolves `<BaseURL>` elements hierarchically in this order: MPD → Period → AdaptationSet → Representation
+- Supports `<SegmentTemplate>` on both `Representation` and `AdaptationSet` with proper inheritance
 - Handles:
-  - `$Number$` templates with `startNumber` and **custom `endNumber`**
-  - `$Time$` templates with `<SegmentTimeline>` (`1 + @r` segment repetition)
-  - `<SegmentList>` and `<Initialization>`
-  - `BaseURL`-only representations
-- Outputs a JSON object mapping `Representation@id` to a list of resolved segment URLs
-  - Initialization segment (if present) should be first in the list
-  - Format: `{"rep_id": ["init_url", "seg1", "seg2", ...]}`
+  - `$Number$` templates including `startNumber` and a custom `endNumber` attribute
+  - `$Time$` templates with `<SegmentTimeline>` (including support for `@r` repetitions)
+  - `<SegmentList>` and `<Initialization>` elements
+  - Representations that only have a `<BaseURL>`
+- Outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs, with the initialization segment first if present
+- The JSON format should be: `{"rep_id": ["init_url", "seg1", "seg2", ...]}`
 
 ---------------------------------------------------------------------------------
 
