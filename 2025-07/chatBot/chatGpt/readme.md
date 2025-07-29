@@ -4,27 +4,22 @@ provide markdown prompt I can give you in the future to return this script
 
 https://chatgpt.com
 
----------------------------------------------------------------------------------
+one file pass
 
-Please provide a complete GoLang script that parses MPEG-DASH MPD files and
-extracts segment URLs with the following specifications:
+Please provide the full Go script that:
 
-## Requirements
-
-### Input Assumptions
-- Input is always a local file path (no network requests)
-- Command line usage: `go run main.go <mpd_file_path>`
-
-### BaseURL Resolution
-- Resolve `BaseURL` elements hierarchically: MPD → Period → Representation
-- Use starting base URL: `http://test.test/test.mpd`
-- Handle both absolute and relative URLs properly
-
-### Output Format
-- JSON object mapping Representation IDs to arrays of resolved segment URLs
-- Initialization URL (if exists) should be first item in the array
-- Format: `{"representation_id": ["init_url", "segment1_url", "segment2_url", ...]}`
-- For BaseURL-only representations: `{"representation_id": ["single_segment_url"]}`
+- Parses a local MPEG-DASH MPD file from a path passed as a CLI argument: `go run main.go <mpd_file_path>`
+- Uses a starting base URL: `http://test.test/test.mpd`
+- Resolves `BaseURL` hierarchically: MPD → Period → AdaptationSet → Representation
+- Supports `<SegmentTemplate>` on both `Representation` and `AdaptationSet` (with proper inheritance)
+- Handles:
+  - `$Number$` templates with `startNumber` and **custom `endNumber`**
+  - `$Time$` templates with `<SegmentTimeline>` (`1 + @r` segment repetition)
+  - `<SegmentList>` and `<Initialization>`
+  - `BaseURL`-only representations
+- Outputs a JSON object mapping `Representation@id` to a list of resolved segment URLs
+  - Initialization segment (if present) should be first in the list
+  - Format: `{"rep_id": ["init_url", "seg1", "seg2", ...]}`
 
 ---------------------------------------------------------------------------------
 
@@ -35,7 +30,6 @@ extracts segment URLs with the following specifications:
   - `$Number$` → Segment number (respects `startNumber` and `endNumber`)
   - `$Time$` → Segment timestamp (accumulates across `<S>` elements in SegmentTimeline)
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
-- Respect `endNumber` attribute to limit segment generation
 - Include initialization URLs when present (grouped with segment URLs as first item)
 - Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
