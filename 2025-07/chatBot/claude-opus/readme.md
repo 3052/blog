@@ -4,6 +4,8 @@ provide markdown prompt I can give you in the future to return this script
 
 https://claude.ai
 
+one file pass
+
 Please provide a complete GoLang script that parses MPEG-DASH MPD files and
 extracts segment URLs with the following specifications:
 
@@ -19,12 +21,31 @@ extracts segment URLs with the following specifications:
 - Format: `{"representation_id": ["init_url", "segment1_url", "segment2_url", ...]}`
 - For BaseURL-only representations: `{"representation_id": ["single_segment_url"]}`
 
----
-
 ### BaseURL Resolution
 - Resolve `BaseURL` elements hierarchically: MPD → Period → AdaptationSet → Representation
 - Use starting base URL: `http://test.test/test.mpd`
 - Handle both absolute and relative URLs properly
+
+### SegmentTemplate Support
+- Support `$RepresentationID$`, `$Number$`, and `$Time$` variable substitution
+- Handle padding formats (e.g., `$Number%05d$`, `$Time%09d$`)
+- Support both SegmentTimeline and duration-based templates
+- Respect `startNumber` and `endNumber` attributes
+- For SegmentTimeline: `$Time$` value should persist and accumulate across S elements
+
+### Additional Features
+- Support SegmentList with Initialization elements
+- Handle representations with only BaseURL (no segments)
+- Proper error handling for file reading and XML parsing
+- Clean, indented JSON output
+
+## Important Implementation Details
+- When processing SegmentTimeline, time values should accumulate across S elements unless explicitly reset by a new `t` attribute
+- The `endNumber` attribute should limit segment generation in both timeline and duration-based templates
+- For duration-based templates without explicit end, generate 10 segments as example
+- All URL resolution should handle relative paths, absolute paths, and full URLs correctly
+
+---
 
 ### Segment Extraction
 - Support **SegmentList** with direct `<SegmentURL>` elements
@@ -33,7 +54,6 @@ extracts segment URLs with the following specifications:
   - `$Number$` → Segment number (respects `startNumber` and `endNumber`)
   - `$Time$` → Segment timestamp (accumulates across `<S>` elements in SegmentTimeline)
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
-- Respect `endNumber` attribute to limit segment generation
 - Include initialization URLs when present (grouped with segment URLs as first item)
 - Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
