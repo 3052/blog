@@ -4,7 +4,7 @@ provide markdown prompt I can give you in the future to return this script
 
 https://claude.ai
 
-one file pass
+two file pass
 
 Please provide a complete GoLang script that parses MPEG-DASH MPD files and
 extracts segment URLs with the following specifications:
@@ -25,6 +25,7 @@ extracts segment URLs with the following specifications:
 - Resolve `BaseURL` elements hierarchically: MPD → Period → AdaptationSet → Representation
 - Use starting base URL: `http://test.test/test.mpd`
 - Handle both absolute and relative URLs properly
+- Do NOT double-resolve Representation BaseURLs (the hierarchical resolution already includes them)
 
 ### SegmentTemplate Support
 - Support `$RepresentationID$`, `$Number$`, and `$Time$` variable substitution
@@ -32,6 +33,9 @@ extracts segment URLs with the following specifications:
 - Support both SegmentTimeline and duration-based templates
 - Respect `startNumber` and `endNumber` attributes
 - For SegmentTimeline: `$Time$` value should persist and accumulate across S elements
+
+### Segment Aggregation
+- Append segments for the same `Representation ID` if it appears in multiple `Periods`
 
 ### Additional Features
 - Support SegmentList with Initialization elements
@@ -44,6 +48,7 @@ extracts segment URLs with the following specifications:
 - The `endNumber` attribute should limit segment generation in both timeline and duration-based templates
 - For duration-based templates without explicit end, generate 10 segments as example
 - All URL resolution should handle relative paths, absolute paths, and full URLs correctly
+- When a representation has only BaseURL, use the already-resolved baseURL directly without double-resolving
 
 ---
 
@@ -56,9 +61,6 @@ extracts segment URLs with the following specifications:
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
 - Include initialization URLs when present (grouped with segment URLs as first item)
 - Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
-
-### Segment Aggregation
-- Append segments for the same `Representation ID` if it appears in multiple `Periods`
 
 ### Calculated Count
 - If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present in `SegmentTemplate`, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`

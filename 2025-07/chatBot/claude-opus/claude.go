@@ -4,7 +4,8 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
-   "io/ioutil"
+   "log"
+   "net/url"
    "os"
    "path"
    "regexp"
@@ -36,16 +37,15 @@ type Representation struct {
    BaseURL         []string         `xml:"BaseURL"`
    SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
    SegmentList     *SegmentList     `xml:"SegmentList"`
-   SegmentBase     *SegmentBase     `xml:"SegmentBase"`
 }
 
 type SegmentTemplate struct {
    Initialization  string           `xml:"initialization,attr"`
    Media           string           `xml:"media,attr"`
-   StartNumber     int              `xml:"startNumber,attr"`
-   EndNumber       int              `xml:"endNumber,attr"`
-   Duration        int              `xml:"duration,attr"`
-   Timescale       int              `xml:"timescale,attr"`
+   StartNumber     *int             `xml:"startNumber,attr"`
+   EndNumber       *int             `xml:"endNumber,attr"`
+   Duration        *int             `xml:"duration,attr"`
+   Timescale       *int             `xml:"timescale,attr"`
    SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
@@ -54,18 +54,14 @@ type SegmentTimeline struct {
 }
 
 type S struct {
-   T int `xml:"t,attr"`
-   D int `xml:"d,attr"`
-   R int `xml:"r,attr"`
+   T *int `xml:"t,attr"`
+   D int  `xml:"d,attr"`
+   R *int `xml:"r,attr"`
 }
 
 type SegmentList struct {
    Initialization *Initialization `xml:"Initialization"`
    SegmentURLs    []SegmentURL    `xml:"SegmentURL"`
-}
-
-type SegmentBase struct {
-   Initialization *Initialization `xml:"Initialization"`
 }
 
 type Initialization struct {
@@ -78,268 +74,157 @@ type SegmentURL struct {
 
 func main() {
    if len(os.Args) < 2 {
-      fmt.Fprintf(os.Stderr, "Usage: %s <mpd_file_path>\n", os.Args[0])
-      os.Exit(1)
+      log.Fatal("Usage: go run main.go <mpd_file_path>")
    }
 
    mpdPath := os.Args[1]
+   baseURL := "http://test.test/test.mpd"
 
    // Read MPD file
-   xmlData, err := ioutil.ReadFile(mpdPath)
+   content, err := os.ReadFile(mpdPath)
    if err != nil {
-      fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
-      os.Exit(1)
+      log.Fatalf("Error reading file: %v", err)
    }
 
    // Parse MPD
    var mpd MPD
-   err = xml.Unmarshal(xmlData, &mpd)
-   if err != nil {
-      fmt.Fprintf(os.Stderr, "Error parsing MPD: %v\n", err)
-      os.Exit(1)
+   if err := xml.Unmarshal(content, &mpd); err != nil {
+      log.Fatalf("Error parsing XML: %v", err)
    }
 
-   // Process and extract segment URLs
+   // Process and extract URLs
    result := make(map[string][]string)
 
    for _, period := range mpd.Periods {
       for _, adaptationSet := range period.AdaptationSets {
          for _, representation := range adaptationSet.Representations {
-            urls := extractSegmentURLs(representation, adaptationSet, period, mpd, mpdPath)
-            if len(urls) > 0 {
-               result[representation.ID] = urls
-            }
+            urls := processRepresentation(representation, adaptationSet, period, mpd, baseURL)
+            // Append to existing URLs for this representation ID
+            result[representation.ID] = append(result[representation.ID], urls...)
          }
       }
    }
 
-   // Output as JSON
-   jsonOutput, err := json.MarshalIndent(result, "", "  ")
+   // Output JSON
+   output, err := json.MarshalIndent(result, "", "  ")
    if err != nil {
-      fmt.Fprintf(os.Stderr, "Error creating JSON output: %v\n", err)
-      os.Exit(1)
+      log.Fatalf("Error creating JSON: %v", err)
    }
-
-   fmt.Println(string(jsonOutput))
+   fmt.Println(string(output))
 }
 
-func extractSegmentURLs(rep Representation, adaptSet AdaptationSet, period Period, mpd MPD, mpdPath string) []string {
+func processRepresentation(rep Representation, as AdaptationSet, period Period, mpd MPD, startBaseURL string) []string {
    var urls []string
 
-   // Get base URL hierarchy
-   baseURL := resolveBaseURL(rep.BaseURL, adaptSet.BaseURL, period.BaseURL, mpd.BaseURL, mpdPath)
+   // Resolve base URL hierarchy
+   baseURL := resolveBaseURL(startBaseURL, mpd.BaseURL, period.BaseURL, as.BaseURL, rep.BaseURL)
 
-   // Check for SegmentTemplate (priority: Representation > AdaptationSet)
+   // Determine which segment template/list to use (representation takes precedence)
    segmentTemplate := rep.SegmentTemplate
    if segmentTemplate == nil {
-      segmentTemplate = adaptSet.SegmentTemplate
+      segmentTemplate = as.SegmentTemplate
+   }
+
+   segmentList := rep.SegmentList
+   if segmentList == nil {
+      segmentList = as.SegmentList
    }
 
    if segmentTemplate != nil {
-      // Handle SegmentTemplate
       urls = processSegmentTemplate(segmentTemplate, rep.ID, baseURL)
-   } else if rep.SegmentList != nil {
-      // Handle SegmentList
-      urls = processSegmentList(rep.SegmentList, baseURL)
-   } else if adaptSet.SegmentList != nil {
-      // Handle SegmentList from AdaptationSet
-      urls = processSegmentList(adaptSet.SegmentList, baseURL)
-   } else if len(rep.BaseURL) > 0 || len(baseURL) > 0 {
-      // BaseURL only case
-      if len(rep.BaseURL) > 0 {
-         urls = append(urls, resolveURL(baseURL, rep.BaseURL[0]))
-      } else {
-         urls = append(urls, baseURL)
-      }
+   } else if segmentList != nil {
+      urls = processSegmentList(segmentList, baseURL)
+   } else if len(rep.BaseURL) > 0 || len(as.BaseURL) > 0 || len(period.BaseURL) > 0 || len(mpd.BaseURL) > 0 {
+      // Only BaseURL, single segment
+      urls = append(urls, baseURL)
    }
 
    return urls
 }
 
-func resolveBaseURL(repBaseURLs, adaptBaseURLs, periodBaseURLs, mpdBaseURLs []string, mpdPath string) string {
-   // Start with MPD location as base URL
-   // Convert file path to URL format
-   var baseURL string
-   if strings.HasPrefix(mpdPath, "http://") || strings.HasPrefix(mpdPath, "https://") {
-      // If MPD path is already a URL, use it
-      baseURL = mpdPath
-   } else {
-      // Convert file path to URL format: http://test.test/test.mpd
-      baseURL = "http://test.test/" + path.Base(mpdPath)
-   }
-
-   // Remove the filename to get the directory URL
-   lastSlash := strings.LastIndex(baseURL, "/")
-   if lastSlash != -1 {
-      baseURL = baseURL[:lastSlash+1]
-   }
-
-   // Apply MPD BaseURL if exists
-   if len(mpdBaseURLs) > 0 {
-      baseURL = resolveURL(baseURL, mpdBaseURLs[0])
-   }
-
-   // Apply Period BaseURL if exists
-   if len(periodBaseURLs) > 0 {
-      baseURL = resolveURL(baseURL, periodBaseURLs[0])
-   }
-
-   // Apply AdaptationSet BaseURL if exists
-   if len(adaptBaseURLs) > 0 {
-      baseURL = resolveURL(baseURL, adaptBaseURLs[0])
-   }
-
-   return baseURL
-}
-
-func resolveURL(base, relative string) string {
-   // Handle absolute URLs
-   if strings.HasPrefix(relative, "http://") || strings.HasPrefix(relative, "https://") {
-      return relative
-   }
-
-   // Handle absolute paths (starting with /)
-   if strings.HasPrefix(relative, "/") {
-      // Extract protocol and host from base URL
-      if strings.HasPrefix(base, "http://") || strings.HasPrefix(base, "https://") {
-         // Find the third slash (after http://)
-         count := 0
-         for i, ch := range base {
-            if ch == '/' {
-               count++
-               if count == 3 {
-                  return base[:i] + relative
-               }
-            }
-         }
-         // If no third slash found, append to base
-         return strings.TrimSuffix(base, "/") + relative
-      }
-      return relative
-   }
-
-   // Handle relative URLs
-   // Ensure base ends with /
-   if !strings.HasSuffix(base, "/") {
-      base += "/"
-   }
-
-   // Handle ../ in relative path
-   for strings.HasPrefix(relative, "../") {
-      relative = relative[3:]
-      // Remove last directory from base
-      base = strings.TrimSuffix(base, "/")
-      lastSlash := strings.LastIndex(base, "/")
-      if lastSlash != -1 {
-         base = base[:lastSlash+1]
-      }
-   }
-
-   // Handle ./ in relative path
-   relative = strings.TrimPrefix(relative, "./")
-
-   // Combine base and relative
-   return base + relative
-}
-
-func processSegmentTemplate(template *SegmentTemplate, repID string, baseURL string) []string {
+func processSegmentTemplate(st *SegmentTemplate, repID string, baseURL string) []string {
    var urls []string
 
-   // Add initialization URL if exists
-   if template.Initialization != "" {
-      initURL := substituteVariables(template.Initialization, repID, 0, 0)
+   // Add initialization URL if present
+   if st.Initialization != "" {
+      initURL := substituteVariables(st.Initialization, repID, 0, 0)
       urls = append(urls, resolveURL(baseURL, initURL))
    }
 
-   // Process media segments
-   if template.Media == "" {
-      return urls
+   // Process segments
+   if st.SegmentTimeline != nil {
+      urls = append(urls, processSegmentTimeline(st, repID, baseURL)...)
+   } else if st.Duration != nil {
+      urls = append(urls, processDurationBasedTemplate(st, repID, baseURL)...)
    }
 
-   if template.SegmentTimeline != nil {
-      // Timeline-based segments
-      segmentNumber := template.StartNumber
-      if segmentNumber == 0 {
-         segmentNumber = 1
+   return urls
+}
+
+func processSegmentTimeline(st *SegmentTemplate, repID string, baseURL string) []string {
+   var urls []string
+   time := 0
+   number := 1
+   if st.StartNumber != nil {
+      number = *st.StartNumber
+   }
+
+   for _, s := range st.SegmentTimeline.S {
+      if s.T != nil {
+         time = *s.T
       }
 
-      var currentTime int
-      for i, s := range template.SegmentTimeline.S {
-         // Check if we've reached endNumber
-         if template.EndNumber > 0 && segmentNumber > template.EndNumber {
+      repeat := 0
+      if s.R != nil {
+         repeat = *s.R
+      }
+
+      for i := 0; i <= repeat; i++ {
+         if st.EndNumber != nil && number > *st.EndNumber {
             break
          }
 
-         // Use explicit time if provided, otherwise continue from last time
-         if s.T != 0 || i == 0 {
-            currentTime = s.T
-         }
-         duration := s.D
-         repeat := s.R
-
-         // Add segment for initial occurrence
-         mediaURL := substituteVariables(template.Media, repID, segmentNumber, currentTime)
+         mediaURL := substituteVariables(st.Media, repID, number, time)
          urls = append(urls, resolveURL(baseURL, mediaURL))
-         segmentNumber++
-         currentTime += duration
 
-         // Add repeated segments
-         for j := 0; j < repeat; j++ {
-            // Check if we've reached endNumber
-            if template.EndNumber > 0 && segmentNumber > template.EndNumber {
-               break
-            }
-            mediaURL := substituteVariables(template.Media, repID, segmentNumber, currentTime)
-            urls = append(urls, resolveURL(baseURL, mediaURL))
-            segmentNumber++
-            currentTime += duration
-         }
-      }
-   } else if template.Duration > 0 {
-      // Duration-based segments
-      startNumber := template.StartNumber
-      if startNumber == 0 {
-         startNumber = 1
-      }
-
-      // Calculate time based on duration
-      timescale := template.Timescale
-      if timescale == 0 {
-         timescale = 1
-      }
-
-      // Determine how many segments to generate
-      maxSegments := 10 // Default if no endNumber
-      if template.EndNumber > 0 {
-         maxSegments = template.EndNumber - startNumber + 1
-      }
-
-      // Generate segments up to endNumber or default limit
-      for i := 0; i < maxSegments; i++ {
-         segmentNumber := startNumber + i
-         // Stop if we've reached endNumber
-         if template.EndNumber > 0 && segmentNumber > template.EndNumber {
-            break
-         }
-         time := i * template.Duration
-         mediaURL := substituteVariables(template.Media, repID, segmentNumber, time)
-         urls = append(urls, resolveURL(baseURL, mediaURL))
+         time += s.D
+         number++
       }
    }
 
    return urls
 }
 
-func processSegmentList(segmentList *SegmentList, baseURL string) []string {
+func processDurationBasedTemplate(st *SegmentTemplate, repID string, baseURL string) []string {
+   var urls []string
+   startNumber := 1
+   if st.StartNumber != nil {
+      startNumber = *st.StartNumber
+   }
+
+   endNumber := startNumber + 9 // Default to 10 segments
+   if st.EndNumber != nil {
+      endNumber = *st.EndNumber
+   }
+
+   for number := startNumber; number <= endNumber; number++ {
+      mediaURL := substituteVariables(st.Media, repID, number, 0)
+      urls = append(urls, resolveURL(baseURL, mediaURL))
+   }
+
+   return urls
+}
+
+func processSegmentList(sl *SegmentList, baseURL string) []string {
    var urls []string
 
-   // Add initialization URL if exists
-   if segmentList.Initialization != nil && segmentList.Initialization.SourceURL != "" {
-      urls = append(urls, resolveURL(baseURL, segmentList.Initialization.SourceURL))
+   // Add initialization URL if present
+   if sl.Initialization != nil && sl.Initialization.SourceURL != "" {
+      urls = append(urls, resolveURL(baseURL, sl.Initialization.SourceURL))
    }
 
    // Add segment URLs
-   for _, segURL := range segmentList.SegmentURLs {
+   for _, segURL := range sl.SegmentURLs {
       if segURL.Media != "" {
          urls = append(urls, resolveURL(baseURL, segURL.Media))
       }
@@ -349,40 +234,84 @@ func processSegmentList(segmentList *SegmentList, baseURL string) []string {
 }
 
 func substituteVariables(template string, repID string, number int, time int) string {
+   result := template
+
    // Replace $RepresentationID$
-   result := strings.ReplaceAll(template, "$RepresentationID$", repID)
+   result = strings.ReplaceAll(result, "$RepresentationID$", repID)
 
    // Replace $Number$ with padding
-   numberPattern := regexp.MustCompile(`\$Number(%0(\d+)d)?\$`)
-   matches := numberPattern.FindStringSubmatch(result)
-
-   if len(matches) > 0 {
-      if len(matches) > 2 && matches[2] != "" {
-         // Padded number
-         width, _ := strconv.Atoi(matches[2])
-         paddedNumber := fmt.Sprintf("%0*d", width, number)
-         result = numberPattern.ReplaceAllString(result, paddedNumber)
-      } else {
-         // Unpadded number
-         result = numberPattern.ReplaceAllString(result, strconv.Itoa(number))
+   numberRe := regexp.MustCompile(`\$Number(%0\d+d)?\$`)
+   result = numberRe.ReplaceAllStringFunc(result, func(match string) string {
+      if strings.Contains(match, "%") {
+         // Extract padding format
+         formatRe := regexp.MustCompile(`%0(\d+)d`)
+         formatMatch := formatRe.FindStringSubmatch(match)
+         if len(formatMatch) > 1 {
+            width, _ := strconv.Atoi(formatMatch[1])
+            return fmt.Sprintf("%0*d", width, number)
+         }
       }
-   }
+      return strconv.Itoa(number)
+   })
 
-   // Replace $Time$ with padding support
-   timePattern := regexp.MustCompile(`\$Time(%0(\d+)d)?\$`)
-   timeMatches := timePattern.FindStringSubmatch(result)
-
-   if len(timeMatches) > 0 {
-      if len(timeMatches) > 2 && timeMatches[2] != "" {
-         // Padded time
-         width, _ := strconv.Atoi(timeMatches[2])
-         paddedTime := fmt.Sprintf("%0*d", width, time)
-         result = timePattern.ReplaceAllString(result, paddedTime)
-      } else {
-         // Unpadded time
-         result = timePattern.ReplaceAllString(result, strconv.Itoa(time))
+   // Replace $Time$ with padding
+   timeRe := regexp.MustCompile(`\$Time(%0\d+d)?\$`)
+   result = timeRe.ReplaceAllStringFunc(result, func(match string) string {
+      if strings.Contains(match, "%") {
+         // Extract padding format
+         formatRe := regexp.MustCompile(`%0(\d+)d`)
+         formatMatch := formatRe.FindStringSubmatch(match)
+         if len(formatMatch) > 1 {
+            width, _ := strconv.Atoi(formatMatch[1])
+            return fmt.Sprintf("%0*d", width, time)
+         }
       }
-   }
+      return strconv.Itoa(time)
+   })
 
    return result
+}
+
+func resolveBaseURL(startURL string, mpdURLs, periodURLs, asURLs, repURLs []string) string {
+   baseURL := startURL
+
+   // Apply hierarchical BaseURL resolution
+   for _, urls := range [][]string{mpdURLs, periodURLs, asURLs, repURLs} {
+      if len(urls) > 0 {
+         baseURL = resolveURL(baseURL, urls[0])
+      }
+   }
+
+   return baseURL
+}
+
+func resolveURL(baseURL, relativeURL string) string {
+   // If relativeURL is already absolute, return it
+   if strings.HasPrefix(relativeURL, "http://") || strings.HasPrefix(relativeURL, "https://") {
+      return relativeURL
+   }
+
+   // Parse base URL
+   base, err := url.Parse(baseURL)
+   if err != nil {
+      return relativeURL
+   }
+
+   // Parse relative URL
+   rel, err := url.Parse(relativeURL)
+   if err != nil {
+      return relativeURL
+   }
+
+   // Resolve relative to base
+   resolved := base.ResolveReference(rel)
+   return resolved.String()
+}
+
+func getBaseFromPath(filePath string) string {
+   dir := path.Dir(filePath)
+   if dir == "." {
+      return ""
+   }
+   return dir + "/"
 }
