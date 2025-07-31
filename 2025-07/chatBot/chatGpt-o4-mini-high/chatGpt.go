@@ -4,7 +4,6 @@ import (
    "encoding/json"
    "encoding/xml"
    "fmt"
-   "log"
    "math"
    "net/url"
    "os"
@@ -15,23 +14,22 @@ import (
 
 const defaultBase = "http://test.test/test.mpd"
 
-// MPD root
+// MPD represents the top-level DASH manifest.
 type MPD struct {
    XMLName  xml.Name `xml:"MPD"`
    BaseURLs []string `xml:"BaseURL"`
    Periods  []Period `xml:"Period"`
 }
 
-// Period, including its duration for SegmentTemplate fallback
+// Period represents a Period element in the MPD.
 type Period struct {
-   XMLName         xml.Name         `xml:"Period"`
-   Duration        string           `xml:"duration,attr"` // ISO8601, e.g. "PT60S"
-   BaseURLs        []string         `xml:"BaseURL"`
-   AdaptationSets  []AdaptationSet  `xml:"AdaptationSet"`
-   Representations []Representation `xml:"Representation"`
+   XMLName        xml.Name        `xml:"Period"`
+   BaseURLs       []string        `xml:"BaseURL"`
+   Duration       string          `xml:"duration,attr"`
+   AdaptationSets []AdaptationSet `xml:"AdaptationSet"`
 }
 
-// AdaptationSet may have its own BaseURLs and SegmentTemplate
+// AdaptationSet represents an AdaptationSet element.
 type AdaptationSet struct {
    XMLName         xml.Name         `xml:"AdaptationSet"`
    BaseURLs        []string         `xml:"BaseURL"`
@@ -39,7 +37,7 @@ type AdaptationSet struct {
    Representations []Representation `xml:"Representation"`
 }
 
-// Representation may have a SegmentList or its own SegmentTemplate
+// Representation represents a Representation element.
 type Representation struct {
    XMLName         xml.Name         `xml:"Representation"`
    ID              string           `xml:"id,attr"`
@@ -48,72 +46,63 @@ type Representation struct {
    SegmentTemplate *SegmentTemplate `xml:"SegmentTemplate"`
 }
 
-// For <SegmentList>
+// SegmentList variant.
 type SegmentList struct {
-   Initialization *Initialization `xml:"Initialization"`
-   SegmentURLs    []SegmentURL    `xml:"SegmentURL"`
+   XMLName        xml.Name       `xml:"SegmentList"`
+   Initialization Initialization `xml:"Initialization"`
+   SegmentURLs    []SegmentURL   `xml:"SegmentURL"`
 }
 
+// Initialization holds the initialization segment reference.
 type Initialization struct {
    SourceURL string `xml:"sourceURL,attr"`
 }
 
+// SegmentURL holds each media segment reference.
 type SegmentURL struct {
    Media string `xml:"media,attr"`
 }
 
-// For <SegmentTemplate>
+// SegmentTemplate variant.
 type SegmentTemplate struct {
    Initialization  string           `xml:"initialization,attr"`
    Media           string           `xml:"media,attr"`
-   Timescale       int64            `xml:"timescale,attr"` // default 1 if zero
-   Duration        int64            `xml:"duration,attr"`
-   StartNumber     int64            `xml:"startNumber,attr"` // default 1 if zero
-   EndNumber       int64            `xml:"endNumber,attr"`
+   Timescale       int              `xml:"timescale,attr"`
+   Duration        int              `xml:"duration,attr"`
+   StartNumber     int              `xml:"startNumber,attr"`
+   EndNumber       int              `xml:"endNumber,attr"`
    SegmentTimeline *SegmentTimeline `xml:"SegmentTimeline"`
 }
 
+// SegmentTimeline holds a series of <S> entries.
 type SegmentTimeline struct {
    S []S `xml:"S"`
 }
 
+// S represents one <S> element.
 type S struct {
-   T int64 `xml:"t,attr"` // start time (optional)
-   D int64 `xml:"d,attr"` // duration (required)
-   R int64 `xml:"r,attr"` // repeat count (optional)
+   T *int64 `xml:"t,attr"`
+   D int64  `xml:"d,attr"`
+   R int    `xml:"r,attr"`
 }
 
-// parseISO8601Duration parses PT#H#M#S durations
-func parseISO8601Duration(dur string) (float64, error) {
-   if !strings.HasPrefix(dur, "P") {
-      return 0, fmt.Errorf("invalid duration: %s", dur)
+// parseDurationISO8601 parses a simple ISO8601 duration (H/M/S only).
+func parseDurationISO8601(d string) (float64, error) {
+   var h, m, s float64
+   if m1 := regexp.MustCompile(`(\d+\.?\d*)H`).FindStringSubmatch(d); len(m1) == 2 {
+      h, _ = strconv.ParseFloat(m1[1], 64)
    }
-   // extract time part after 'T'
-   timePart := dur
-   if i := strings.Index(dur, "T"); i >= 0 {
-      timePart = dur[i+1:]
+   if m2 := regexp.MustCompile(`(\d+\.?\d*)M`).FindStringSubmatch(d); len(m2) == 2 {
+      m, _ = strconv.ParseFloat(m2[1], 64)
    }
-   re := regexp.MustCompile(`([\d\.]+)([HMS])`)
-   var total float64
-   for _, m := range re.FindAllStringSubmatch(timePart, -1) {
-      v, err := strconv.ParseFloat(m[1], 64)
-      if err != nil {
-         return 0, err
-      }
-      switch m[2] {
-      case "H":
-         total += v * 3600
-      case "M":
-         total += v * 60
-      case "S":
-         total += v
-      }
+   if m3 := regexp.MustCompile(`(\d+\.?\d*)S`).FindStringSubmatch(d); len(m3) == 2 {
+      s, _ = strconv.ParseFloat(m3[1], 64)
    }
-   return total, nil
+   return h*3600 + m*60 + s, nil
 }
 
 func main() {
-   if len(os.Args) != 2 {
+   if len(os.Args) < 2 {
       fmt.Fprintf(os.Stderr, "Usage: %s <mpd_file_path>\n", os.Args[0])
       os.Exit(1)
    }
@@ -121,202 +110,185 @@ func main() {
 
    data, err := os.ReadFile(mpdPath)
    if err != nil {
-      log.Fatalf("Error reading MPD: %v", err)
-   }
-   var mpd MPD
-   if err := xml.Unmarshal(data, &mpd); err != nil {
-      log.Fatalf("Error parsing MPD XML: %v", err)
+      fmt.Fprintf(os.Stderr, "Error reading MPD file: %v\n", err)
+      os.Exit(1)
    }
 
-   // Start from defaultBase and chain MPD-level BaseURLs
-   baseURL, err := url.Parse(defaultBase)
-   if err != nil {
-      log.Fatalf("Invalid default base URL: %v", err)
+   var mpd MPD
+   if err := xml.Unmarshal(data, &mpd); err != nil {
+      fmt.Fprintf(os.Stderr, "Error parsing MPD XML: %v\n", err)
+      os.Exit(1)
    }
-   for _, bu := range mpd.BaseURLs {
-      rel, err := url.Parse(bu)
+
+   base, err := url.Parse(defaultBase)
+   if err != nil {
+      fmt.Fprintf(os.Stderr, "Invalid defaultBase: %v\n", err)
+      os.Exit(1)
+   }
+   // Chain MPD-level BaseURLs
+   for _, b := range mpd.BaseURLs {
+      u, err := url.Parse(b)
       if err != nil {
-         log.Fatalf("Invalid MPD BaseURL %q: %v", bu, err)
+         fmt.Fprintf(os.Stderr, "Invalid MPD BaseURL %q: %v\n", b, err)
+         continue
       }
-      baseURL = baseURL.ResolveReference(rel)
+      base = base.ResolveReference(u)
    }
 
    result := make(map[string][]string)
 
    for _, period := range mpd.Periods {
       // Chain Period-level BaseURLs
-      periodBase := baseURL
-      for _, bu := range period.BaseURLs {
-         rel, err := url.Parse(bu)
+      pbase := base
+      for _, b := range period.BaseURLs {
+         u, err := url.Parse(b)
          if err != nil {
-            log.Fatalf("Invalid Period BaseURL %q: %v", bu, err)
+            fmt.Fprintf(os.Stderr, "Invalid Period BaseURL %q: %v\n", b, err)
+            continue
          }
-         periodBase = periodBase.ResolveReference(rel)
+         pbase = pbase.ResolveReference(u)
       }
-
-      // Parse period duration for fallback
-      var periodSeconds float64
+      periodSec := 0.0
       if period.Duration != "" {
-         sec, err := parseISO8601Duration(period.Duration)
-         if err != nil {
-            log.Fatalf("Error parsing Period duration %q: %v", period.Duration, err)
-         }
-         periodSeconds = sec
+         periodSec, _ = parseDurationISO8601(period.Duration)
       }
 
-      // 1) Handle top-level Representations (outside AdaptationSets)
-      for _, rep := range period.Representations {
-         processRepresentation(periodBase, nil, rep, periodSeconds, result)
-      }
-
-      // 2) Handle AdaptationSets (with their own BaseURLs & SegmentTemplate)
       for _, aset := range period.AdaptationSets {
          // Chain AdaptationSet-level BaseURLs
-         asetBase := periodBase
-         for _, bu := range aset.BaseURLs {
-            rel, err := url.Parse(bu)
+         abase := pbase
+         for _, b := range aset.BaseURLs {
+            u, err := url.Parse(b)
             if err != nil {
-               log.Fatalf("Invalid AdaptationSet BaseURL %q: %v", bu, err)
+               fmt.Fprintf(os.Stderr, "Invalid AdaptationSet BaseURL %q: %v\n", b, err)
+               continue
             }
-            asetBase = asetBase.ResolveReference(rel)
+            abase = abase.ResolveReference(u)
          }
+         adaptTmpl := aset.SegmentTemplate
+
          for _, rep := range aset.Representations {
-            processRepresentation(asetBase, aset.SegmentTemplate, rep, periodSeconds, result)
+            // Chain Representation-level BaseURLs
+            rbase := abase
+            for _, b := range rep.BaseURLs {
+               u, err := url.Parse(b)
+               if err != nil {
+                  fmt.Fprintf(os.Stderr, "Invalid Representation BaseURL %q: %v\n", b, err)
+                  continue
+               }
+               rbase = rbase.ResolveReference(u)
+            }
+
+            // Determine templates
+            tmpl := adaptTmpl
+            if rep.SegmentTemplate != nil {
+               tmpl = rep.SegmentTemplate
+            }
+
+            // If no SegmentList and no template, return sole BaseURL
+            if rep.SegmentList == nil && tmpl == nil {
+               result[rep.ID] = []string{rbase.String()}
+               continue
+            }
+
+            var segments []string
+
+            // SegmentList handling
+            if rep.SegmentList != nil {
+               sl := rep.SegmentList
+               if sl.Initialization.SourceURL != "" {
+                  u, err := url.Parse(sl.Initialization.SourceURL)
+                  if err == nil {
+                     segments = append(segments, rbase.ResolveReference(u).String())
+                  }
+               }
+               for _, s := range sl.SegmentURLs {
+                  if s.Media == "" {
+                     continue
+                  }
+                  u, err := url.Parse(s.Media)
+                  if err != nil {
+                     continue
+                  }
+                  segments = append(segments, rbase.ResolveReference(u).String())
+               }
+            } else if tmpl != nil {
+               // SegmentTemplate handling
+               if tmpl.Initialization != "" {
+                  initURL := strings.ReplaceAll(tmpl.Initialization, "$RepresentationID$", rep.ID)
+                  u, err := url.Parse(initURL)
+                  if err == nil {
+                     segments = append(segments, rbase.ResolveReference(u).String())
+                  }
+               }
+
+               startNum := tmpl.StartNumber
+               if startNum == 0 {
+                  startNum = 1
+               }
+               timescale := tmpl.Timescale
+               if timescale == 0 {
+                  timescale = 1
+               }
+               mediaTpl := tmpl.Media
+
+               // Timeline
+               if tmpl.SegmentTimeline != nil && len(tmpl.SegmentTimeline.S) > 0 {
+                  ct := int64(0)
+                  seq := startNum
+                  for _, e := range tmpl.SegmentTimeline.S {
+                     if e.T != nil {
+                        ct = *e.T
+                     }
+                     repCnt := e.R
+                     if repCnt < 0 {
+                        repCnt = 0
+                     }
+                     for i := 0; i <= repCnt; i++ {
+                        uStr := strings.ReplaceAll(mediaTpl, "$RepresentationID$", rep.ID)
+                        uStr = strings.ReplaceAll(uStr, "$Number$", strconv.Itoa(seq))
+                        uStr = strings.ReplaceAll(uStr, "$Time$", strconv.FormatInt(ct, 10))
+                        u2, err := url.Parse(uStr)
+                        if err == nil {
+                           segments = append(segments, rbase.ResolveReference(u2).String())
+                        }
+                        seq++
+                        ct += e.D
+                     }
+                  }
+               } else if tmpl.EndNumber > 0 {
+                  for n := startNum; n <= tmpl.EndNumber; n++ {
+                     uStr := strings.ReplaceAll(mediaTpl, "$RepresentationID$", rep.ID)
+                     uStr = strings.ReplaceAll(uStr, "$Number$", strconv.Itoa(n))
+                     u2, err := url.Parse(uStr)
+                     if err == nil {
+                        segments = append(segments, rbase.ResolveReference(u2).String())
+                     }
+                  }
+               } else if tmpl.Duration > 0 && periodSec > 0 {
+                  count := int(math.Ceil(periodSec * float64(timescale) / float64(tmpl.Duration)))
+                  for i := 0; i < count; i++ {
+                     num := startNum + i
+                     uStr := strings.ReplaceAll(mediaTpl, "$RepresentationID$", rep.ID)
+                     uStr = strings.ReplaceAll(uStr, "$Number$", strconv.Itoa(num))
+                     u2, err := url.Parse(uStr)
+                     if err == nil {
+                        segments = append(segments, rbase.ResolveReference(u2).String())
+                     }
+                  }
+               } else {
+                  fmt.Fprintf(os.Stderr, "No segment info for representation %s\n", rep.ID)
+               }
+            }
+
+            result[rep.ID] = segments
          }
       }
    }
 
    out, err := json.MarshalIndent(result, "", "  ")
    if err != nil {
-      log.Fatalf("JSON marshal error: %v", err)
+      fmt.Fprintf(os.Stderr, "Error marshaling JSON: %v\n", err)
+      os.Exit(1)
    }
    fmt.Println(string(out))
-}
-
-// processRepresentation handles one Representation, given its parent base URL,
-// an optional inherited SegmentTemplate from its AdaptationSet, the period duration,
-// and writes into result map.
-func processRepresentation(parentBase *url.URL, inheritedTmpl *SegmentTemplate, rep Representation, periodSec float64, result map[string][]string) {
-   // Chain Representation-level BaseURLs
-   repBase := parentBase
-   for _, bu := range rep.BaseURLs {
-      rel, err := url.Parse(bu)
-      if err != nil {
-         log.Fatalf("Invalid Representation BaseURL %q: %v", bu, err)
-      }
-      repBase = repBase.ResolveReference(rel)
-   }
-
-   var segs []string
-
-   // 1) <SegmentList> if present
-   if rep.SegmentList != nil {
-      if rep.SegmentList.Initialization != nil {
-         rel, err := url.Parse(rep.SegmentList.Initialization.SourceURL)
-         if err != nil {
-            log.Fatalf("Invalid init URL %q: %v", rep.SegmentList.Initialization.SourceURL, err)
-         }
-         segs = append(segs, repBase.ResolveReference(rel).String())
-      }
-      for _, su := range rep.SegmentList.SegmentURLs {
-         rel, err := url.Parse(su.Media)
-         if err != nil {
-            log.Fatalf("Invalid segment URL %q: %v", su.Media, err)
-         }
-         segs = append(segs, repBase.ResolveReference(rel).String())
-      }
-
-   } else {
-      // 2) <SegmentTemplate>: rep-level overrides inherited
-      tmpl := inheritedTmpl
-      if rep.SegmentTemplate != nil {
-         tmpl = rep.SegmentTemplate
-      }
-      if tmpl != nil {
-         // Replace helper
-         repReplacer := strings.NewReplacer("$RepresentationID$", rep.ID)
-         // Initialization
-         if tmpl.Initialization != "" {
-            initURL := repReplacer.Replace(tmpl.Initialization)
-            rel, err := url.Parse(initURL)
-            if err != nil {
-               log.Fatalf("Invalid init template %q: %v", initURL, err)
-            }
-            segs = append(segs, repBase.ResolveReference(rel).String())
-         }
-         startNum := tmpl.StartNumber
-         if startNum == 0 {
-            startNum = 1
-         }
-         timescale := tmpl.Timescale
-         if timescale == 0 {
-            timescale = 1
-         }
-         // 2a) SegmentTimeline
-         if tmpl.SegmentTimeline != nil && len(tmpl.SegmentTimeline.S) > 0 {
-            num := startNum
-            curTime := int64(0)
-            if first := tmpl.SegmentTimeline.S[0]; first.T != 0 {
-               curTime = first.T
-            }
-            for _, e := range tmpl.SegmentTimeline.S {
-               repeat := e.R
-               if repeat < 0 {
-                  repeat = 0
-               }
-               for i := int64(0); i <= repeat; i++ {
-                  r := strings.NewReplacer(
-                     "$RepresentationID$", rep.ID,
-                     "$Number$", strconv.FormatInt(num, 10),
-                     "$Time$", strconv.FormatInt(curTime, 10),
-                  )
-                  mediaURL := r.Replace(tmpl.Media)
-                  rel, err := url.Parse(mediaURL)
-                  if err != nil {
-                     log.Fatalf("Invalid media template %q: %v", mediaURL, err)
-                  }
-                  segs = append(segs, repBase.ResolveReference(rel).String())
-                  num++
-                  curTime += e.D
-               }
-            }
-            // 2b) Numeric startNumber → endNumber
-         } else if tmpl.EndNumber > 0 {
-            for n := startNum; n <= tmpl.EndNumber; n++ {
-               r := strings.NewReplacer(
-                  "$RepresentationID$", rep.ID,
-                  "$Number$", strconv.FormatInt(n, 10),
-               )
-               mediaURL := r.Replace(tmpl.Media)
-               rel, err := url.Parse(mediaURL)
-               if err != nil {
-                  log.Fatalf("Invalid media template %q: %v", mediaURL, err)
-               }
-               segs = append(segs, repBase.ResolveReference(rel).String())
-            }
-            // 2c) Compute count by ceil(periodSec * timescale / duration)
-         } else if tmpl.Duration > 0 && timescale > 0 && periodSec > 0 {
-            count := int64(math.Ceil(periodSec * float64(timescale) / float64(tmpl.Duration)))
-            for i := int64(0); i < count; i++ {
-               num := startNum + i
-               timeVal := i * tmpl.Duration
-               r := strings.NewReplacer(
-                  "$RepresentationID$", rep.ID,
-                  "$Number$", strconv.FormatInt(num, 10),
-                  "$Time$", strconv.FormatInt(timeVal, 10),
-               )
-               mediaURL := r.Replace(tmpl.Media)
-               rel, err := url.Parse(mediaURL)
-               if err != nil {
-                  log.Fatalf("Invalid media template %q: %v", mediaURL, err)
-               }
-               segs = append(segs, repBase.ResolveReference(rel).String())
-            }
-         }
-      }
-   }
-
-   if len(segs) > 0 {
-      result[rep.ID] = segs
-   }
 }
