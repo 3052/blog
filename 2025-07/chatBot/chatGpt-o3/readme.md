@@ -1,17 +1,17 @@
 # chatGpt
 
-provide markdown prompt I can give you in the future to return this script, do
-not wrap in a code block
+provide markdown prompt I can give you to return this script, do not wrap in a
+code block
 
 https://chatgpt.com
 
-one file pass
+two file pass
 
 Write a single, complete Go program named **main.go** that uses **only the
 standard library** and does the following. Return **only** the code in one
 fenced Go code block (no commentary before or after).
 
-**Behavior & CLI**
+Behavior & CLI
 
 * Program name: `main.go`
 * Usage: `go run main.go <mpd_file_path>`
@@ -19,11 +19,11 @@ fenced Go code block (no commentary before or after).
 * On success, print to **stdout** a JSON object mapping each `Representation@id` to an **ordered list** of fully resolved segment URLs.
 * On any error, print a clear message to **stderr** and exit with a non-zero status.
 
-**Constant requirement**
+Constant requirement
 
 * Define at top-level: `const defaultBase = "http://test.test/test.mpd"`
 
-**DASH handling scope**
+DASH handling scope
 
 * Parse enough of the DASH MPD to:
 
@@ -40,22 +40,22 @@ fenced Go code block (no commentary before or after).
 * If neither `SegmentList` nor `SegmentTemplate` is available, but a `Representation` has a `BaseURL` pointing to a single resource, include that single resolved URL; otherwise error.
 * Maintain **segment order** exactly as defined by the MPD constructs.
 
-**Durations**
+Durations
 
 * Implement a minimal ISO-8601 duration parser for forms like `PT#H#M#S` and `P#DT#H#M#S` (seconds may be fractional). If parsing fails, log a warning and treat as unknown duration.
 * Provide a helper `hmsToDuration(daysStr, hoursStr, minsStr, secsStr string) time.Duration`.
 * Ensure the fallback call in the PT-only path passes `""` (empty string) for days (not `0`) to avoid type errors.
 
-**URL resolution**
+URL resolution
 
 * Use `net/url` to resolve relative URLs with `ResolveReference`, layering BaseURL values in order (MPD → Period → AdaptationSet → Representation). Always start from `defaultBase`.
 
-**Output**
+Output
 
 * Encode the final map as pretty JSON to **stdout**.
 * Use `log` for diagnostics to **stderr** (no timestamps).
 
-**Constraints**
+Constraints
 
 * **Standard library only.**
 * Clean, idiomatic, and compilable Go.
