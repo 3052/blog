@@ -13,10 +13,8 @@ Please provide a complete Go program (main.go) using only the standard library t
 2. Starts with `const defaultBase = "http://test.test/test.mpd"`
 3. Chains every `<BaseURL>` at the MPD, Period, AdaptationSet, and Representation levels via `net/url.URL.ResolveReference`
 4. Supports both:
-
    * **`<SegmentList>`** with `<Initialization sourceURL="…">` and multiple `<SegmentURL media="…">`
    * **`<SegmentTemplate>`** (at AdaptationSet or Representation) handling:
-
      * `initialization` template with `$RepresentationID$`
      * `<SegmentTimeline>` entries `<S t="…" d="…" r="…">` and substitutions for `$Number$`, `$Time$` (including repeats)
      * Numeric `startNumber`/`endNumber`
