@@ -1,20 +1,30 @@
 # chatGpt
 
-provide markdown prompt I can give you in the future to return this script
+provide markdown prompt I can give you to return this script
 
 https://chatgpt.com
 
-six file pass
+one file pass
 
-Please provide the full Go script that:
+Please provide a complete Go script that takes a local MPEG-DASH MPD file path
+as a CLI argument (`go run main.go <mpd_file_path>`), parses the MPD, and
+outputs a JSON object mapping each `Representation@id` to a list of fully
+resolved segment URLs with the initialization segment first if present.
 
-- Parses a local MPEG-DASH MPD file from a path passed as a CLI argument: `go run main.go <mpd_file_path>`
-- Uses base URL: `http://test.test/test.mpd`
-- Resolves `<BaseURL>` elements hierarchically: MPD → Period → AdaptationSet → Representation
-- Supports `<SegmentTemplate>` on both AdaptationSet and Representation, with inheritance
+Requirements:
+- Use base URL `http://test.test/test.mpd` as the initial base for URL resolution.
+- Resolve `<BaseURL>` elements hierarchically in this order: MPD → Period → AdaptationSet → Representation.
+- Support `<SegmentTemplate>` inheritance: Representation inherits and overrides from AdaptationSet.
+- Fully support `<SegmentTimeline>` inside `<SegmentTemplate>`, expanding timeline segments to generate URLs.
+- Support substitution variables `$RepresentationID$`, `$Number$`, `$Time$` in templates, including printf-style formatting like `$Number%05d$`.
+- Handle `startNumber` and `endNumber` attributes in `<SegmentTemplate>` to limit segment generation.
+- Output JSON with keys = representation IDs and values = arrays of fully resolved segment URLs.
+
+Use only Go standard library packages.
+
+## prompts
+
 - Handles:
-  - `$RepresentationID$`, `$Number$`, `$Time$` substitutions, including formatted patterns like `$Number%05d$`
-  - `startNumber` and `endNumber`
   - `$Time$` using `<SegmentTimeline>` and `@r` repetitions (each `<S>` repeated `1 + r` times)
   - If both `SegmentTimeline` and `endNumber` are missing, and `duration` + `timescale` are present, calculate number of segments as:
     `ceil(PeriodDurationInSeconds * timescale / duration)`
@@ -24,5 +34,3 @@ Please provide the full Go script that:
 - Appends segments for the same `Representation@id` if it appears in multiple `<Period>` elements
 - Uses **only** `net/url.URL.ResolveReference` for URL resolving (no other logic)
 - Prefers `Period@duration` over `MPD@mediaPresentationDuration` for segment count calculations
-- Outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs, with the initialization segment first if present:
-  `{ "rep_id": ["init_url", "seg1", "seg2", ...] }`
