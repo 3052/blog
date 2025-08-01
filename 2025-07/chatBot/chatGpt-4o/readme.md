@@ -4,7 +4,10 @@ provide markdown prompt I can give you to return this script
 
 https://chatgpt.com
 
-two file pass
+this model failed to move from two to three passing test files, even after ten
+chances, so we are failing this model.
+
+## chance 1
 
 Please return the full Go script that:
 
@@ -20,16 +23,41 @@ Please return the full Go script that:
 - Falls back to using the `BaseURL` segment if no other segment info is present
 - Uses only the Go standard library
 
-## prompts
+## chance 2
 
-- Uses only the Go **standard library**
-- Supports:
-  - `<SegmentTemplate>` on both `AdaptationSet` and `Representation`, with inheritance
-  - `<SegmentTimeline>` with proper handling of `@t`, `@d`, `@r`
-  - `<BaseURL>` hierarchy: MPD → Period → AdaptationSet → Representation
-  - Always uses `url.URL.ResolveReference` for URL resolution
-  - Appends segments across multiple `<Period>`s for the same `Representation@id`
-  - Defaults `timescale=1` if not present
-  - If both `SegmentTimeline` and `endNumber` are missing, and both `duration`
-    and `timescale` are present, calculates number of segments as:
-   `ceil(PeriodDurationInSeconds * timescale / duration)`
+133:2: declared and not used: segmentCount
+
+## chance 3
+
+BaseURL is a string not slice
+
+## chance 4
+
+use only net/url.Parse to build URLs, no other package or logic
+
+## chance 5
+
+Respects `startNumber` and `endNumber` to control how many segments are generated
+
+## chance 6
+
+`base = resolve(base, rep.BaseURL)` incorrectly resolves Representation@BaseURL
+a second time
+
+## chance 7
+
+do not ignore errors
+
+## chance 8
+
+`format := result[start+len(key)+1 : end]` incorrectly includes `%`
+
+## chance 9
+
+Appends segments across multiple `<Period>`s for the same `Representation@id`
+
+## chance 10
+
+If both `SegmentTimeline` and `endNumber` are missing, and both `duration` and
+`timescale` are present, calculates number of segments as:
+`ceil(PeriodDurationInSeconds * timescale / duration)`
