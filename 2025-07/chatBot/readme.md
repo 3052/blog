@@ -1,17 +1,44 @@
 # chatBot
 
-## coPilot quick response
+## chatGpt-o4-mini
 
-https://copilot.microsoft.com
+271
 
-coPilot is so stupid that it cannot even generate valid markdown to describe
-its own prompt
+## chatGpt-4o
 
-## coPilot think deeper
+290
 
-https://copilot.microsoft.com
+## kimi
 
-AI is a fucking idiot it cannot even provide valid markdown for its own prompts
+313
+
+## chatGpt-4-1-mini
+
+325
+
+## claude-opus
+
+373
+
+## chatGpt-o4-mini-high
+
+404
+
+## claude-sonnet
+
+468
+
+## gemini-pro
+
+474
+
+## gemini-flash
+
+484
+
+## chatGpt-o3
+
+579
 
 ## cursor
 
@@ -22,8 +49,6 @@ changes.
 https://cursor.com/agents
 
 ## deepSeek
-
-site is a piece of shit, repeatedly get this:
 
 Server busy, please try again later.
 
@@ -42,9 +67,6 @@ https://grok.com
 Grok was unable to finish replying.
 Please try again later or use a different model.
 
-## moonshot
+## coPilot think deeper
 
-API is trash:
-
-- https://platform.moonshot.ai/docs/api/caching
-- https://platform.moonshot.ai/docs/api/files
+https://copilot.microsoft.com
