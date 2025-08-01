@@ -4,7 +4,7 @@ provide markdown prompt I can give you to return this script
 
 https://chatgpt.com
 
-two file pass
+six file pass
 
 Please provide a complete Go script that:
 
@@ -21,14 +21,7 @@ Please provide a complete Go script that:
 - Falls back to the resolved Representation `<BaseURL>` as the single segment URL if neither `<SegmentList>` nor `<SegmentTemplate>` is present.
 - Avoids double URL resolving of `<BaseURL>` in the fallback (i.e., outputs the already resolved URL string).
 - Uses only Go standard library packages.
-
-## prompts
-
-- Handles:
-  - `$Time$` using `<SegmentTimeline>` and `@r` repetitions (each `<S>` repeated `1 + r` times)
-  - If both `SegmentTimeline` and `endNumber` are missing, and `duration` + `timescale` are present, calculate number of segments as:
-    `ceil(PeriodDurationInSeconds * timescale / duration)`
-  - Defaults `timescale` to `1` if omitted
-- Appends segments for the same `Representation@id` if it appears in multiple `<Period>` elements
-- Uses **only** `net/url.URL.ResolveReference` for URL resolving (no other logic)
-- Prefers `Period@duration` over `MPD@mediaPresentationDuration` for segment count calculations
+- Supports `<SegmentTemplate>` `initialization` attribute as well as `<Initialization>` child element for the initialization segment.
+- Appends segments for the same `Representation@id` if it appears in multiple `<Period>` elements.
+- If both `SegmentTimeline` and `endNumber` are missing, and `duration` + `timescale` are present, calculates the number of segments as `ceil(PeriodDurationInSeconds * timescale / duration)`.
+- Parses `<Period duration="...">` ISO8601 durations (PT#H#M#S) for segment count calculation.
