@@ -13,6 +13,14 @@ https://copilot.microsoft.com
 
 AI is a fucking idiot it cannot even provide valid markdown for its own prompts
 
+## cursor
+
+GitHub connection is required to use background agents. This allows us to
+access your repositories and create pull requests with the generated code
+changes.
+
+https://cursor.com/agents
+
 ## deepSeek
 
 site is a piece of shit, repeatedly get this:

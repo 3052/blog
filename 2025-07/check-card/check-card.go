@@ -7,6 +7,18 @@ import (
    "strings"
 )
 
+var contains = []string{
+   "BRAUMS STORE",
+   "CHICK-FIL-A",
+   "JASON'S DELI",
+   "MCDONALD'S",
+   "SONIC DRIVE IN",
+   "SPRING CREEK",
+   "STARBUCKS STORE",
+   "WENDYS",
+   "WHATABURGER",
+}
+
 func do_check(name string) error {
    data, err := read_file(name)
    if err != nil {
@@ -24,17 +36,6 @@ func do_check(name string) error {
       }
    }
    return nil
-}
-
-var contains = []string{
-   "BRAUMS STORE",
-   "CHICK-FIL-A",
-   "JASON'S DELI",
-   "SONIC DRIVE IN",
-   "WHATABURGER",
-   "MCDONALD'S",
-   "SPRING CREEK",
-   "WENDYS",
 }
 
 func main() {
