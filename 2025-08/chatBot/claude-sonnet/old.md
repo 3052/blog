@@ -1,11 +1,3 @@
-# claude
-
-provide markdown prompt I can give you in the future to return this script
-
-https://claude.ai
-
-six file pass
-
 Please provide a complete GoLang script that parses MPEG-DASH MPD files and
 extracts segment URLs with the following specifications:
 
@@ -27,7 +19,6 @@ extracts segment URLs with the following specifications:
   - `$Number$` → Segment number (respects `startNumber` and `endNumber`)
   - `$Time$` → Segment timestamp (accumulates across `<S>` elements in SegmentTimeline)
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
-- Respect `endNumber` attribute to limit segment generation
 - Include initialization URLs when present (grouped with segment URLs as first item)
 - Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
@@ -35,7 +26,9 @@ extracts segment URLs with the following specifications:
 - Append segments for the same `Representation ID` if it appears in multiple `Periods`
 
 ### Calculated Count
-- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present in `SegmentTemplate`, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
+- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
+  `timescale` are present in `SegmentTemplate`, calculate the number of
+   segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
 - `SegmentTemplate@timescale` should default to `1` if missing
 
 ### Output Format
