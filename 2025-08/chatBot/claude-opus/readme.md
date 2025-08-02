@@ -4,7 +4,7 @@ provide prompt I can give you to return this script
 
 https://claude.ai
 
-two file pass
+six file pass
 
 Please provide a complete GoLang script that parses MPEG-DASH MPD files and
 extracts segment URLs with the following specifications:
@@ -28,9 +28,13 @@ extracts segment URLs with the following specifications:
 - Support both timeline-based and duration-based templates
 - Replace template variables: `$RepresentationID$`, `$Number$`, `$Time$`, `$Bandwidth$`
 - Support padded number format `$Number%0Xd$`
+- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
+- Default `timescale` to `1` if missing
 
 ### Additional Requirements
 - Support SegmentList with initialization and segment URLs
 - Support SegmentBase for single-segment representations
 - Properly handle URL resolution for relative and absolute paths
 - Include proper error handling for file reading and XML parsing
+- Append segments for the same Representation ID if it appears in multiple Periods
+- Parse ISO 8601 duration format for Period duration (e.g., PT30S, PT1H30M)
