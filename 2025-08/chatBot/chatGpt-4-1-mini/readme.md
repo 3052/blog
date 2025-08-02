@@ -1,27 +1,51 @@
-# chatGpt
-
-provide markdown prompt I can give you to return this script
+# chatGpt 4.1-mini
 
 https://chatgpt.com
 
-six file pass
+this model fails. after nine chances it could not pass the first test file
+
+## chance 1
 
 Please provide a complete Go script that:
 
 - Takes a local MPEG-DASH MPD file path as a CLI argument (`go run main.go <mpd_file_path>`).
-- Parses the MPD and outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs with the initialization segment first if present.
+- Parses the MPD and outputs a JSON object mapping each `Representation@id` to
+   a list of fully resolved segment URLs with the initialization segment first
+   if present
 - Uses base URL `http://test.test/test.mpd` as the initial base for URL resolution.
-- Resolves `<BaseURL>` elements hierarchically in this order: MPD → Period → AdaptationSet → Representation.
-- Treats each `<BaseURL>` as a single string (not a slice).
-- Supports `<SegmentTemplate>` inheritance: Representation inherits and overrides from AdaptationSet, etc.
-- Fully supports `<SegmentTimeline>` inside `<SegmentTemplate>`, expanding timeline segments to generate URLs.
-- Supports substitution variables `$RepresentationID$`, `$Number$`, `$Time$` in templates, including printf-style formatting like `$Number%05d$`.
-- Handles `startNumber` and `endNumber` attributes in `<SegmentTemplate>` to limit segment generation.
-- Supports `<SegmentList>` and `<Initialization>` elements with hierarchical inheritance.
-- Falls back to the resolved Representation `<BaseURL>` as the single segment URL if neither `<SegmentList>` nor `<SegmentTemplate>` is present.
-- Avoids double URL resolving of `<BaseURL>` in the fallback (i.e., outputs the already resolved URL string).
-- Uses only Go standard library packages.
-- Supports `<SegmentTemplate>` `initialization` attribute as well as `<Initialization>` child element for the initialization segment.
-- Appends segments for the same `Representation@id` if it appears in multiple `<Period>` elements.
-- If both `SegmentTimeline` and `endNumber` are missing, and `duration` + `timescale` are present, calculates the number of segments as `ceil(PeriodDurationInSeconds * timescale / duration)`.
-- Parses `<Period duration="...">` ISO8601 durations (PT#H#M#S) for segment count calculation.
+
+## chance 2
+
+Error parsing MPD XML: main.MPD field "Period" with tag "Period" conflicts with
+field "Periods" with tag "Period"
+
+## chance 3
+
+use only net/url.URL.ResolveReference to resolve URLs, no other package or logic
+
+## chance 4
+
+SegmentTemplate can be child of Representation or AdaptationSet
+
+## chance 5
+
+Supports substitution variables `$RepresentationID$`, `$Number$`, `$Time$` in
+templates, including printf-style formatting like `$Number%05d$`
+
+## chance 6
+
+`substituteTemplateVars(mediaPattern, rep.ID, i, 0)` incorrectly uses zero
+value for `$Time$`
+
+## chance 7
+
+support SegmentTimeline
+
+## chance 8
+
+279:7: declared and not used: timescale
+
+## chance 9
+
+`prevT = segments[len(segments)-1]` is incorrect, as it should instead be the
+final segment value + S@d
