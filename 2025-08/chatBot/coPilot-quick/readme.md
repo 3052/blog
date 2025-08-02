@@ -4,12 +4,16 @@ provide prompt I can give you to return this script
 
 https://copilot.microsoft.com
 
-one file pass
+two file pass
 
-Please give me the complete Go program (using only the standard library) that:
-- Reads an MPEG-DASH MPD XML file path from the CLI: `go run main.go <mpd_file_path>`
-- Resolves `BaseURL` hierarchically: MPD → Period → AdaptationSet → Representation
-- Supports both `<SegmentList>` and `<SegmentTemplate>` (including `<SegmentTimeline>` and respecting `endNumber`)
-- Handles all the following tokens: `$RepresentationID$`, `$Number$`, `$Number%0Nd$`, and `$Time$`
-- Uses the starting base URL: `http://test.test/test.mpd`
-- Outputs a **JSON map** from each `Representation.ID` to its ordered list of fully resolved segment URLs
+Give me the complete Go program that parses a DASH MPD using only the standard
+library, uses `http://test.test/test.mpd` as the starting base URL, resolves
+BaseURL hierarchically using `net/url.URL.ResolveReference`, supports
+SegmentTemplate (at both AdaptationSet and Representation levels) including
+SegmentTimeline, Initialization, `startNumber`, and `endNumber`, supports
+SegmentList including Initialization@sourceURL, handles token replacements
+(`$RepresentationID$`, `$Number$`, `$Number%0Nd$`, `$Time$`), accumulates
+`$Time$` correctly across `<SegmentTimeline>` entries by using each `<S>`
+element `1 + S@r` times, treats BaseURL-only Representations as single segment
+URLs, and outputs a JSON map from each Representation ID to its fully resolved
+segment URLs.

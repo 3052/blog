@@ -5,7 +5,6 @@ Please give me the complete Go program (standard library only) that:
 - Starts with `const defaultBase = "http://test.test/test.mpd"`
 - Resolves all nested `<BaseURL>` tags using only `net/url.Parse` and `net/url.URL.ResolveReference`
 - Outputs a JSON map from each `Representation.ID` to its ordered list of fully resolved segment URLs
-- Accumulates `$Time$` across `<SegmentTimeline><S>` elements
 
 ## chance 2
 
@@ -22,12 +21,6 @@ starting token
 ## chance 4
 
 `end += start + 1` is not correct, as it will exclude the final token
-
-## chance 5
-
-each S element should be used 1 + S@r times
-
-need to burn another chance since it did not create a script.
 
 ## chance 6
 
