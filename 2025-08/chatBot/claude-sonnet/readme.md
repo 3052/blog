@@ -4,7 +4,7 @@ provide prompt I can give you to return this script
 
 https://claude.ai
 
-one file pass
+two file pass
 
 Please provide a complete GoLang script that parses MPEG-DASH MPD files and
 extracts segment URLs with the following specifications:
@@ -16,6 +16,7 @@ extracts segment URLs with the following specifications:
 ### BaseURL Resolution
 - Resolve `BaseURL` elements hierarchically: MPD → Period → AdaptationSet → Representation
 - Use starting base URL: `http://test.test/test.mpd`
+- Use only net/url.URL.ResolveReference for all URL resolution (no other packages or logic)
 
 ### SegmentTemplate Support
 - Support SegmentTemplate at both AdaptationSet and Representation levels
@@ -32,6 +33,7 @@ extracts segment URLs with the following specifications:
 - SegmentBase (single file with initialization)
 - SegmentList (explicit list of segments)
 - SegmentTemplate (template-based URL generation)
+- **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
 ### Output Format
 - JSON object mapping Representation IDs to arrays of resolved segment URLs

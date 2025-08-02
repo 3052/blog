@@ -20,7 +20,6 @@ extracts segment URLs with the following specifications:
   - `$Time$` → Segment timestamp (accumulates across `<S>` elements in SegmentTimeline)
 - Handle **SegmentTimeline** with proper time persistence across `<S>` elements
 - Include initialization URLs when present (grouped with segment URLs as first item)
-- Handle **BaseURL-only Representations**: When Representation contains only BaseURL (no SegmentList/SegmentTemplate), treat BaseURL as single segment URL
 
 ### Segment Aggregation
 - Append segments for the same `Representation ID` if it appears in multiple `Periods`
