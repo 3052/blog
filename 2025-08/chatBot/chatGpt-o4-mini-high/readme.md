@@ -2,8 +2,8 @@
 
 https://chatgpt.com
 
-this model fails. when attempting the third test file, it reached the max 10
-chances before passing the test
+this model fails. when attempting the third test file, it reached the max nine
+chances without passing the test
 
 ## chance 1
 
@@ -55,7 +55,3 @@ SegmentTemplate@media can include `$Number$` or `$Time$`
 ## chance 9
 
 replace input like `$Number%08d$`
-
-## chance 10
-
-script ends unexpectedly at line 319
