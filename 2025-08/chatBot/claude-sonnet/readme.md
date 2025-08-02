@@ -14,7 +14,7 @@ extracts segment URLs with the following specifications:
 - Command line usage: `go run main.go <mpd_file_path>`
 
 ### BaseURL Resolution
-- Resolve `BaseURL` elements hierarchically: MPD → Period → AdaptationSet → Representation
+- Resolve `BaseURL` elements hierarchically: MPD → Period → Representation
 - Use starting base URL: `http://test.test/test.mpd`
 - Use only net/url.URL.ResolveReference for all URL resolution (no other packages or logic)
 - BaseURL is a string field, not a slice
