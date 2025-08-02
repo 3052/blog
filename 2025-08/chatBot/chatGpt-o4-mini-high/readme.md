@@ -1,10 +1,11 @@
 # chatGpt
 
-provide prompt I can give you to return this script
-
 https://chatgpt.com
 
-two file pass
+this model fails. when attempting the third test file, it reached the max 10
+chances before passing the test
+
+## chance 1
 
 Please generate a complete Go program (`main.go`) using only the standard library that:
 
@@ -19,3 +20,42 @@ Please generate a complete Go program (`main.go`) using only the standard librar
 9. Falls back to the resolved Representation `<BaseURL>` as the single segment URL if neither `<SegmentList>` nor `<SegmentTemplate>` is present
 10. Prints a JSON object mapping each `Representation.ID` to its ordered slice of fully-resolved segment URLs
 11. Includes full error handling (exit nonzero on any parse/URL error, logging to stderr)
+
+## chance 2
+
+If **both** `SegmentTimeline` and `endNumber` are missing **and** both
+`duration` and `timescale` are present, calculate the number of segments as  
+`ceil(PeriodDurationInSeconds * timescale / duration)`
+
+## chance 3
+
+all BaseURL fields should be type string
+
+## chance 4
+
+support duration like PT2H13M19.040S
+
+## chance 5
+
+SegmentTemplate@timeline is 1 when missing
+
+## chance 6
+
+Appends segments for the same `Representation@id` if it appears in multiple
+`<Period>` elements
+
+## chance 7
+
+204:16: undefined: buildFromSegmentList
+
+## chance 8
+
+SegmentTemplate@media can include `$Number$` or `$Time$`
+
+## chance 9
+
+replace input like `$Number%08d$`
+
+## chance 10
+
+script ends unexpectedly at line 319
