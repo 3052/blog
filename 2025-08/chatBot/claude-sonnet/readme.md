@@ -31,7 +31,9 @@ extracts segment URLs with the following specifications:
 - When no SegmentTimeline, generate segments from startNumber to endNumber
 - `timescale` should default to `1` if missing
 - `$Time$` should increase by `S@d` each iteration (use raw timeline values)
-- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
+- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
+   `timescale` are present, calculate the number of segments using
+   `ceil(PeriodDurationInSeconds * timescale / duration)`
 
 ### Segment Types Support
 - SegmentBase (single file with initialization)
