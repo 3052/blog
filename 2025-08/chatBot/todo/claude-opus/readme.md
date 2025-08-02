@@ -28,7 +28,9 @@ extracts segment URLs with the following specifications:
 - Support both timeline-based and duration-based templates
 - Replace template variables: `$RepresentationID$`, `$Number$`, `$Time$`, `$Bandwidth$`
 - Support padded number format `$Number%0Xd$`
-- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and `timescale` are present, calculate the number of segments using `ceil(PeriodDurationInSeconds * timescale / duration)`
+- If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
+   `timescale` are present, calculate the number of segments using
+   `ceil(PeriodDurationInSeconds * timescale / duration)`
 - Default `timescale` to `1` if missing
 
 ### Additional Requirements
