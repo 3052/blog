@@ -2,7 +2,7 @@
 
 https://chatgpt.com
 
-this model fails to pass the first test file, after ten chances
+this model fails to pass the first test file, after nine chances
 
 ## chance 1
 
@@ -47,7 +47,3 @@ script ends unexpectedly at line 182
 ## chance 9
 
 script ends unexpectedly at line 196
-
-## chance 10
-
-script ends unexpectedly at line 203

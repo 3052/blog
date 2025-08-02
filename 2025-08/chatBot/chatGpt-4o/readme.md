@@ -1,10 +1,8 @@
 # chatGpt
 
-provide markdown prompt I can give you to return this script
-
 https://chatgpt.com
 
-this model failed to move from two to three passing test files, even after ten
+this model failed to move from two to three passing test files, even after nine
 chances, so we are failing this model.
 
 ## chance 1
@@ -55,9 +53,3 @@ do not ignore errors
 ## chance 9
 
 Appends segments across multiple `<Period>`s for the same `Representation@id`
-
-## chance 10
-
-If both `SegmentTimeline` and `endNumber` are missing, and both `duration` and
-`timescale` are present, calculates number of segments as:
-`ceil(PeriodDurationInSeconds * timescale / duration)`
