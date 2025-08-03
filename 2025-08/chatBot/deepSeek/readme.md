@@ -111,5 +111,3 @@ with URL resolve, each URL should build on the previous result
 ## prompt 25, 2m34s
 
 full script
-
-## 26 OK

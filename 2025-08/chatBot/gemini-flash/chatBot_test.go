@@ -15,7 +15,7 @@ var tests = []struct {
    representation []representationA
 }{
    {
-      name: "canal.mpd",
+      name: "../canal.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -32,7 +32,7 @@ var tests = []struct {
       },
    },
    {
-      name: "criterion.mpd",
+      name: "../criterion.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -49,7 +49,7 @@ var tests = []struct {
       },
    },
    {
-      name: "max.mpd",
+      name: "../max.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -82,7 +82,7 @@ var tests = []struct {
       },
    },
    {
-      name: "molotov.mpd",
+      name: "../molotov.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -99,7 +99,7 @@ var tests = []struct {
       },
    },
    {
-      name: "paramount.mpd",
+      name: "../paramount.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -122,7 +122,7 @@ var tests = []struct {
       },
    },
    {
-      name: "rakuten.mpd",
+      name: "../rakuten.mpd",
       representation: []representationA{
          {
             content_type: type_video,
