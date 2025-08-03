@@ -1,8 +1,8 @@
 # chatGpt 4.1-mini
 
-https://chatgpt.com
+https://chatgpt.com?model=gpt-4-1-mini
 
-## prompt 1
+## prompt 1, 14 seconds
 
 Please provide a complete Go script that:
 
@@ -12,52 +12,62 @@ Please provide a complete Go script that:
    if present
 - Uses base URL `http://test.test/test.mpd` as the initial base for URL resolution
 
-## prompt 2
-
-Error parsing MPD XML: main.MPD field "Period" with tag "Period" conflicts with
-field "Periods" with tag "Period"
-
-## prompt 3
+## prompt 2, 15 seconds
 
 SegmentTemplate can be child of Representation or AdaptationSet
 
-## prompt 4
+## prompt 3, 12 seconds
 
-support SegmentTimeline
+`collectSegmentURLs` is adding a limit of one when I did not ask that
 
-## prompt 5
+## prompt 4, 16 seconds
 
-handle `$RepresentationID$`
+updated script
 
-## prompt 6
+## prompt 5, 7 seconds
 
-with each iteration, `$Time$` should be replaced, then incremented by the
-current S@d value, in that order, no other logic should happen
+replace `$RepresentationID$`
 
-## prompt 7
+## prompt 6, 17 seconds
 
-if SegmentTemplate@endNumber exists it sets value of the last segment
+entire script
 
-## prompt 8
+## prompt 7, 18 seconds
 
-if a Representation supplies its own `<BaseURL>` and there is no `SegmentList`
-or `SegmentTemplate` at any level, outputs just that single resolved URL
+replace `$Time$`
 
-## prompt 9
+## prompt 8, 10 seconds
+
+respect Period@BaseURL
+
+## prompt 9, 16 seconds
+
+updated script
+
+## prompt 10, 25 seconds
+
+support SegmentTemplate@endNumber
+
+## prompt 11, 8 seconds
+
+When a representation has only BaseURL and no segment information, use the
+already-resolved baseURL directly
+
+## prompt 12, 6 seconds
 
 Append segments for the same Representation ID if it appears in multiple
 Periods
 
-## prompt 10
-
-respect input like `$Number%08d$`
-
-## prompt 11
-
-Default `timescale` to `1` if missing
-
-## prompt 12
+## prompt 13, 24 seconds
 
 If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
 `timescale` are present, calculate the number of segments using
 `ceil(PeriodDurationInSeconds * timescale / duration)`
+
+## prompt 14, 7 seconds
+
+replace input like `$Number%08d$`
+
+## prompt 15, 22 seconds
+
+updated script

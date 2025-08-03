@@ -1,6 +1,6 @@
 # chatGpt
 
-https://chatgpt.com
+https://chatgpt.com?model=o3
 
 this model fails. upon attempting the third test file, it was unable to create
 a passing script after nine tries

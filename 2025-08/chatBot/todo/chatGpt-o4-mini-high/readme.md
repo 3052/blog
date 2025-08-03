@@ -1,6 +1,6 @@
 # chatGpt
 
-https://chatgpt.com
+https://chatgpt.com?model=o4-mini-high
 
 this model fails. when attempting the third test file, it reached the max nine
 chances without passing the test

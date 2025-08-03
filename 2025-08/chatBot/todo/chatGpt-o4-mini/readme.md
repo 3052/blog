@@ -1,6 +1,6 @@
 # chatGpt
 
-https://chatgpt.com
+https://chatgpt.com?model=o4-mini
 
 this model fails to pass the first test file, after nine chances
 
