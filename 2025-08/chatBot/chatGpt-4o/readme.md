@@ -77,7 +77,3 @@ replace input like `$Number%08d$`
 ## prompt 17, 10 seconds
 
 MPD@BaseURL can be different from the MPD URL and should be respected
-
-
-
-
