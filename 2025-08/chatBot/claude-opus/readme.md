@@ -32,16 +32,6 @@ If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
 
 replace input like `$Number%08d$`
 
-## prompt 7, 1m17s
+## prompt 7, 1m21s
 
-syntax error at line 214
-
-## prompt 8, 42s
-
-you did not fix the problem, its in `replaceTemplateVariable`, its blatantly
-obvious that your process broke at that point
-
-## prompt 9, 1m21s
-
-re write the entire script, since it seems you are unable to see the completely
-obvious broken syntax
+re write the entire script, since  you are unable to see the broken syntax
