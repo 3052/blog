@@ -7,19 +7,19 @@
 - median is 10.0 seconds
 - 373 LOC
 
-## chatGpt-4-1-mini
-
-- 15 prompts
-- sum of the times is 217 seconds
-- median is 15 seconds
-- 341 LOC
-
 ## chatGpt-o3
 
 - 5 prompts
 - sum of the times is 195 seconds
 - median is 42.0 seconds
 - 286 LOC
+
+## chatGpt-4-1-mini
+
+- 15 prompts
+- sum of the times is 217 seconds
+- median is 15 seconds
+- 341 LOC
 
 ## chatGpt-o4-mini
 
@@ -69,3 +69,14 @@
 - sum is 1985 seconds
 - median is 77.0 seconds
 - 409 LOC
+
+## fail
+
+these all failed the challenge:
+
+- chatGpt-o4-mini-high
+- coPilot-quick
+- grok-think
+- grok
+- kimi
+- qwen
