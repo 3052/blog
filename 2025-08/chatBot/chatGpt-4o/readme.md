@@ -2,7 +2,7 @@
 
 https://chatgpt.com?model=gpt-4o
 
-## prompt 1, 26 seconds
+## prompt 1, 26s
 
 Please return the full Go script that:
 
