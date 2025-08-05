@@ -1,9 +1,5 @@
 # chatGpt o4 mini high
 
-https://chatgpt.com?model=o4-mini-high
-
-as can be clearly seen below, this model is too stupid to be useful
-
 ## prompt 1, 46s
 
 return the full Go script that:

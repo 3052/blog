@@ -1,6 +1,6 @@
 # grok
 
-https://grok.com
+https://wikipedia.org/wiki/Grok_(chatbot)
 
 in response to prompt 21 I got:
 

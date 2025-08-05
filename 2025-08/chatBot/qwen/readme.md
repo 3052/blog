@@ -1,6 +1,6 @@
 # qwen
 
-https://chat.qwen.ai
+https://wikipedia.org/wiki/Qwen
 
 I reached the limit after 5 prompts
 

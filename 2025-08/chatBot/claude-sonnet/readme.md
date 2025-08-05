@@ -1,7 +1,5 @@
 # claude sonnet
 
-https://claude.ai
-
 ## prompt 1, 26s
 
 return the full Go script that:

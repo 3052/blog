@@ -1,7 +1,5 @@
 # z.ai
 
-https://chat.z.ai
-
 ## prompt 1, 1m30s
 
 return the full Go script that:

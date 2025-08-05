@@ -1,6 +1,6 @@
 # claude opus
 
-https://claude.ai
+<https://wikipedia.org/wiki/Claude_(language_model)>
 
 ## prompt 1, 1m10s
 

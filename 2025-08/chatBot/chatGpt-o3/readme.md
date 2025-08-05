@@ -1,7 +1,5 @@
 # chatGpt o3
 
-https://chatgpt.com?model=o3
-
 ## prompt 1, 42s
 
 return the full Go script that:

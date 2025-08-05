@@ -1,6 +1,6 @@
 # coPilot think deeper
 
-https://copilot.microsoft.com
+<https://wikipedia.org/wiki/Microsoft_Copilot>
 
 ## prompt 1, 44s
 

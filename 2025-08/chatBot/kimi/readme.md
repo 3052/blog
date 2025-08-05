@@ -1,9 +1,9 @@
 # kimi
 
-https://kimi.com
+<https://wikipedia.org/wiki/Moonshot_AI>
 
-despite repeatedly correcting the AI on URL logic, it is still making idiot
-mistakes like adding file extension that no one asked for:
+despite repeatedly correcting the AI on URL logic, it is still making mistakes
+like adding file extension:
 
 ~~~
 seg, _ := url.Parse(repID + ".mp4")

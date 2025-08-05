@@ -1,7 +1,5 @@
 # chatGpt o4 mini
 
-https://chatgpt.com?model=o4-mini
-
 ## prompt 1, 17s
 
 return the full Go script that:

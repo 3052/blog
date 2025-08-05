@@ -1,7 +1,5 @@
 # chatGpt 4o
 
-https://chatgpt.com?model=gpt-4o
-
 ## prompt 1, 26s
 
 Please return the full Go script that:

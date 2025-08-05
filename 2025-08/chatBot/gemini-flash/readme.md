@@ -1,7 +1,5 @@
 # gemini flash
 
-https://gemini.google.com
-
 ## prompt 1, 7s
 
 return the full Go script that:

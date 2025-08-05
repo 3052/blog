@@ -1,6 +1,6 @@
 # deepSeek
 
-https://chat.deepseek.com
+https://wikipedia.org/wiki/DeepSeek
 
 ## prompt 1, 1m5s
 
