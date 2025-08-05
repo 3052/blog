@@ -8,6 +8,8 @@ import (
    "testing"
 )
 
+const folder = "../"
+
 const initialization = 1
 
 var tests = []struct {
@@ -15,7 +17,7 @@ var tests = []struct {
    representation []representationA
 }{
    {
-      name: "../testdata/canal.mpd",
+      name: "canal.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -32,7 +34,7 @@ var tests = []struct {
       },
    },
    {
-      name: "../testdata/criterion.mpd",
+      name: "criterion.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -49,7 +51,7 @@ var tests = []struct {
       },
    },
    {
-      name: "../testdata/max.mpd",
+      name: "max.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -82,7 +84,7 @@ var tests = []struct {
       },
    },
    {
-      name: "../testdata/molotov.mpd",
+      name: "molotov.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -99,7 +101,7 @@ var tests = []struct {
       },
    },
    {
-      name: "../testdata/paramount.mpd",
+      name: "paramount.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -122,7 +124,7 @@ var tests = []struct {
       },
    },
    {
-      name: "../testdata/rakuten.mpd",
+      name: "rakuten.mpd",
       representation: []representationA{
          {
             content_type: type_video,
@@ -137,7 +139,7 @@ var tests = []struct {
 func Test(t *testing.T) {
    log.SetFlags(log.Ltime)
    for _, testVar := range tests {
-      data, err := output("go", "run", ".", testVar.name)
+      data, err := output("go", "run", ".", folder + testVar.name)
       if err != nil {
          t.Fatal(string(data))
       }
