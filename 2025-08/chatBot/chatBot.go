@@ -1,6 +1,7 @@
 package main
 
 import (
+   "encoding/json"
    "errors"
    "fmt"
    "os"
@@ -32,40 +33,6 @@ func get_json(name string) error {
    return nil
 }
 
-func get_go(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   var lines int
-   for _, line := range strings.Split(string(data), "\n") {
-      line = strings.TrimSpace(line)
-      if line != ""  {
-         if !strings.HasPrefix(line, "//") {
-            lines++
-         }
-      }
-   }
-   fmt.Printf("- %v LOC\n", lines)
-   return nil
-}
-
-func main() {
-   readmes, err := filepath.Glob("*/readme.md")
-   if err != nil {
-      panic(err)
-   }
-   for i, readme := range readmes {
-      if i >= 1 {
-         fmt.Println()
-      }
-      err := get_md(readme)
-      if err != nil {
-         panic(err)
-      }
-   }
-}
-
 func get_sum(values []time.Duration) time.Duration {
    var sum time.Duration
    for _, value := range values {
@@ -87,11 +54,6 @@ func get_median(values []time.Duration) time.Duration {
 }
 
 func get_md(name string) error {
-   fmt.Printf("## %v\n", name)
-   err := get_go(filepath.Dir(name) + "/chatBot.go")
-   if err != nil {
-      return nil
-   }
    data, err := os.ReadFile(name)
    if err != nil {
       return err
@@ -114,5 +76,46 @@ func get_md(name string) error {
    fmt.Printf("- %v prompts\n", len(durations))
    fmt.Printf("- median is %v\n", get_median(durations))
    fmt.Printf("- sum is %v\n", get_sum(durations))
+   return nil
+}
+
+func main() {
+   names, err := filepath.Glob("*/chatBot.json")
+   if err != nil {
+      panic(err)
+   }
+   for i, name := range names {
+      if i >= 1 {
+         fmt.Println()
+      }
+      err = get_json(name)
+      if err != nil {
+         panic(err)
+      }
+      dir := filepath.Dir(name)
+      if get_go(dir + "/chatBot.go") == nil {
+         err = get_md(dir + "/readme.md")
+         if err != nil {
+            panic(err)
+         }
+      }
+   }
+}
+
+func get_go(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   var lines int
+   for _, line := range strings.Split(string(data), "\n") {
+      line = strings.TrimSpace(line)
+      if line != ""  {
+         if !strings.HasPrefix(line, "//") {
+            lines++
+         }
+      }
+   }
+   fmt.Printf("- %v LOC\n", lines)
    return nil
 }
