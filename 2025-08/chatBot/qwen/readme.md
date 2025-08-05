@@ -23,6 +23,6 @@ BaseURL is string not string slice
 
 102:5: declared and not used: mpdBaseURL
 
-## prompt 5
+## prompt 5, 31s
 
 output should be `map[string][]string`

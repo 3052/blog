@@ -34,7 +34,7 @@ support SegmentTimeline
 
 full script
 
-## prompt 7
+## prompt 7, 42s
 
 When a representation has only BaseURL and no segment information, use the
 already-resolved baseURL directly

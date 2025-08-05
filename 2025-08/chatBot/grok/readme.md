@@ -98,6 +98,6 @@ support duration like `PT1100.34925S`
 
 replace input like `$Number%08d$`
 
-## prompt 21
+## prompt 21, 9s
 
 replace `$Number$` in SegmentTemplate@media
