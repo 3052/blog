@@ -1,7 +1,5 @@
 # chatGpt 4.1-mini
 
-https://chatgpt.com?model=gpt-4-1-mini
-
 ## prompt 1, 14s
 
 Please provide a complete Go script that:
