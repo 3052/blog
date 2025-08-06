@@ -125,7 +125,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Map to store representation ID to segment URLs (using slice to preserve order and allow appending)
+	// Map to store representation ID to segment URLs
 	result := make(map[string][]string)
 
 	// Process each period
@@ -260,14 +260,7 @@ func main() {
 					segmentURLs = append(segmentURLs, representationBaseURL.String())
 				}
 				
-				// Append segments to existing representation ID or create new entry
-				if existingSegments, exists := result[representation.ID]; exists {
-					// Append new segments to existing ones
-					result[representation.ID] = append(existingSegments, segmentURLs...)
-				} else {
-					// Create new entry
-					result[representation.ID] = segmentURLs
-				}
+				result[representation.ID] = segmentURLs
 			}
 		}
 	}

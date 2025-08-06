@@ -8,7 +8,7 @@ import (
    "testing"
 )
 
-const folder = "../testdata/"
+const folder = "../chatBot/testdata/"
 
 const initialization = 1
 

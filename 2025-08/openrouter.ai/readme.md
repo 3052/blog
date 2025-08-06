@@ -1,14 +1,7 @@
 # qwen
 
-https://wikipedia.org/wiki/Qwen
-
-free:
-
-https://openrouter.ai/qwen/qwen3-coder:free
-
-no idea on cost:
-
-https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct
+- https://wikipedia.org/wiki/Qwen
+- https://openrouter.ai/qwen/qwen3-coder:free
 
 ## prompt 1
 
