@@ -1,6 +1,7 @@
 package main
 
 import (
+   "encoding/csv"
    "encoding/json"
    "errors"
    "fmt"
@@ -10,28 +11,6 @@ import (
    "strings"
    "time"
 )
-
-func get_json(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   var value struct {
-      ChatBot string
-      Developer string
-      Model string
-      Url string
-   }
-   err = json.Unmarshal(data, &value)
-   if err != nil {
-      return err
-   }
-   fmt.Printf("- URL: %v\n", value.Url)
-   fmt.Printf("- chatBot: %v\n", value.ChatBot)
-   fmt.Printf("- developer: %v\n", value.Developer)
-   fmt.Printf("- model: %v\n", value.Model)
-   return nil
-}
 
 func get_sum(values []time.Duration) time.Duration {
    var sum time.Duration
@@ -53,7 +32,15 @@ func get_median(values []time.Duration) time.Duration {
    return values[size/2]
 }
 
-func get_md(name string) error {
+func (c *chatBot) get_json(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   return json.Unmarshal(data, c)
+}
+
+func (c *chatBot) get_md(name string) error {
    data, err := os.ReadFile(name)
    if err != nil {
       return err
@@ -73,36 +60,13 @@ func get_md(name string) error {
          durations = append(durations, duration)
       }
    }
-   fmt.Printf("- %v prompts\n", len(durations))
-   fmt.Printf("- median is %v\n", get_median(durations))
-   fmt.Printf("- sum is %v\n", get_sum(durations))
+   c.median = get_median(durations)
+   c.prompts = len(durations)
+   c.sum = get_sum(durations)
    return nil
 }
 
-func main() {
-   names, err := filepath.Glob("*/chatBot.json")
-   if err != nil {
-      panic(err)
-   }
-   for i, name := range names {
-      if i >= 1 {
-         fmt.Println()
-      }
-      err = get_json(name)
-      if err != nil {
-         panic(err)
-      }
-      dir := filepath.Dir(name)
-      if get_go(dir + "/chatBot.go") == nil {
-         err = get_md(dir + "/readme.md")
-         if err != nil {
-            panic(err)
-         }
-      }
-   }
-}
-
-func get_go(name string) error {
+func (c *chatBot) get_go(name string) error {
    data, err := os.ReadFile(name)
    if err != nil {
       return err
@@ -116,6 +80,91 @@ func get_go(name string) error {
          }
       }
    }
-   fmt.Printf("- %v LOC\n", lines)
+   c.loc = lines
    return nil
 }
+
+type chatBot struct {
+   ChatBot string
+   Developer string
+   Model string
+   Url string
+   loc int
+   median time.Duration
+   prompts int
+   sum time.Duration
+}
+
+func (c *chatBot) record() []string {
+   return []string{
+      c.Developer,
+      c.ChatBot,
+      c.Model,
+      c.Url,
+      fmt.Sprint(c.prompts),
+      fmt.Sprint(c.median),
+      fmt.Sprint(c.sum),
+      fmt.Sprint(c.loc),
+   }
+}
+
+func (*chatBot) header() []string {
+   return []string{
+      "developer",
+      "chatbot",
+      "model",
+      "URL",
+      "prompts",
+      "median",
+      "sum",
+      "LOC",
+   }
+}
+
+func main() {
+   names, err := filepath.Glob("*/chatBot.json")
+   if err != nil {
+      panic(err)
+   }
+   file, err := os.Create("chatBot.csv")
+   if err != nil {
+      panic(err)
+   }
+   write := csv.NewWriter(file)
+   err = write.Write(new(chatBot).header())
+   if err != nil {
+      panic(err)
+   }
+   for _, name := range names {
+      var bot chatBot
+      err = bot.get_json(name)
+      if err != nil {
+         panic(err)
+      }
+      dir := filepath.Dir(name)
+      if bot.get_go(dir + "/chatBot.go") == nil {
+         err = bot.get_md(dir + "/readme.md")
+         if err != nil {
+            panic(err)
+         }
+      }
+      err = write.Write(bot.record())
+      if err != nil {
+         panic(err)
+      }
+   }
+   write.Flush()
+   err = write.Error()
+   if err != nil {
+      panic(err)
+   }
+}
+
+
+
+
+
+
+
+
+

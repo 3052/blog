@@ -1,0 +1,18 @@
+developer,chatbot,model,URL,prompts,median,sum,LOC
+openAi,chatGpt,GPT-4.1 mini,chatgpt.com?model=gpt-4-1-mini,15,15s,3m37s,340
+openAi,chatGpt,gpt-4o,chatgpt.com?model=gpt-4o,17,26s,7m5s,258
+openAi,chatGpt,o3,chatgpt.com?model=o3,5,42s,3m15s,276
+openAi,chatGpt,o4-mini,chatgpt.com?model=o4-mini,15,15s,3m43s,227
+openAi,chatGpt,o4-mini-high,chatgpt.com?model=o4-mini-high,0,0s,0s,0
+anthropic,claude,opus,claude.ai,7,52s,6m51s,293
+anthropic,claude,sonnet,claude.ai,14,18.5s,6m18s,285
+microsoft,copilot,quick response,copilot.microsoft.com,0,0s,0s,0
+microsoft,copilot,think deeper,copilot.microsoft.com,12,28s,6m41s,268
+deepSeek,deepSeek,R1,chat.deepseek.com,25,1m17s,33m5s,389
+google,gemini,2.5 flash,gemini.google.com,14,10s,2m22s,327
+google,gemini,2.5 pro,gemini.google.com,16,38.5s,10m41s,315
+xAi,grok,3,grok.com,0,0s,0s,0
+xAi,grok,3 think,grok.com,0,0s,0s,0
+moonshot ai,kimi,K2,kimi.com,0,0s,0s,0
+alibaba cloud,qwen,3,chat.qwen.ai,0,0s,0s,0
+z.ai,z.ai,GLM-4.5,chat.z.ai,16,51s,15m14s,380
