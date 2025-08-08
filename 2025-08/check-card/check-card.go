@@ -15,6 +15,7 @@ var contains = []string{
    "SONIC DRIVE IN",
    "SPRING CREEK",
    "STARBUCKS STORE",
+   "STEAK-N-SHAKE",
    "WENDYS",
    "WHATABURGER",
 }
