@@ -1,5 +1,7 @@
 # chatGpt 5
 
+keep code shorter but readable; do not use semicolons as a line-saving trick
+
 ## prompt 1, 1m7s
 
 Please return the full Go script that:
@@ -38,18 +40,14 @@ when SegmentTemplate@endNumber exists it defines the value of the last segment
 
 344:17: undefined: max64
 
-## prompt 8, 1s
-
-keep code shorter but readable; do not use semicolons as a line-saving trick
-
-## prompt 9, 7s
+## prompt 8, 7s
 
 `$Time$` value should increase by S@d each iteration
 
-## prompt 10, 11s
+## prompt 9, 11s
 
 227:53: undefined: int64Ptr
 
-## prompt 11, 1m19s
+## prompt 10, 1m19s
 
 BaseURL is string not slice

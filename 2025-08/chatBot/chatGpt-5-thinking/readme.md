@@ -1,5 +1,7 @@
 # chatGpt 5 thinking
 
+keep code shorter but readable; do not use semicolons as a line-saving trick
+
 ## prompt 1, 1m24s
 
 Please return the full Go script that:
@@ -43,7 +45,3 @@ If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
 ## prompt 8, 2m25s
 
 Default `timescale` to `1` if missing
-
-## prompt 9, 1s
-
-keep code shorter but readable; do not use semicolons as a line-saving trick
