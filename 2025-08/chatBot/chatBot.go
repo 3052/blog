@@ -12,6 +12,32 @@ import (
    "time"
 )
 
+func (c *chatBot) get_md(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   var durations []time.Duration
+   for _, line := range strings.Split(string(data), "\n") {
+      if strings.HasPrefix(line, "## ") {
+         var ok bool
+         _, line, ok = strings.Cut(line, ", ")
+         if !ok {
+            return errors.New("strings.Cut")
+         }
+         duration, err := time.ParseDuration(line)
+         if err != nil {
+            return err
+         }
+         durations = append(durations, duration)
+      }
+   }
+   c.median = get_median(durations)
+   c.prompts = len(durations)
+   c.sum = get_sum(durations)
+   return nil
+}
+
 func get_sum(values []time.Duration) time.Duration {
    var sum time.Duration
    for _, value := range values {
@@ -38,32 +64,6 @@ func (c *chatBot) get_json(name string) error {
       return err
    }
    return json.Unmarshal(data, c)
-}
-
-func (c *chatBot) get_md(name string) error {
-   data, err := os.ReadFile(name)
-   if err != nil {
-      return err
-   }
-   var durations []time.Duration
-   for _, line := range strings.Split(string(data), "\n") {
-      if strings.HasPrefix(line, "## ") {
-         var ok bool
-         _, line, ok = strings.Cut(line, ", ")
-         if !ok {
-            return errors.New("strings.Cut")
-         }
-         duration, err := time.ParseDuration(line)
-         if err != nil {
-            return err
-         }
-         durations = append(durations, duration)
-      }
-   }
-   c.median = get_median(durations)
-   c.prompts = len(durations)
-   c.sum = get_sum(durations)
-   return nil
 }
 
 func (c *chatBot) get_go(name string) error {
@@ -159,12 +159,3 @@ func main() {
       panic(err)
    }
 }
-
-
-
-
-
-
-
-
-

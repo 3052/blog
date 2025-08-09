@@ -69,14 +69,14 @@ var tests = []struct {
             content_type: type_image,
             id:           "images_1",
             length: func() int { // allow duplicates
-               media := math.Ceil(1100.34925 / 5)
-               media += math.Ceil(1122.2044166666667 / 5)
-               media += math.Ceil(1104.1864166666664 / 5)
-               media += math.Ceil(1017.5582083333338 / 5)
-               media += math.Ceil(1058.9328749999995 / 5)
-               media += math.Ceil(1011.9692916666672 / 5)
-               media += math.Ceil(994.4934999999996 / 5)
-               media += math.Ceil(1914.2873749999999 / 5)
+               media := math.Ceil(1100.34925 / 5)         // 221, 0-220
+               media += math.Ceil(1122.2044166666667 / 5) // 225, 220-
+               media += math.Ceil(1104.1864166666664 / 5) // 221
+               media += math.Ceil(1017.5582083333338 / 5) // 204
+               media += math.Ceil(1058.9328749999995 / 5) // 212
+               media += math.Ceil(1011.9692916666672 / 5) // 203
+               media += math.Ceil(994.4934999999996 / 5)  // 199
+               media += math.Ceil(1914.2873749999999 / 5) // 383
                return int(media)
             }(),
             url: prefix + "i/1_6c0f17/images_1_00001863.jpg",
