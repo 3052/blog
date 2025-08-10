@@ -5,10 +5,7 @@ import (
    "log"
    "math"
    "os/exec"
-   "testing"
 )
-
-const folder = "../testdata/"
 
 const initialization = 1
 
@@ -149,43 +146,6 @@ var tests = []struct {
    },
 }
 
-func Test(t *testing.T) {
-   log.SetFlags(log.Ltime)
-   for _, testVar := range tests {
-      data, err := output("go", "run", ".", folder+testVar.name)
-      if err != nil {
-         t.Fatal(string(data))
-      }
-      var representsB map[string][]string
-      err = json.Unmarshal(data, &representsB)
-      if err != nil {
-         t.Fatal(err)
-      }
-      for _, representA := range testVar.representation {
-         representB := representsB[representA.id]
-         if len(representB) != representA.length {
-            t.Fatal(
-               representA.id,
-               "pass", representA.length,
-               "fail", len(representB),
-            )
-         }
-         if representB[0] != representA.start {
-            t.Fatal(
-               "\npass", representA.start,
-               "\nfail", representB[0],
-            )
-         }
-         if representB[len(representB)-1] != representA.end {
-            t.Fatal(
-               "\npass", representA.end,
-               "\nfail", representB[len(representB)-1],
-            )
-         }
-      }
-   }
-}
-
 func output(name string, arg ...string) ([]byte, error) {
    command := exec.Command(name, arg...)
    log.Print(command.Args)
@@ -209,3 +169,42 @@ type representationA struct {
 }
 
 const prefix = "http://test.test/"
+
+const folder = "internal/"
+
+func main() {
+   log.SetFlags(log.Ltime)
+   for _, testVar := range tests {
+      data, err := output("go", "run", ".", folder+testVar.name)
+      if err != nil {
+         panic(string(data))
+      }
+      var representsB map[string][]string
+      err = json.Unmarshal(data, &representsB)
+      if err != nil {
+         panic(err)
+      }
+      for _, representA := range testVar.representation {
+         representB := representsB[representA.id]
+         if len(representB) != representA.length {
+            panic(
+               representA.id,
+               "pass", representA.length,
+               "fail", len(representB),
+            )
+         }
+         if representB[0] != representA.start {
+            panic(
+               "\npass", representA.start,
+               "\nfail", representB[0],
+            )
+         }
+         if representB[len(representB)-1] != representA.end {
+            panic(
+               "\npass", representA.end,
+               "\nfail", representB[len(representB)-1],
+            )
+         }
+      }
+   }
+}
