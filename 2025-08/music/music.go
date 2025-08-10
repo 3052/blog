@@ -1,46 +1,5 @@
 package music
 
-var Bibio = []album{
-   {
-      name: "Phantom Brickworks",
-      link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_n-QU7H56CP_Cxg7Qg-ZKsHfUiFkh518Bw"},
-      },
-      track: []track{
-         {
-            number: 5,
-            name:   "CAPEL CELYN",
-            link: []link{
-               {url: "youtube.com/watch?v=CJsBL-6Ixb8"},
-               {url: "youtube.com/watch?v=nCuoUr5c_rI"},
-            },
-         },
-         {
-            number: 7,
-            name:   "Bibio Ivy Charcoal",
-            link: []link{
-               {url: "youtube.com/watch?v=w7y8-lXjGAw"},
-            },
-         },
-      },
-   },
-   {
-      name: "Phantom Brickworks (IV & V)",
-      link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_m9SC1PouugkPkMBuKHH1J2TWPb0Bn1Mno"},
-      },
-      track: []track{
-         {
-            number: 2,
-            name:   "PHANTOM BRICKWORKS V",
-            link: []link{
-               {url: "youtube.com/watch?v=akFKIFhz5iU"},
-            },
-         },
-      },
-   },
-}
-
 var KellyMoran = []album{
    {
       name: "helix (edit)",
@@ -84,6 +43,13 @@ var KellyMoran = []album{
                {url: "youtube.com/watch?v=o63kYG-j6Lg"},
             },
          },
+         {
+            number: 7,
+            name:   "it's okay to disappear",
+            link: []link{
+               {url: "youtube.com/watch?v=exedtrCI3fg"},
+            },
+         },
       },
    },
    {
@@ -119,3 +85,44 @@ type link struct {
    text string
    url  string
 }
+var Bibio = []album{
+   {
+      name: "Phantom Brickworks",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_n-QU7H56CP_Cxg7Qg-ZKsHfUiFkh518Bw"},
+      },
+      track: []track{
+         {
+            number: 5,
+            name:   "CAPEL CELYN",
+            link: []link{
+               {url: "youtube.com/watch?v=CJsBL-6Ixb8"},
+               {url: "youtube.com/watch?v=nCuoUr5c_rI"},
+            },
+         },
+         {
+            number: 7,
+            name:   "Bibio Ivy Charcoal",
+            link: []link{
+               {url: "youtube.com/watch?v=w7y8-lXjGAw"},
+            },
+         },
+      },
+   },
+   {
+      name: "Phantom Brickworks (IV & V)",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_m9SC1PouugkPkMBuKHH1J2TWPb0Bn1Mno"},
+      },
+      track: []track{
+         {
+            number: 2,
+            name:   "PHANTOM BRICKWORKS V",
+            link: []link{
+               {url: "youtube.com/watch?v=akFKIFhz5iU"},
+            },
+         },
+      },
+   },
+}
+
