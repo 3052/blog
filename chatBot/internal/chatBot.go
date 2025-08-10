@@ -2,10 +2,57 @@ package main
 
 import (
    "encoding/json"
+   "flag"
    "log"
    "math"
    "os/exec"
 )
+
+func main() {
+   run := flag.String("r", "", "run")
+   mpd := flag.String("m", "../internal/", "mpd")
+   flag.Parse()
+   if *run == "" {
+      flag.Usage()
+      return
+   }
+   log.SetFlags(log.Ltime)
+   for _, testVar := range tests {
+      data, err := output(
+         "go", "run", *run, *mpd+testVar.name,
+      )
+      if err != nil {
+         log.Fatal(string(data))
+      }
+      var representsB map[string][]string
+      err = json.Unmarshal(data, &representsB)
+      if err != nil {
+         log.Fatal(err)
+      }
+      for _, representA := range testVar.representation {
+         representB := representsB[representA.id]
+         if len(representB) != representA.length {
+            log.Fatalln(
+               representA.id,
+               "pass", representA.length,
+               "fail", len(representB),
+            )
+         }
+         if representB[0] != representA.start {
+            log.Fatalln(
+               "\npass", representA.start,
+               "\nfail", representB[0],
+            )
+         }
+         if representB[len(representB)-1] != representA.end {
+            log.Fatalln(
+               "\npass", representA.end,
+               "\nfail", representB[len(representB)-1],
+            )
+         }
+      }
+   }
+}
 
 const initialization = 1
 
@@ -169,42 +216,3 @@ type representationA struct {
 }
 
 const prefix = "http://test.test/"
-
-const folder = "internal/"
-
-func main() {
-   log.SetFlags(log.Ltime)
-   for _, testVar := range tests {
-      data, err := output("go", "run", ".", folder+testVar.name)
-      if err != nil {
-         panic(string(data))
-      }
-      var representsB map[string][]string
-      err = json.Unmarshal(data, &representsB)
-      if err != nil {
-         panic(err)
-      }
-      for _, representA := range testVar.representation {
-         representB := representsB[representA.id]
-         if len(representB) != representA.length {
-            panic(
-               representA.id,
-               "pass", representA.length,
-               "fail", len(representB),
-            )
-         }
-         if representB[0] != representA.start {
-            panic(
-               "\npass", representA.start,
-               "\nfail", representB[0],
-            )
-         }
-         if representB[len(representB)-1] != representA.end {
-            panic(
-               "\npass", representA.end,
-               "\nfail", representB[len(representB)-1],
-            )
-         }
-      }
-   }
-}
