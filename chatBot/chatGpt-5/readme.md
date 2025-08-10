@@ -1,7 +1,5 @@
 # chatGpt 5
 
-keep code shorter but readable; do not use semicolons as a line-saving trick
-
 ## prompt 1, 1m7s
 
 Please return the full Go script that:

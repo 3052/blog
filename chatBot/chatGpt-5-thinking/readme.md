@@ -1,8 +1,6 @@
 # chatGpt 5 thinking
 
-keep code shorter but readable; do not use semicolons as a line-saving trick
-
-## prompt 1, 1m24s
+## prompt 1, 1m36s
 
 Please return the full Go script that:
 
@@ -10,38 +8,32 @@ Please return the full Go script that:
 - Uses base URL: `http://test.test/test.mpd`
 - Outputs a JSON object mapping each `Representation@id` to a list of fully resolved segment URLs (initialization segment first, if present)
 
-## prompt 2, 2m52s
+## prompt 2, 2m9s
 
-support SegmentTimeline
+use only net/url.URL.ResolveReference to resolve URLs, no other package or logic
 
-## prompt 3, 2m4s
+## prompt 3, 1m39s
+
+BaseURL is string not slice
+
+## prompt 4, 1m48s
 
 When a representation has only BaseURL and no segment information, use the
 already-resolved baseURL directly
 
-## prompt 4, 1m52s
-
-BaseURL is string not slice
-
-## prompt 5, 2m14s
+## prompt 5, 1m49s
 
 Append segments for the same Representation ID if it appears in multiple
 Periods
 
-## prompt 6, 2m4s
+## prompt 6, 2m10s
 
-no idea where you got this logic
+Period should use its own duration if possible
 
-Bound by Period@duration if provided
+## prompt 7, 2m18s
 
-but its completely invalid when `$Number$` is being used
+missing startNumber is different from startNumber="0"
 
-## prompt 7, 2m15s
+## prompt 8, 2m29s
 
-If both `SegmentTimeline` and `endNumber` are missing, but `duration` and
-`timescale` are present, calculate the number of segments using
-`ceil(PeriodDurationInSeconds * timescale / duration)`
-
-## prompt 8, 2m25s
-
-Default `timescale` to `1` if missing
+SegmentTemplate@endNumber defines the last segment if it exists
