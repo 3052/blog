@@ -1,7 +1,5 @@
 # gemini pro
 
-https://gemini.google.com
-
 ## prompt 1, 1m9s
 
 return the full Go script that:

@@ -1,7 +1,5 @@
 # grok think
 
-https://grok.com
-
 after prompt 7, I got this:
 
 Grok was unable to finish replying.

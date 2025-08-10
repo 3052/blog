@@ -1,7 +1,5 @@
 # grok
 
-https://wikipedia.org/wiki/Grok_(chatbot)
-
 in response to prompt 21 I got:
 
 Grok was unable to finish replying.

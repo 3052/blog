@@ -1,7 +1,5 @@
 # kimi
 
-<https://wikipedia.org/wiki/Moonshot_AI>
-
 despite repeatedly correcting the AI on URL logic, it is still making mistakes
 like adding file extension:
 
