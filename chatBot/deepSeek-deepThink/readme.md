@@ -1,5 +1,7 @@
 # deepSeek deepThink
 
+model had to think for more than five minutes, so it is not useful for my needs
+
 ## prompt 1
 
 return the full Go script that:
