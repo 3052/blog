@@ -1,6 +1,6 @@
 {
    "chatBot": "deepSeek",
    "developer": "deepSeek",
-   "model": "R1",
+   "model": "R1 deepThink",
    "url": "chat.deepseek.com"
 }
