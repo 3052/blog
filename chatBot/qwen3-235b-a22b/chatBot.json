@@ -1,6 +1,6 @@
 {
    "chatBot": "qwen",
    "developer": "alibaba cloud",
-   "model": "3",
+   "model": "qwen3-235b-a22b",
    "url": "chat.qwen.ai"
 }

@@ -1,4 +1,4 @@
-# qwen
+# qwen3-235b-a22b
 
 https://app.fireworks.ai/models/fireworks/qwen3-coder-480b-a35b-instruct
 
