@@ -85,27 +85,15 @@ func (c *chatBot) get_go(name string) error {
 }
 
 type chatBot struct {
-   ChatBot string
    Developer string
+   ChatBot string
    Model string
    Url string
-   loc int
-   median time.Duration
+   Ok bool
    prompts int
+   median time.Duration
    sum time.Duration
-}
-
-func (c *chatBot) record() []string {
-   return []string{
-      c.Developer,
-      c.ChatBot,
-      c.Model,
-      c.Url,
-      fmt.Sprint(c.prompts),
-      fmt.Sprint(c.median),
-      fmt.Sprint(c.sum),
-      fmt.Sprint(c.loc),
-   }
+   loc int
 }
 
 func (*chatBot) header() []string {
@@ -114,10 +102,25 @@ func (*chatBot) header() []string {
       "chatbot",
       "model",
       "URL",
+      "OK",
       "prompts",
       "median",
       "sum",
       "LOC",
+   }
+}
+
+func (c *chatBot) record() []string {
+   return []string{
+      c.Developer,
+      c.ChatBot,
+      c.Model,
+      c.Url,
+      fmt.Sprint(c.Ok),
+      fmt.Sprint(c.prompts),
+      fmt.Sprint(c.median),
+      fmt.Sprint(c.sum),
+      fmt.Sprint(c.loc),
    }
 }
 
@@ -141,9 +144,13 @@ func main() {
       if err != nil {
          panic(err)
       }
-      dir := filepath.Dir(name)
-      if bot.get_go(dir + "/chatBot.go") == nil {
+      if bot.Ok {
+         dir := filepath.Dir(name)
          err = bot.get_md(dir + "/readme.md")
+         if err != nil {
+            panic(err)
+         }
+         err = bot.get_go(dir + "/chatBot.go")
          if err != nil {
             panic(err)
          }

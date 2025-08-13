@@ -1,0 +1,19 @@
+developer,chatbot,model,URL,OK,prompts,median,sum,LOC
+openAi,chatGpt,gpt-4o,chatgpt.com?model=gpt-4o,false,0,0s,0s,0
+openAi,chatGpt,5,chatgpt.com?model=gpt-5,false,0,0s,0s,0
+openAi,chatGpt,5 thinking,chatgpt.com?model=gpt-5-thinking,false,0,0s,0s,0
+openAi,chatGpt,auto,chatgpt.com?model=auto,false,0,0s,0s,0
+anthropic,claude,opus,claude.ai,false,0,0s,0s,0
+anthropic,claude,sonnet,claude.ai,false,0,0s,0s,0
+microsoft,copilot,quick response,copilot.microsoft.com,false,0,0s,0s,0
+deepSeek,deepSeek,R1,chat.deepseek.com,false,0,0s,0s,0
+deepSeek,deepSeek,R1 deepThink,chat.deepseek.com,false,0,0s,0s,0
+google,gemini,2.5 flash,gemini.google.com,false,0,0s,0s,0
+google,gemini,2.5 pro,gemini.google.com,false,0,0s,0s,0
+xAi,grok,3,grok.com,false,0,0s,0s,0
+xAi,grok,3 think,grok.com,false,0,0s,0s,0
+moonshot ai,kimi,K2,kimi.com,false,0,0s,0s,0
+alibaba cloud,qwen,qwen3-235b-a22b,chat.qwen.ai,false,0,0s,0s,0
+alibaba cloud,qwen,qwen3-coder,chat.qwen.ai,false,0,0s,0s,0
+z.ai,z.ai,GLM-4.5,chat.z.ai,false,0,0s,0s,0
+z.ai,z.ai,GLM-4.5-Air,chat.z.ai,false,0,0s,0s,0
