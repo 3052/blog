@@ -2,5 +2,6 @@
    "chatBot": "copilot",
    "developer": "microsoft",
    "model": "quick response",
-   "url": "copilot.microsoft.com"
+   "url": "copilot.microsoft.com",
+   "ok": false
 }

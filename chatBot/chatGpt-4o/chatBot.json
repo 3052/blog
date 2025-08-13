@@ -2,5 +2,6 @@
    "chatBot": "chatGpt",
    "developer": "openAi",
    "model": "gpt-4o",
-   "url": "chatgpt.com?model=gpt-4o"
+   "url": "chatgpt.com?model=gpt-4o",
+   "ok": true
 }
