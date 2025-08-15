@@ -3,5 +3,5 @@
    "chatBot": "gpt-oss",
    "model": "gpt-oss-20b",
    "url": "gpt-oss.com",
-   "ok": true
+   "ok": false
 }

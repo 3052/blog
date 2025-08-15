@@ -1,4 +1,9 @@
-# gpt-oss-20b-high
+# gpt-oss
+
+the web client gives no indication of when it is finished with a response, so
+you have to constantly scroll until you see it finish. you can set scrolling with
+middle click, but even with that your mouse is captured so you literally cannot
+use your mouse until the response is done
 
 ## prompt 1
 
