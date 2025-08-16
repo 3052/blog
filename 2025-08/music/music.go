@@ -1,5 +1,52 @@
 package music
 
+var MkGee = []album{
+   {
+      name: "rockman"
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_meKfaX4xfVCc1wUZMYBKx0bzlGPYJUeTg"},
+      },
+      track: []track{
+         {
+            number: 1,
+            name: "rockman",
+            link: []link{
+               {url: "youtube.com/watch?v=pULkm-3b_1M"},
+            },
+         }
+      },
+   },
+   {
+      name: "Two Star & the Dream Police"
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_lXnYM2XCJUqRw7PgY36hjIVKEOCMkkr-I"},
+      },
+      track: []track{
+         {
+            number: 3,
+            name: "are you looking up",
+            link: []link{
+               {url: "youtube.com/watch?v=z0pzzkp85-Q"},
+            },
+         },
+         {
+            number: 11,
+            name: "little bit more",
+            link: []link{
+               {url: "youtube.com/watch?v=NncelKQ6Hvw"},
+            },
+         },
+         {
+            number: 12,
+            name: "dream police",
+            link: []link{
+               {url: "youtube.com/watch?v=3bLYswnD8yk"},
+            },
+         },
+      },
+   },
+}
+
 var KellyMoran = []album{
    {
       name: "helix (edit)",
@@ -85,6 +132,7 @@ type link struct {
    text string
    url  string
 }
+
 var Bibio = []album{
    {
       name: "Phantom Brickworks",
@@ -125,4 +173,3 @@ var Bibio = []album{
       },
    },
 }
-

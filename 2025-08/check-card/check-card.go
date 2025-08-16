@@ -30,7 +30,7 @@ func do_check(name string) error {
          log.Println("Contains", contain)
       }
    }
-   log.Println()
+   log.Print()
    for _, contain := range contains {
       if !strings.Contains(data, contain) {
          log.Println("!Contains", contain)
