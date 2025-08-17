@@ -1,7 +1,7 @@
 {
    "chatBot": "claude",
    "developer": "anthropic",
-   "model": "sonnet",
+   "model": "sonnet 4",
    "url": "claude.ai",
    "ok": true
 }
