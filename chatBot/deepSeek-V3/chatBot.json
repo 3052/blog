@@ -1,7 +1,7 @@
 {
    "chatBot": "deepSeek",
    "developer": "deepSeek",
-   "model": "R1 deepThink",
+   "model": "V3",
    "url": "chat.deepseek.com",
    "ok": false
 }

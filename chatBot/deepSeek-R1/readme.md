@@ -1,4 +1,4 @@
-# deepSeek deepThink
+# deepSeek R1
 
 model had to think for more than five minutes, so it is not useful for my needs
 

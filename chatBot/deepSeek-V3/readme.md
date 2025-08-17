@@ -1,4 +1,4 @@
-# deepSeek
+# deepSeek V3
 
 as can be seen, this model is too stupid to be useful
 
