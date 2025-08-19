@@ -1,7 +1,0 @@
-{
-   "developer": "anthropic",
-   "chatBot": "claude",
-   "model": "opus 4.1",
-   "url": "claude.ai",
-   "ok": true
-}
