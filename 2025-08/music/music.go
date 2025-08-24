@@ -1,46 +1,72 @@
 package music
 
-var MkGee = []album{
+var EsbenAndTheWitch = []album{
    {
-      name: "rockman"
+      name: "Wash the Sins Not Only the Face",
       link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_meKfaX4xfVCc1wUZMYBKx0bzlGPYJUeTg"},
+         {url: "youtube.com/playlist?list=OLAK5uy_mWTxrHEOalIe-BLQrIs_kx-plYsyXysdM"},
       },
       track: []track{
          {
-            number: 1,
-            name: "rockman",
+            number: 2,
+            name: "slow wave",
             link: []link{
-               {url: "youtube.com/watch?v=pULkm-3b_1M"},
+               {url: "youtube.com/watch?v=2LYLeVar5OA"},
             },
-         }
+         },
+         {
+            number: 6,
+            name: "yellow wood",
+            link: []link{
+               {url: "youtube.com/watch?v=-VHsbhM6o9A"},
+            },
+         },
+         {
+            number: 9,
+            name: "the fall of glorieta mountain",
+            link: []link{
+               {url: "youtube.com/watch?v=qqXsyk5ZmCo"},
+            },
+         },
+      },
+   },
+}
+
+var Bibio = []album{
+   {
+      name: "Phantom Brickworks",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_n-QU7H56CP_Cxg7Qg-ZKsHfUiFkh518Bw"},
+      },
+      track: []track{
+         {
+            number: 5,
+            name:   "CAPEL CELYN",
+            link: []link{
+               {url: "youtube.com/watch?v=CJsBL-6Ixb8"},
+               {url: "youtube.com/watch?v=nCuoUr5c_rI"},
+            },
+         },
+         {
+            number: 7,
+            name:   "Bibio Ivy Charcoal",
+            link: []link{
+               {url: "youtube.com/watch?v=w7y8-lXjGAw"},
+            },
+         },
       },
    },
    {
-      name: "Two Star & the Dream Police"
+      name: "Phantom Brickworks (IV & V)",
       link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_lXnYM2XCJUqRw7PgY36hjIVKEOCMkkr-I"},
+         {url: "youtube.com/playlist?list=OLAK5uy_m9SC1PouugkPkMBuKHH1J2TWPb0Bn1Mno"},
       },
       track: []track{
          {
-            number: 3,
-            name: "are you looking up",
+            number: 2,
+            name:   "PHANTOM BRICKWORKS V",
             link: []link{
-               {url: "youtube.com/watch?v=z0pzzkp85-Q"},
-            },
-         },
-         {
-            number: 11,
-            name: "little bit more",
-            link: []link{
-               {url: "youtube.com/watch?v=NncelKQ6Hvw"},
-            },
-         },
-         {
-            number: 12,
-            name: "dream police",
-            link: []link{
-               {url: "youtube.com/watch?v=3bLYswnD8yk"},
+               {url: "youtube.com/watch?v=akFKIFhz5iU"},
             },
          },
       },
@@ -116,6 +142,53 @@ var KellyMoran = []album{
    },
 }
 
+var MkGee = []album{
+   {
+      name: "rockman",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_meKfaX4xfVCc1wUZMYBKx0bzlGPYJUeTg"},
+      },
+      track: []track{
+         {
+            number: 1,
+            name: "rockman",
+            link: []link{
+               {url: "youtube.com/watch?v=pULkm-3b_1M"},
+            },
+         },
+      },
+   },
+   {
+      name: "Two Star & the Dream Police",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_lXnYM2XCJUqRw7PgY36hjIVKEOCMkkr-I"},
+      },
+      track: []track{
+         {
+            number: 3,
+            name: "are you looking up",
+            link: []link{
+               {url: "youtube.com/watch?v=z0pzzkp85-Q"},
+            },
+         },
+         {
+            number: 11,
+            name: "little bit more",
+            link: []link{
+               {url: "youtube.com/watch?v=NncelKQ6Hvw"},
+            },
+         },
+         {
+            number: 12,
+            name: "dream police",
+            link: []link{
+               {url: "youtube.com/watch?v=3bLYswnD8yk"},
+            },
+         },
+      },
+   },
+}
+
 type album struct {
    name  string
    link  []link
@@ -131,45 +204,4 @@ type track struct {
 type link struct {
    text string
    url  string
-}
-
-var Bibio = []album{
-   {
-      name: "Phantom Brickworks",
-      link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_n-QU7H56CP_Cxg7Qg-ZKsHfUiFkh518Bw"},
-      },
-      track: []track{
-         {
-            number: 5,
-            name:   "CAPEL CELYN",
-            link: []link{
-               {url: "youtube.com/watch?v=CJsBL-6Ixb8"},
-               {url: "youtube.com/watch?v=nCuoUr5c_rI"},
-            },
-         },
-         {
-            number: 7,
-            name:   "Bibio Ivy Charcoal",
-            link: []link{
-               {url: "youtube.com/watch?v=w7y8-lXjGAw"},
-            },
-         },
-      },
-   },
-   {
-      name: "Phantom Brickworks (IV & V)",
-      link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_m9SC1PouugkPkMBuKHH1J2TWPb0Bn1Mno"},
-      },
-      track: []track{
-         {
-            number: 2,
-            name:   "PHANTOM BRICKWORKS V",
-            link: []link{
-               {url: "youtube.com/watch?v=akFKIFhz5iU"},
-            },
-         },
-      },
-   },
 }
