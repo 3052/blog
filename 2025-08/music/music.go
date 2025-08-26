@@ -1,5 +1,13 @@
 package music
 
+var KateBush = []album{
+   {
+      
+      
+      
+   }
+}
+
 var EsbenAndTheWitch = []album{
    {
       name: "Wash the Sins Not Only the Face",
