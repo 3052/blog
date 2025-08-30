@@ -6,8 +6,6 @@ import (
    "flag"
    "fmt"
    "net/http"
-   "net/url"
-   "path"
    "strconv"
    "time"
 )
@@ -159,23 +157,4 @@ func (d *Date) UnmarshalText(data []byte) error {
       return err
    }
    return nil
-}
-
-type VideoId string
-
-func (v *VideoId) Set(data string) error {
-   address, err := url.Parse(data)
-   if err != nil {
-      return err
-   }
-   id := address.Query().Get("v")
-   if id == "" {
-      id = path.Base(address.Path)
-   }
-   *v = VideoId(id)
-   return nil
-}
-
-func (v VideoId) String() string {
-   return string(v)
 }
