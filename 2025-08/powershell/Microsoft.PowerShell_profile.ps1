@@ -1,6 +1,8 @@
+# 2025-08-29
+$env:path = 'C:\Users\Steven\AppData\Roaming\Python\Python311-32\Scripts'
+
 # 2025-07-20
-$env:path = 'C:\Program Files (x86)\Python311-32'
-$env:path += ';C:\Program Files (x86)\Python311-32\scripts'
+$env:path += ';C:\Program Files (x86)\Python311-32'
 
 # 2025-05-14
 $env:path += ';C:\Program Files\Rust stable GNU 1.86\bin'
