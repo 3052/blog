@@ -1,5 +1,8 @@
+# 2025-08-30
+$env:path = 'C:\Program Files (x86)\Python311-32\scripts'
+
 # 2025-08-29
-$env:path = 'C:\Users\Steven\AppData\Roaming\Python\Python311-32\Scripts'
+$env:path += ';C:\Users\Steven\AppData\Roaming\Python\Python311-32\Scripts'
 
 # 2025-07-20
 $env:path += ';C:\Program Files (x86)\Python311-32'
