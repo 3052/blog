@@ -1,5 +1,37 @@
 package music
 
+var EsbenAndTheWitch = []album{
+   {
+      name: "Wash the Sins Not Only the Face",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_mWTxrHEOalIe-BLQrIs_kx-plYsyXysdM"},
+      },
+      track: []track{
+         {
+            number: 2,
+            name: "slow wave",
+            link: []link{
+               {url: "youtube.com/watch?v=2LYLeVar5OA"},
+            },
+         },
+         {
+            number: 6,
+            name: "yellow wood",
+            link: []link{
+               {url: "youtube.com/watch?v=-VHsbhM6o9A"},
+            },
+         },
+         {
+            number: 9,
+            name: "the fall of glorieta mountain",
+            link: []link{
+               {url: "youtube.com/watch?v=qqXsyk5ZmCo"},
+            },
+         },
+      },
+   },
+}
+
 var KellyMoran = []album{
    {
       name: "helix (edit)",
@@ -69,37 +101,7 @@ var KellyMoran = []album{
    },
 }
 
-var EsbenAndTheWitch = []album{
-   {
-      name: "Wash the Sins Not Only the Face",
-      link: []link{
-         {url: "youtube.com/playlist?list=OLAK5uy_mWTxrHEOalIe-BLQrIs_kx-plYsyXysdM"},
-      },
-      track: []track{
-         {
-            number: 2,
-            name: "slow wave",
-            link: []link{
-               {url: "youtube.com/watch?v=2LYLeVar5OA"},
-            },
-         },
-         {
-            number: 6,
-            name: "yellow wood",
-            link: []link{
-               {url: "youtube.com/watch?v=-VHsbhM6o9A"},
-            },
-         },
-         {
-            number: 9,
-            name: "the fall of glorieta mountain",
-            link: []link{
-               {url: "youtube.com/watch?v=qqXsyk5ZmCo"},
-            },
-         },
-      },
-   },
-}
+///
 
 var Bibio = []album{
    {
