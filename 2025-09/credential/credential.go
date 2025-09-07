@@ -5,9 +5,35 @@ import (
    "fmt"
    "os"
    "path/filepath"
+   "slices"
    "strings"
    "time"
 )
+
+func (u userinfo) String() string {
+   var (
+      b strings.Builder
+      line bool
+   )
+   keys := make([]string, 0, len(u))
+   for key := range u {
+      keys = append(keys, key)
+   }
+   slices.Sort(keys)
+   for _, key := range keys {
+      if line {
+         b.WriteByte('\n')
+      } else {
+         line = true
+      }
+      b.WriteString(key)
+      b.WriteString(" = ")
+      b.WriteString(u[key])
+   }
+   return b.String()
+}
+
+type userinfo map[string]string
 
 func main() {
    users, err := get_users()
@@ -25,7 +51,7 @@ func main() {
             } else {
                line = true
             }
-            fmt.Println(&user)
+            fmt.Println(user)
          }
       }
    case 3: // credential google.com srpen6@gmail.com
@@ -66,5 +92,3 @@ func get_users() ([]userinfo, error) {
    }
    return users, nil
 }
-
-type userinfo map[string]string
