@@ -2,6 +2,7 @@ package main
 
 import (
    "encoding/json"
+   "flag"
    "fmt"
    "os"
    "path/filepath"
@@ -10,63 +11,48 @@ import (
    "time"
 )
 
-func (u userinfo) String() string {
-   var (
-      b strings.Builder
-      line bool
-   )
-   keys := make([]string, 0, len(u))
-   for key := range u {
-      keys = append(keys, key)
-   }
-   slices.Sort(keys)
-   for _, key := range keys {
-      if line {
-         b.WriteByte('\n')
-      } else {
-         line = true
-      }
-      b.WriteString(key)
-      b.WriteString(" = ")
-      b.WriteString(u[key])
-   }
-   return b.String()
-}
-
-type userinfo map[string]string
-
 func main() {
+   host := flag.String("h", "", "host")
+   key := flag.String("k", "password", "key")
+   user := flag.String("u", "", "user")
+   all := flag.Bool("a", false, "all")
+   flag.Parse()
+   if *host == "" {
+      if *key == "password" {
+         flag.Usage()
+         return
+      }
+   }
    users, err := get_users()
    if err != nil {
       panic(err)
    }
-   switch len(os.Args) {
-   case 2: // credential google.com
-      host := os.Args[1]
-      var line bool
-      for _, user := range users {
-         if strings.Contains(user["host"], host) {
-            if line {
-               fmt.Println()
-            } else {
-               line = true
-            }
-            fmt.Println(user)
+   var line bool
+   for _, user2 := range users {
+      if user2[*key] == "" {
+         continue
+      }
+      if *host != "" {
+         if user2["host"] != *host {
+            continue
          }
       }
-   case 3: // credential google.com srpen6@gmail.com
-      host, user := os.Args[1], os.Args[2]
-      for _, user2 := range users {
-         if user2["host"] == host {
-            if user2["user"] == user {
-               fmt.Print(user2["password"])
-               return
-            }
+      if *user != "" {
+         if user2["user"] != *user {
+            continue
          }
       }
-   default:
-      fmt.Println("credential", "host")
-      fmt.Println("credential", "host", "user")
+      if *all {
+         if line {
+            fmt.Println()
+         } else {
+            line = true
+         }
+         fmt.Println(user2)
+      } else {
+         fmt.Print(user2[*key])
+         return
+      }
    }
 }
 
@@ -92,3 +78,23 @@ func get_users() ([]userinfo, error) {
    }
    return users, nil
 }
+
+func (u userinfo) String() string {
+   keys := make([]string, 0, len(u))
+   for key := range u {
+      keys = append(keys, key)
+   }
+   slices.Sort(keys)
+   var b strings.Builder
+   for i, key := range keys {
+      if i >= 1 {
+         b.WriteByte('\n')
+      }
+      b.WriteString(key)
+      b.WriteString(" = ")
+      b.WriteString(u[key])
+   }
+   return b.String()
+}
+
+type userinfo map[string]string
