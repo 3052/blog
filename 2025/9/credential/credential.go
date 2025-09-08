@@ -12,15 +12,17 @@ import (
 )
 
 func main() {
-   host := flag.String("h", "", "host")
    key := flag.String("k", "password", "key")
+   host := flag.String("h", "", "host")
    user := flag.String("u", "", "user")
-   all := flag.Bool("a", false, "all")
+   contains := flag.String("c", "", "contains")
    flag.Parse()
-   if *host == "" {
-      if *key == "password" {
-         flag.Usage()
-         return
+   if *key == "password" {
+      if *contains == "" {
+         if *host == "" {
+            flag.Usage()
+            return
+         }
       }
    }
    users, err := get_users()
@@ -29,27 +31,29 @@ func main() {
    }
    var line bool
    for _, user2 := range users {
-      if user2[*key] == "" {
-         continue
-      }
-      if *host != "" {
-         if user2["host"] != *host {
-            continue
+      if *contains != "" {
+         if strings.Contains(user2.String(), *contains) {
+            if line {
+               fmt.Println()
+            } else {
+               line = true
+            }
+            fmt.Println(user2)
          }
-      }
-      if *user != "" {
-         if user2["user"] != *user {
-            continue
-         }
-      }
-      if *all {
-         if line {
-            fmt.Println()
-         } else {
-            line = true
-         }
-         fmt.Println(user2)
       } else {
+         if user2[*key] == "" {
+            continue
+         }
+         if *host != "" {
+            if user2["host"] != *host {
+               continue
+            }
+         }
+         if *user != "" {
+            if user2["user"] != *user {
+               continue
+            }
+         }
          fmt.Print(user2[*key])
          return
       }
