@@ -5,11 +5,31 @@ import (
    "flag"
    "fmt"
    "os"
-   "path/filepath"
    "slices"
    "strings"
    "time"
 )
+
+const name = `D:\backblaze\largest\credential.json`
+
+func get_users() ([]userinfo, error) {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return nil, err
+   }
+   var users []userinfo
+   err = json.Unmarshal(data, &users)
+   if err != nil {
+      return nil, err
+   }
+   year_ago := time.Now().AddDate(-1, 0, 0).String()
+   for _, user := range users {
+      if user["date"] < year_ago {
+         return nil, fmt.Errorf("%v", user)
+      }
+   }
+   return users, nil
+}
 
 func main() {
    key := flag.String("k", "password", "key")
@@ -58,29 +78,6 @@ func main() {
          return
       }
    }
-}
-
-func get_users() ([]userinfo, error) {
-   home, err := os.UserHomeDir()
-   if err != nil {
-      return nil, err
-   }
-   data, err := os.ReadFile(filepath.Join(home, "credential.json"))
-   if err != nil {
-      return nil, err
-   }
-   var users []userinfo
-   err = json.Unmarshal(data, &users)
-   if err != nil {
-      return nil, err
-   }
-   year_ago := time.Now().AddDate(-1, 0, 0).String()
-   for _, user := range users {
-      if user["date"] < year_ago {
-         return nil, fmt.Errorf("%v", user)
-      }
-   }
-   return users, nil
 }
 
 func (u userinfo) String() string {
