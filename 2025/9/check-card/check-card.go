@@ -11,11 +11,10 @@ var contains = []string{
    "BRAUMS STORE",
    "CHICK-FIL-A",
    "JASON'S DELI",
+   "LA MADELEINE",
    "MCDONALD'S",
-   "SONIC DRIVE IN",
    "SPRING CREEK",
    "STARBUCKS STORE",
-   "STEAK-N-SHAKE",
    "WENDY",
    "WHATABURGER",
 }
