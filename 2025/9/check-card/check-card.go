@@ -10,6 +10,7 @@ import (
 var contains = []string{
    "BRAUMS STORE",
    "CHICK-FIL-A",
+   "IN-N-OUT",
    "JASON'S DELI",
    "LA MADELEINE",
    "MCDONALD'S",
