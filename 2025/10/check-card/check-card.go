@@ -18,7 +18,6 @@ var contains = []string{
    "STARBUCKS STORE",
    "WENDY",
    "WHATABURGER",
-   "WINGSTOP",
 }
 
 func do_check(name string) error {
