@@ -2,7 +2,7 @@
 
 ## 100M+ Downloads
 
-Max: Stream HBO, TV, & Movies
+HBO Max: Stream TV & Movies
 
 https://play.google.com/store/apps/details?id=com.wbd.stream
 
