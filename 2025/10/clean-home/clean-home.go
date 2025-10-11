@@ -6,8 +6,13 @@ import (
    "path/filepath"
 )
 
+/*
+C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\b5ohm1qd.2024-11-28
+C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\uuivvd0h.2024-11-29 
+*/
 var patterns = []string{
    `C:\ProgramData\Mozilla-*`,
+   `C:\ProgramData\Mozilla`,
    `C:\Users\Steven\.android`,
    `C:\Users\Steven\.cargo`,
    `C:\Users\Steven\AppData\Local\Android Open Source Project`,

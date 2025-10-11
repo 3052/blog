@@ -10,7 +10,7 @@ import (
    "time"
 )
 
-const name = `D:\backblaze\largest\credential.json`
+type userinfo map[string]string
 
 func get_users() ([]userinfo, error) {
    data, err := os.ReadFile(name)
@@ -30,6 +30,8 @@ func get_users() ([]userinfo, error) {
    }
    return users, nil
 }
+
+const name = `D:\backblaze\largest\credential.json`
 
 func main() {
    key := flag.String("k", "password", "key")
@@ -97,5 +99,3 @@ func (u userinfo) String() string {
    }
    return b.String()
 }
-
-type userinfo map[string]string
