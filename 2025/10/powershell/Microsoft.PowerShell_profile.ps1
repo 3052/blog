@@ -1,3 +1,6 @@
+# 2025-10-16
+$env:path = 'C:\Users\Steven\.cargo\bin'
+
 # 2025-10-10
 
 $env:RIPGREP_CONFIG_PATH = 'C:\Users\Steven\Documents\PowerShell\ripgrep.txt'
@@ -12,7 +15,7 @@ Set-PSReadLineOption -AddToHistoryHandler $null
 # git diff unicode
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-$env:path = 'C:\Users\Steven\AppData\Local\Programs\Python\Python311'
+$env:path += ';C:\Users\Steven\AppData\Local\Programs\Python\Python311'
 $env:path += ';C:\Users\Steven\AppData\Local\Programs\Python\Python311\Scripts'
 
 Get-Alias | Remove-Alias -Force
@@ -24,9 +27,6 @@ Set-PSReadLineKeyHandler Ctrl+UpArrow {
 
 # git commit -v
 $env:EDITOR = 'gvim'
-
-# 2025-05-14
-$env:path += ';C:\Program Files\Rust stable GNU 1.86\bin'
 
 # 2025-01-18
 $env:path += ';C:\Program Files\Mullvad VPN\resources'
