@@ -98,7 +98,7 @@ var tests = []struct {
       },
    },
    {
-      name: "max.mpd",
+      name: "hboMax.mpd",
       representation: []representationA{
          {
             content_type: type_video,
