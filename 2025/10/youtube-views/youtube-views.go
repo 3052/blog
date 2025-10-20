@@ -6,6 +6,7 @@ import (
    "flag"
    "fmt"
    "net/http"
+   "strings"
    "time"
 )
 
@@ -14,29 +15,45 @@ func (i *InnerTube) do() error {
    if err != nil {
       return err
    }
-   views, err := views_per_year(
+   views := views_per_year(
       play.VideoDetails.ViewCount,
       play.Microformat.PlayerMicroformatRenderer.PublishDate,
    )
-   if err != nil {
-      return err
-   }
    if views >= 10_000_000 {
       fmt.Print(red, " FAIL ", reset)
    } else {
       fmt.Print(green, " PASS ", reset)
    }
    fmt.Print("   ")
-   fmt.Print(views)
+   fmt.Print(FormatInteger(views))
    fmt.Print("   ")
    fmt.Println(play.VideoDetails.VideoId)
    return nil
 }
 
-func views_per_year(views int64, publish date) (float64, error) {
+func FormatInteger(number int) string {
+   numberString := fmt.Sprint(number)
+   lengthOfString := len(numberString)
+   if lengthOfString <= 3 {
+      return numberString
+   }
+   var resultBuilder strings.Builder
+   initialDigits := lengthOfString % 3
+   if initialDigits == 0 {
+      initialDigits = 3
+   }
+   resultBuilder.WriteString(numberString[:initialDigits])
+   for index := initialDigits; index < lengthOfString; index += 3 {
+      resultBuilder.WriteString(",")
+      resultBuilder.WriteString(numberString[index : index+3])
+   }
+   return resultBuilder.String()
+}
+
+func views_per_year(views int, publish date) int {
    fmt.Println(publish[0])
    years := time.Since(publish[0]).Hours() / 24 / 365
-   return float64(views) / years, nil
+   return int(float64(views) / years)
 }
 
 // need `osVersion` this to get the correct:
@@ -123,7 +140,7 @@ type Player struct {
    }
    VideoDetails struct {
       VideoId          string
-      ViewCount        int64 `json:",string"`
+      ViewCount        int `json:",string"`
    }
 }
 
