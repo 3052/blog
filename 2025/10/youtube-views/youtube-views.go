@@ -10,6 +10,25 @@ import (
    "time"
 )
 
+func format_integer(number int) string {
+   numberString := fmt.Sprint(number)
+   lengthOfString := len(numberString)
+   if lengthOfString <= 3 {
+      return numberString
+   }
+   digits := lengthOfString % 3
+   if digits == 0 {
+      digits = 3
+   }
+   var data strings.Builder
+   data.WriteString(numberString[:digits])
+   for i := digits; i < lengthOfString; i += 3 {
+      data.WriteByte(',')
+      data.WriteString(numberString[i : i+3])
+   }
+   return data.String()
+}
+
 func (i *InnerTube) do() error {
    play, err := i.Player()
    if err != nil {
@@ -25,29 +44,10 @@ func (i *InnerTube) do() error {
       fmt.Print(green, " PASS ", reset)
    }
    fmt.Print("   ")
-   fmt.Print(FormatInteger(views))
+   fmt.Print(format_integer(views))
    fmt.Print("   ")
    fmt.Println(play.VideoDetails.VideoId)
    return nil
-}
-
-func FormatInteger(number int) string {
-   numberString := fmt.Sprint(number)
-   lengthOfString := len(numberString)
-   if lengthOfString <= 3 {
-      return numberString
-   }
-   var resultBuilder strings.Builder
-   initialDigits := lengthOfString % 3
-   if initialDigits == 0 {
-      initialDigits = 3
-   }
-   resultBuilder.WriteString(numberString[:initialDigits])
-   for index := initialDigits; index < lengthOfString; index += 3 {
-      resultBuilder.WriteString(",")
-      resultBuilder.WriteString(numberString[index : index+3])
-   }
-   return resultBuilder.String()
 }
 
 func views_per_year(views int, publish date) int {

@@ -28,9 +28,6 @@ Set-PSReadLineKeyHandler Ctrl+UpArrow {
 # git commit -v
 $env:EDITOR = 'gvim'
 
-# 2025-01-18
-$env:path += ';C:\Program Files\Mullvad VPN\resources'
-
 # 2025-01-17
 $env:path += ';C:\Users\Steven\go\bin'
 
