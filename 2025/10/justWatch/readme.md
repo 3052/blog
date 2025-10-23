@@ -2,14 +2,6 @@
 
 ## 2025
 
-- https://justwatch.com/us/movie/the-assessment
-- https://justwatch.com/us/movie/the-battle-of-baktan-cross
-- https://justwatch.com/us/movie/sovereign-2025
-- https://justwatch.com/us/movie/the-smashing-machine
-- https://justwatch.com/us/movie/the-roses
-- https://justwatch.com/us/movie/together-2025
-- https://justwatch.com/us/movie/weapons-2026
-- https://justwatch.com/us/movie/youre-cordially-invited
 - https://justwatch.com/us/movie/black-bag
 - https://justwatch.com/us/movie/bonjour-tristesse-2025-0
 - https://justwatch.com/us/movie/bugonia
@@ -27,6 +19,15 @@
 - https://justwatch.com/us/movie/pushing-thirteen
 - https://justwatch.com/us/movie/sentimental-value
 - https://justwatch.com/us/movie/silent-friend
+- https://justwatch.com/us/movie/sovereign-2025
+- https://justwatch.com/us/movie/the-assessment
+- https://justwatch.com/us/movie/the-battle-of-baktan-cross
+- https://justwatch.com/us/movie/the-roses
+- https://justwatch.com/us/movie/the-smashing-machine
+- https://justwatch.com/us/movie/together-2025
+- https://justwatch.com/us/movie/weapons-2026
+- https://justwatch.com/us/movie/youre-cordially-invited
+- https://justwatch.com/us/tv-show/pluribus
 
 ## 2024
 
