@@ -1,4 +1,4 @@
-# titles
+# justWatch
 
 ## 2025
 
@@ -68,11 +68,11 @@
 
 ## 2019
 
-- https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
+https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
 
 ## 2018
 
-- https://justwatch.com/us/movie/hereditary
+https://justwatch.com/us/movie/hereditary
 
 ## 2017
 
@@ -86,15 +86,15 @@
 
 ## 2015
 
-- https://justwatch.com/us/movie/steve-jobs
+https://justwatch.com/us/movie/steve-jobs
 
 ## 2013
 
-- https://justwatch.com/us/movie/burton-and-taylor
+https://justwatch.com/us/movie/burton-and-taylor
 
 ## 2011
 
-- https://justwatch.com/us/movie/sound-of-my-voice
+https://justwatch.com/us/movie/sound-of-my-voice
 
 ## 2010
 
@@ -103,23 +103,23 @@
 
 ## 2009
 
-- https://justwatch.com/us/movie/chloe-2009
+https://justwatch.com/us/movie/chloe-2009
 
 ## 2006
 
-- https://justwatch.com/us/movie/the-good-shepherd-2006
+https://justwatch.com/us/movie/the-good-shepherd-2006
 
 ## 2005
 
-- https://justwatch.com/us/movie/syriana
+https://justwatch.com/us/movie/syriana
 
 ## 2004
 
-- https://justwatch.com/us/movie/the-village
+https://justwatch.com/us/movie/the-village
 
 ## 2003
 
-- https://justwatch.com/us/movie/lost-in-translation
+https://justwatch.com/us/movie/lost-in-translation
 
 ## 2001
 
@@ -128,7 +128,7 @@
 
 ## 2000
 
-- https://justwatch.com/us/movie/unbreakable
+https://justwatch.com/us/movie/unbreakable
 
 ## 1999
 
@@ -150,12 +150,12 @@
 
 ## 1992
 
-- https://justwatch.com/us/movie/sneakers
+https://justwatch.com/us/movie/sneakers
 
 ## 1972
 
-- https://justwatch.com/us/movie/last-tango-in-paris
+https://justwatch.com/us/movie/last-tango-in-paris
 
 ## 1962
 
-- https://justwatch.com/us/movie/an-autumn-afternoon
+https://justwatch.com/us/movie/an-autumn-afternoon
