@@ -5,6 +5,7 @@
 - https://justwatch.com/us/movie/black-bag
 - https://justwatch.com/us/movie/bonjour-tristesse-2025-0
 - https://justwatch.com/us/movie/bugonia
+- https://justwatch.com/us/movie/die-my-love
 - https://justwatch.com/us/movie/eddington
 - https://justwatch.com/us/movie/eenie-meanie
 - https://justwatch.com/us/movie/ennemi
@@ -17,6 +18,7 @@
 - https://justwatch.com/us/movie/panne-fatale
 - https://justwatch.com/us/movie/predator-badlands-2025
 - https://justwatch.com/us/movie/pushing-thirteen
+- https://justwatch.com/us/movie/rental-family
 - https://justwatch.com/us/movie/sentimental-value
 - https://justwatch.com/us/movie/silent-friend
 - https://justwatch.com/us/movie/sovereign-2025
@@ -146,17 +148,12 @@ https://justwatch.com/us/movie/unbreakable
 
 ## 1996
 
-- https://justwatch.com/us/movie/the-long-kiss-goodnight
-- https://justwatch.com/us/movie/twister
+https://justwatch.com/us/movie/the-long-kiss-goodnight
+
+## 1993
+
+https://justwatch.com/us/movie/jurassic-park-i
 
 ## 1992
 
 https://justwatch.com/us/movie/sneakers
-
-## 1972
-
-https://justwatch.com/us/movie/last-tango-in-paris
-
-## 1962
-
-https://justwatch.com/us/movie/an-autumn-afternoon
