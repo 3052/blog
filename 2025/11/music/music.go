@@ -1,5 +1,23 @@
 package music
 
+var U2 = []album{
+   {
+      name: "war",
+      link: []link{
+         {url: "youtube.com/playlist?list=OLAK5uy_nuez2OLRZURWEwEonP_eKZIjKKP_o93e0"},
+      },
+      track: []track{
+         {
+            number: 1,
+            name: "sunday bloody sunday",
+            link: []link{
+               {url: "youtube.com/watch?v=d8FYJ9qvegI"},
+            },
+         },
+      },
+   },
+}
+
 var EsbenAndTheWitch = []album{
    {
       name: "Wash the Sins Not Only the Face",
@@ -100,8 +118,6 @@ var KellyMoran = []album{
       },
    },
 }
-
-///
 
 var Bibio = []album{
    {
