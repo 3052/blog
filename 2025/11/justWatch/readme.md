@@ -27,7 +27,6 @@
 - https://justwatch.com/us/movie/the-roses
 - https://justwatch.com/us/movie/the-smashing-machine
 - https://justwatch.com/us/movie/together-2025
-- https://justwatch.com/us/movie/weapons-2026
 - https://justwatch.com/us/movie/youre-cordially-invited
 - https://justwatch.com/us/tv-show/pluribus
 
