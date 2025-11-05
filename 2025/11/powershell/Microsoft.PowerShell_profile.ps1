@@ -1,9 +1,6 @@
-# 2025-10-16
-$env:path = 'C:\Users\Steven\.cargo\bin'
-
-# 2025-10-10
-
-$env:RIPGREP_CONFIG_PATH = 'C:\Users\Steven\Documents\PowerShell\ripgrep.txt'
+# 2025-11-04
+$env:path = 'D:\node'
+$env:RIPGREP_CONFIG_PATH = "C:\Users\Steven\AppData\Local\ripgrep\ripgrep.txt"
 
 # disable auto complete
 Set-PSReadLineOption -PredictionSource None

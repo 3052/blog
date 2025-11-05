@@ -72,7 +72,8 @@ https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
 
 ## 2018
 
-https://justwatch.com/us/movie/hereditary
+- https://justwatch.com/us/movie/hereditary
+- https://justwatch.com/us/movie/solo-a-star-wars-story
 
 ## 2017
 
@@ -88,6 +89,10 @@ https://justwatch.com/us/movie/hereditary
 
 - https://justwatch.com/us/movie/steve-jobs
 - https://justwatch.com/us/movie/welcome-to-me
+
+## 2014
+
+https://justwatch.com/us/tv-show/fargo
 
 ## 2013
 
