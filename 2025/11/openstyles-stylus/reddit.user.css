@@ -1,0 +1,27 @@
+/*
+==userstyle==
+@name Reddit
+@namespace 10317
+@version 2023.05.12
+==/userstyle==
+*/
+@-moz-document domain("reddit.com") {
+   /* Color top-level comment text blue */
+   .commentarea > .sitetable > .thing.comment > .entry .usertext-body {
+      background-color: lightblue !important;
+   }
+   /* Color second-level comment text green */
+   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry .usertext-body {
+      background-color: lightgreen !important;
+   }
+   /* Color third-level comment text orange */
+   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry .usertext-body {
+      background-color: #ffcc99 !important;
+   }
+   :visited {
+      color: hsl(270 100% 50%) !important
+   }
+   .arrow {
+      visibility: hidden !important
+   }
+}
