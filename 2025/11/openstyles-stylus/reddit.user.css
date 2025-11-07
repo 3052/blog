@@ -6,17 +6,17 @@
 ==/userstyle==
 */
 @-moz-document domain("reddit.com") {
-   /* Color top-level comment text blue */
-   .commentarea > .sitetable > .thing.comment > .entry .usertext-body {
-      background-color: lightblue !important;
+   /* Add a blue left border to top-level comments */
+   .commentarea > .sitetable > .thing.comment > .entry {
+      border-left: 1em solid blue !important;
    }
-   /* Color second-level comment text green */
-   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry .usertext-body {
-      background-color: lightgreen !important;
+   /* Add a green left border to second-level comments */
+   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry {
+      border-left: 1em solid green !important;
    }
-   /* Color third-level comment text orange */
-   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry .usertext-body {
-      background-color: #ffcc99 !important;
+   /* Add an orange left border to third-level comments */
+   .commentarea > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .child > .sitetable > .thing.comment > .entry {
+      border-left: 1em solid orange !important;
    }
    :visited {
       color: hsl(270 100% 50%) !important
