@@ -1,5 +1,13 @@
 # german BIN
 
+I need to purchase a prepaid card or gift card for one of these:
+
+1. visa
+2. mastercard
+3. american express
+
+needs to be German BIN
+
 ## requirements
 
 1. needs to be one of these
@@ -8,17 +16,18 @@
    3. american express
 2. US purchase
 
-## Ecard.io
+## kycnot.me
 
-dead domain
-
-## ezzocard.com
-
-dead domain
-
-## LeadingCards.net
-
-dead domain
+- kycnot.me?categories=gift-cards
+- kycnot.me?categories=cards
+   - stealths.net/store
+      - USA card
+   - trocador.app/prepaidcards
+      - international
+   - satsrefill.com
+   - uprampr.com
+   - xkard.io
+   - xkode.io
 
 ## pay2.house
 
