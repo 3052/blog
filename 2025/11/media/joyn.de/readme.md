@@ -29,125 +29,7 @@
 21. I expressly agree to the execution of the contract
 22. ordering the payment
 
-## prompt
-
-a service offers these payment methods
-
-1. visa
-2. mastercard
-3. american express
-4. paypal
-5. amazon pay
-
-however I get this when using Amazon Pay:
-
-CheckoutSession cannot be completed: the billing address country US is not
-included in the allowed whitelist. Allowed countries: DE
-
-and similar errors with the other methods. how can I get one of these payment
-methods? also do not offer guesses. also do not offer vague ideas but concrete
-options or steps. also the service does not ask for the address, it must find the
-address that is linked to the card, so dont suggest to enter a german address
-when making a purchase because that is not an option. also dont offer a service
-like Wise unless you are certain they offer german cards. also dont offer a
-service unless you are certain I can get it as a US citizen
-
-## 1 visa US
-
-~~~
-POST /api/v1/CustomerSelfService/signup/pay HTTP/2
-Host: p7.billwerk.com
-
-{
-  "paymentData": {
-    "bearer": {
-      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
-    }
-  }
-}
-
-HTTP/2 200 OK
-
-{
-  "Error": {
-    "Code": "BearerInvalid",
-    "Message": "Payment failed!",
-    "Details": "Your card was declined."
-  }
-}
-~~~
-
-## 2 mastercard US
-
-~~~
-POST /api/v1/CustomerSelfService/signup/pay HTTP/2
-Host: p7.billwerk.com
-
-{
-  "paymentData": {
-    "bearer": {
-      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
-    }
-  }
-}
-
-HTTP/2 200 OK
-
-{
-  "Error": {
-    "Code": "BearerInvalid",
-    "Message": "Payment failed!",
-    "Details": "Your card was declined."
-  }
-}
-~~~
-
-## 3 american express US
-
-~~~
-POST /api/v1/CustomerSelfService/signup/pay HTTP/2
-Host: p7.billwerk.com
-
-{
-  "paymentData": {
-    "bearer": {
-      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
-    }
-  }
-}
-
-HTTP/2 200 OK
-
-{
-  "Error": {
-    "Code": "BearerInvalid",
-    "Message": "Payment failed!",
-    "Details": "Your card was declined."
-  }
-}
-~~~
-
-## 4 paypal US
-
-~~~
-POST https://p7.billwerk.com/api/v1/CustomerSelfService/Finalize HTTP/2.0
-
-{
-  "returnUrl": "https://www.joyn.de/abo/v2/willkommen?productVariantId=de-plus-web-monthly&interactivePayment=true&pactasTransactionId=690febaa2a093d3441958ec6&secret=Qye5089O39XJWIIYe9sdzQ&trigger=Payment&language=de-DE&token=EC-9E522846T9953502C"
-}
-
-HTTP/2.0 422 
-
-{
-  "Error": {
-    "Code": "",
-    "Message": "The country in the address field does not match country in payment",
-    "Details": ""
-  }
-}
-~~~
-
-## 5 amazon.de US card
+## amazon pay
 
 ~~~json
 POST https://p7.billwerk.com/api/v1/CustomerSelfService/Finalize HTTP/2.0
@@ -167,17 +49,41 @@ HTTP/2.0 200
 }
 ~~~
 
-## 6 VizoVcc 
+## prompt
 
-https://vizovcc.com/card/details/mastercard-de/23
+a service offers these payment methods
 
-- 532454
-- DE
-- $150
+1. visa
+2. mastercard
+3. american express
+4. paypal
+5. amazon pay
 
-## 7 yellowdotpay.net
+however I get this when using Amazon Pay:
 
-➤ Issued from: Trusted Turkish Bank
-➤ Bank Issued: Verified Argentine Bank
+CheckoutSession cannot be completed: the billing address country US is not
+included in the allowed whitelist. Allowed countries: DE
 
-https://yellowdotpay.net/blog/virtual-credit-card-germany
+and similar errors with the other methods. how can I get one of these payment
+methods? offer one option at a time and I will review the options one by one
+
+## Option 1: Use a Virtual Address Service in Germany
+
+the BIN for my cards will still be US so this is not a valid option
+
+## Option 2: Use a Multi-Currency Account or Virtual Card Service
+
+neither Wise nor Revolut offer German BIN cards to my understanding, if I am
+wrong correct me
+
+## Option 3: Use a specialized Virtual Credit Card (VCC) Provider
+
+this is not a valid option as you have not given any example providers
+
+## Option 4 (Revised): Obtain a European Prepaid Card from VIABUY
+
+this is not a valid option as that URL is dead
+
+## Option 5: Use the PayCenter SupremaCard Mastercard
+
+https://supremacard.de
