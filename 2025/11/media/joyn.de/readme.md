@@ -29,6 +29,29 @@
 21. I expressly agree to the execution of the contract
 22. ordering the payment
 
+## prompt
+
+a service offers these payment methods
+
+1. visa
+2. mastercard
+3. american express
+4. paypal
+5. amazon pay
+
+however I get this when using Amazon Pay:
+
+CheckoutSession cannot be completed: the billing address country US is not
+included in the allowed whitelist. Allowed countries: DE
+
+and similar errors with the other methods. how can I get one of these payment
+methods? also do not offer guesses. also do not offer vague ideas but concrete
+options or steps. also the service does not ask for the address, it must find the
+address that is linked to the card, so dont suggest to enter a german address
+when making a purchase because that is not an option. also dont offer a service
+like Wise unless you are certain they offer german cards. also dont offer a
+service unless you are certain I can get it as a US citizen
+
 ## 1 visa US
 
 ~~~
@@ -124,14 +147,37 @@ HTTP/2.0 422
 }
 ~~~
 
-## amazon pay
+## 5 amazon.de US card
 
 ~~~json
+POST https://p7.billwerk.com/api/v1/CustomerSelfService/Finalize HTTP/2.0
+
+{
+  "returnUrl": "https://www.joyn.de/abo/v2/willkommen?productVariantId=de-plus-web-monthly&interactivePayment=true&pactasTransactionId=69100f1a8d6ed9975022459e&secret=0sYLF0qPunj8F3s5FoVj5g&trigger=Payment&language=de-DE&amazonCheckoutSessionId=bfd7aff5-c6db-4f6c-805f-51135e87e5ba"
+}
+
+HTTP/2.0 200 
+
 {
   "Error": {
     "Code": "InvalidCountry",
-    "Message": "Invalid order status",
+    "Message": "Payment failed!",
     "Details": "CheckoutSession cannot be completed: the billing address country US is not included in the allowed whitelist. Allowed countries: DE"
   }
 }
 ~~~
+
+## 6 VizoVcc 
+
+https://vizovcc.com/card/details/mastercard-de/23
+
+- 532454
+- DE
+- $150
+
+## 7 yellowdotpay.net
+
+➤ Issued from: Trusted Turkish Bank
+➤ Bank Issued: Verified Argentine Bank
+
+https://yellowdotpay.net/blog/virtual-credit-card-germany

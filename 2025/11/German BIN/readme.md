@@ -55,11 +55,3 @@ Please confirm that you are not a citizen or resident of the United States of
 America
 
 https://pst.net
-
-## VizoVcc 
-
-https://vizovcc.com/card/details/mastercard-de/23
-
-- 532454
-- DE
-- $150
