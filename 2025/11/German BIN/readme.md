@@ -6,7 +6,7 @@ I need to purchase a prepaid card or gift card for one of these:
 2. mastercard
 3. american express
 
-needs to be German BIN
+needs to be German BIN. note I am in US
 
 ## requirements
 
@@ -19,15 +19,28 @@ needs to be German BIN
 ## kycnot.me
 
 - kycnot.me?categories=gift-cards
+   - bitrefill.com/de/en/gift-cards
+      - no visa/mastercard/american express
+   - xkode.io
+      - no gift cards or prepaid cards
+   - uprampr.com
+      - no visa/mastercard/american express
+   - bitvalve.com
+      - cursed
+   - coincards.com/eu
+      - no visa/mastercard/american express
+   - coinsbee.com
+      - US cards only
+   - noones.com
+      - ID verification is required by our card partner to issue your virtual
+        VISA card
 - kycnot.me?categories=cards
    - stealths.net/store
       - USA card
    - trocador.app/prepaidcards
       - international
    - satsrefill.com
-   - uprampr.com
-   - xkard.io
-   - xkode.io
+      - no option to change country
 
 ## pay2.house
 

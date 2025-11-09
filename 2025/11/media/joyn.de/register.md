@@ -29,9 +29,100 @@
 21. I expressly agree to the execution of the contract
 22. ordering the payment
 
-## paypal
+## 1 visa US
 
-Ihre Kreditkarte wurde abgelehnt (your credit card has been declined)
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
+
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
+
+HTTP/2 200 OK
+
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
+~~~
+
+## 2 mastercard US
+
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
+
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
+
+HTTP/2 200 OK
+
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
+~~~
+
+## 3 american express US
+
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
+
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
+
+HTTP/2 200 OK
+
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
+~~~
+
+## 4 paypal US
+
+~~~
+POST https://p7.billwerk.com/api/v1/CustomerSelfService/Finalize HTTP/2.0
+
+{
+  "returnUrl": "https://www.joyn.de/abo/v2/willkommen?productVariantId=de-plus-web-monthly&interactivePayment=true&pactasTransactionId=690febaa2a093d3441958ec6&secret=Qye5089O39XJWIIYe9sdzQ&trigger=Payment&language=de-DE&token=EC-9E522846T9953502C"
+}
+
+HTTP/2.0 422 
+
+{
+  "Error": {
+    "Code": "",
+    "Message": "The country in the address field does not match country in payment",
+    "Details": ""
+  }
+}
+~~~
 
 ## amazon pay
 
@@ -44,13 +135,3 @@ Ihre Kreditkarte wurde abgelehnt (your credit card has been declined)
   }
 }
 ~~~
-
-## mastercard
-
-## american express
-
-## visa
-
-with physical card:
-
-Ihre Kreditkarte wurde abgelehnt (your credit card has been declined)
