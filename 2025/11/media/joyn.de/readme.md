@@ -1,27 +1,137 @@
-# joyn
+# register
 
-## prior art
+1. joyn.de
+2. email
+   1. mailsac.com fail
+   2. gmail.com pass
+   3. mail.tm?
+3. password
+   - Das Passwort muss mindestens 1 Klein- und Großbuchstaben sowie eine Zahl
+   enthalten (The password must contain at least one lowercase and one uppercase
+   letter, as well as one number)
+4. Männlich (male)
+5. day
+6. month
+7. year
+8. save
+9. PLUS
+10. try now for free
+11. enable JavaScript
+12. first name
+13. surname
+14. Zahlungsmethode wählen (select payment method)
+15. credit card
+16. Karteninhaber (cardholder)
+17. card number
+18. CVC
+19. month
+20. year
+21. I expressly agree to the execution of the contract
+22. ordering the payment
 
-<https://github.com/Maven85/plugin.video.joyn/blob/master/resources/lib/submodules/libjoyn_video.py>
+## 1 visa US
 
-looks like its here now:
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
 
-<https://joyn.de/_next/static/chunks/3806.dcb7578b32019150.js>
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
 
-but obfuscated:
+HTTP/2 200 OK
 
-~~~js
-t[i(486) + "t"] = "5C783" + i(628) + "78646" + i(642) + i(701) + "65C78" +
-i(545) + i(371) + i(336) + i(470) + "65395" + i(415) + i(438) + i(587) + i(468)
-+ i(395) + i(561) + "5"
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
 ~~~
 
-x-api-key is hard coded in JavaScript
+## 2 mastercard US
 
-## android
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
 
-https://play.google.com/store/apps/details?id=de.prosiebensat1digital.seventv
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
 
-Create Android 7 device. Install system certificate
+HTTP/2 200 OK
 
-https://apkmirror.com/apk/joyn-gmbh/joyn-deine-streaming-app
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
+~~~
+
+## 3 american express US
+
+~~~
+POST /api/v1/CustomerSelfService/signup/pay HTTP/2
+Host: p7.billwerk.com
+
+{
+  "paymentData": {
+    "bearer": {
+      "token": "tok_1SRN66EPPEU9tzM9FQskkgIJ"
+    }
+  }
+}
+
+HTTP/2 200 OK
+
+{
+  "Error": {
+    "Code": "BearerInvalid",
+    "Message": "Payment failed!",
+    "Details": "Your card was declined."
+  }
+}
+~~~
+
+## 4 paypal US
+
+~~~
+POST https://p7.billwerk.com/api/v1/CustomerSelfService/Finalize HTTP/2.0
+
+{
+  "returnUrl": "https://www.joyn.de/abo/v2/willkommen?productVariantId=de-plus-web-monthly&interactivePayment=true&pactasTransactionId=690febaa2a093d3441958ec6&secret=Qye5089O39XJWIIYe9sdzQ&trigger=Payment&language=de-DE&token=EC-9E522846T9953502C"
+}
+
+HTTP/2.0 422 
+
+{
+  "Error": {
+    "Code": "",
+    "Message": "The country in the address field does not match country in payment",
+    "Details": ""
+  }
+}
+~~~
+
+## amazon pay
+
+~~~json
+{
+  "Error": {
+    "Code": "InvalidCountry",
+    "Message": "Invalid order status",
+    "Details": "CheckoutSession cannot be completed: the billing address country US is not included in the allowed whitelist. Allowed countries: DE"
+  }
+}
+~~~
