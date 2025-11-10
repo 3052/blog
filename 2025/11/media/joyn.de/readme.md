@@ -86,4 +86,15 @@ this is not a valid option as that URL is dead
 
 ## Option 5: Use the PayCenter SupremaCard Mastercard
 
+it seems German ID is required, which would make this an invalid option
+
 https://supremacard.de
+
+## Option 6: Use a Service-Specific Gift Card or Voucher
+
+you have ignored the original prompt which does not include this option as a
+payment method
+
+## Option 7 (Revised): Use an Assisted Purchase Service from a German Package Forwarder
+
+https://mygermany.com
