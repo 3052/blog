@@ -29,9 +29,3 @@ https://mullvad.net/help/how-use-mullvad-cli
 4. quantum resistant tunnel
 
 https://github.com/mullvad/mullvadvpn-app/issues/7937
-
-stupid shit they want me to try:
-
-1. settings
-2. api access
-3. encrypted dns proxy, off
