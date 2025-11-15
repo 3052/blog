@@ -1,5 +1,17 @@
 # go doc
 
+~~~
+parser.go:210
+highlighter.go:61
+doc.go:36
+types.go:33
+renderer.go:22
+template.tmpl:77
+style.css:38
+
+477 matched lines
+~~~
+
 Go language, I would like to create a package that creates HTML documentation
 for a Go package
 
