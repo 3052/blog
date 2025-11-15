@@ -8,10 +8,13 @@ for a Go package
 3. use a separate file for each type
 4. any templates should be a separate file not a string
 5. put all package files in the top directory not a subfolder
-6. include a test package in folder "example"
+6. exclude unexported items
 7. include a test file in the top folder
-8. do not include any other test files
-9. when sending file updates, send the complete file, for only new or updated
+8. test file should only use the "example" directory, assuming the user has
+   provided it, not create it
+9. test output should remain after test is complete
+10. do not include any other test files
+11. when sending updates, send the complete file, for only new or updated
    files
 
 https://github.com/golang/go/issues/2381

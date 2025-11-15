@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Documentation for {{.Name}}</title>
+    <style>
+        body { font-family: sans-serif; }
+        h1, h2, h3 { color: #333; }
+        pre { background-color: #f4f4f4; padding: 1em; border: 1px solid #ddd; }
+        .doc { margin-left: 2em; }
+    </style>
+</head>
+<body>
+    <h1>Package {{.Name}}</h1>
+    <div class="doc">
+        <pre>{{.Doc}}</pre>
+    </div>
+
+    <h2>Index</h2>
+    <ul>
+        {{if .Constants}}<li><a href="#constants">Constants</a></li>{{end}}
+        {{if .Variables}}<li><a href="#variables">Variables</a></li>{{end}}
+        {{if .Functions}}<li><a href="#functions">Functions</a></li>{{end}}
+        {{if .Types}}<li><a href="#types">Types</a></li>{{end}}
+    </ul>
+
+    {{if .Constants}}
+    <h2 id="constants">Constants</h2>
+    {{range .Constants}}
+        <pre>{{range .Names}}{{.}}{{end}}</pre>
+        <div class="doc"><p>{{.Doc}}</p></div>
+    {{end}}
+    {{end}}
+
+    {{if .Variables}}
+    <h2 id="variables">Variables</h2>
+    {{range .Variables}}
+        <pre>{{range .Names}}{{.}}{{end}}</pre>
+        <div class="doc"><p>{{.Doc}}</p></div>
+    {{end}}
+    {{end}}
+
+    {{if .Functions}}
+    <h2 id="functions">Functions</h2>
+    {{range .Functions}}
+        <h3>func {{.Name}}</h3>
+        <div class="doc"><p>{{.Doc}}</p></div>
+    {{end}}
+    {{end}}
+
+    {{if .Types}}
+    <h2 id="types">Types</h2>
+    {{range .Types}}
+        <h3>type {{.Name}}</h3>
+        <div class="doc"><p>{{.Doc}}</p></div>
+        {{range .Specs}}
+            <h4>{{.Name}}</h4>
+            <div class="doc"><p>{{.Doc}}</p></div>
+        {{end}}
+    {{end}}
+    {{end}}
+</body>
+</html>
