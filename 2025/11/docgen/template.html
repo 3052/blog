@@ -3,19 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Package: {{.PackageName}}</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; padding: 2em; max-width: 800px; margin: 0 auto; color: #333; }
-        table { border-collapse: collapse; width: 100%; margin: 1.5em 0; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
-        th { background-color: #f7f7f7; font-weight: 600; }
-        code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; background-color: #eee; padding: 3px 5px; border-radius: 4px; }
-        h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5em; }
-        h2 { border-bottom: 1px solid #eee; padding-bottom: 0.3em; margin-top: 2.5em;}
-        h3 { margin-top: 2em; }
-        h1 code, h2 code { font-size: 1.1em; }
-        a, a:visited { color: #005A9C; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -27,47 +15,23 @@
     <h2 id="{{.Name}}">Struct: <code>{{.Name}}</code></h2>
     <p>{{nl2br .Comment}}</p>
 
-    <h3>Fields</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Field</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Tag</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .Fields}}
-            <tr>
-                <td><code>{{.Name}}</code></td>
-                <td><code>{{.Type}}</code></td>
-                <td>{{nl2br .Comment}}</td>
-                <td><code>{{cleantag .Tag}}</code></td>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
+    <pre><code>{{renderCode .Definition $.StructNames}}</code></pre>
 
     {{if .Methods}}
     <h3>Methods</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Signature</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .Methods}}
-            <tr>
-                <!-- CORRECTED: Call the linkifyRecv function -->
-                <td><code>{{linkifyRecv .Signature .RecvType}}</code></td>
-                <td>{{nl2br .Comment}}</td>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
+    
+    <!-- CORRECTED: Removed the table and now loop through vertical blocks -->
+    {{range .Methods}}
+    <div class="method-block">
+        <div class="method-signature">
+            <code>{{renderCode .Signature $.StructNames}}</code>
+        </div>
+        <div class="method-description">
+            {{nl2br .Comment}}
+        </div>
+    </div>
+    {{end}}
+
     {{end}}
 
     {{end}}
