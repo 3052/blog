@@ -1,0 +1,12 @@
+{{define "types.tmpl"}}
+<h2>Types</h2>
+{{range .}}
+    {{$type := .}}
+    <h3>type {{$type.Name}}</h3>
+    <p>{{$type.Doc}}</p>
+    {{range .Methods}}
+        <h4>func ({{$type.Name}}) {{.Name}}{{.Signature}}</h4>
+        <p>{{.Doc}}</p>
+    {{end}}
+{{end}}
+{{end}}
