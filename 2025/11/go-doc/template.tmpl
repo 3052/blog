@@ -2,13 +2,26 @@
 <html>
 <head>
     <title>Documentation for {{.Name}}</title>
+    {{if and .ImportPath .VCS .RepositoryURL}}
+    <meta name="go-import" content="{{.ImportPath}} {{.VCS}} {{.RepositoryURL}}">
+    {{end}}
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Package {{.Name}}</h1>
+    <h1>
+        Package {{.Name}}
+        {{if .Version}}
+            <span class="version-info">({{.Version}})</span>
+        {{end}}
+        {{if .RepositoryURL}}
+            <span class="repository-link">[<a href="{{.RepositoryURL}}" target="_blank" rel="noopener">repository</a>]</span>
+        {{end}}
+    </h1>
+    {{if .Doc}}
     <div class="doc">
         <pre>{{.Doc}}</pre>
     </div>
+    {{end}}
 
     <h2>Index</h2>
     <ul>
@@ -30,7 +43,7 @@
     <h2 id="constants">Constants</h2>
     {{range .Constants}}
         <pre>{{.Definition}}</pre>
-        <div class="doc"><p>{{.Doc}}</p></div>
+        {{if .Doc}}<div class="doc"><p>{{.Doc}}</p></div>{{end}}
     {{end}}
     {{end}}
 
@@ -38,7 +51,7 @@
     <h2 id="variables">Variables</h2>
     {{range .Variables}}
         <pre>{{.Definition}}</pre>
-        <div class="doc"><p>{{.Doc}}</p></div>
+        {{if .Doc}}<div class="doc"><p>{{.Doc}}</p></div>{{end}}
     {{end}}
     {{end}}
 
@@ -46,7 +59,7 @@
     <h2 id="functions">Functions</h2>
     {{range .Functions}}
         <pre>{{.Signature}}</pre>
-        <div class="doc"><p>{{.Doc}}</p></div>
+        {{if .Doc}}<div class="doc"><p>{{.Doc}}</p></div>{{end}}
     {{end}}
     {{end}}
 
@@ -54,14 +67,14 @@
     <h2 id="types">Types</h2>
     {{range .Types}}
         <h3 id="{{.Name}}">type {{.Name}}</h3>
-        <div class="doc"><p>{{.Doc}}</p></div>
+        {{if .Doc}}<div class="doc"><p>{{.Doc}}</p></div>{{end}}
         <pre>{{.Definition}}</pre>
 
         {{if .Methods}}
             <h4>Methods</h4>
             {{range .Methods}}
                 <pre>{{.Signature}}</pre>
-                <div class="doc"><p>{{.Doc}}</p></div>
+                {{if .Doc}}<div class="doc"><p>{{.Doc}}</p></div>{{end}}
             {{end}}
         {{end}}
     {{end}}

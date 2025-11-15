@@ -31,3 +31,16 @@ pre {
 .string {
     color: #a31515;
 }
+
+.version-info {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #555;
+    margin-left: 1em;
+}
+
+.repository-link {
+    font-size: 0.8em;
+    font-weight: normal;
+    margin-left: 1em;
+}

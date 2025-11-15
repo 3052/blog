@@ -9,6 +9,10 @@ import (
 func TestGenerate(t *testing.T) {
    sourceDir := "example"
    outputDir := "test_output"
+   version := "v1.2.3"
+   vcs := "git"
+   importPath := "example.com/me/repo"
+   repoURL := "https://github.com/example/repo"
 
    if _, err := os.Stat(sourceDir); os.IsNotExist(err) {
       t.Fatalf("example directory does not exist, please provide it for testing")
@@ -18,7 +22,7 @@ func TestGenerate(t *testing.T) {
       t.Fatalf("failed to remove existing output directory: %v", err)
    }
 
-   if err := Generate(sourceDir, outputDir); err != nil {
+   if err := Generate(sourceDir, outputDir, repoURL, version, importPath, vcs); err != nil {
       t.Fatalf("Generate() failed: %v", err)
    }
 

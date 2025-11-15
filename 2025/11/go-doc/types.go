@@ -25,10 +25,14 @@ type TypeDoc struct {
 
 // PackageDoc holds all the documentation for a package.
 type PackageDoc struct {
-   Name      string
-   Doc       string
-   Functions []FuncDoc
-   Types     []TypeDoc
-   Variables []VarDoc
-   Constants []VarDoc
+   Name          string
+   RepositoryURL string
+   Version       string
+   ImportPath    string
+   VCS           string
+   Doc           string
+   Functions     []FuncDoc
+   Types         []TypeDoc
+   Variables     []VarDoc
+   Constants     []VarDoc
 }

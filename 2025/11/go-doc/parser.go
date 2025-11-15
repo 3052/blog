@@ -15,7 +15,7 @@ import (
 )
 
 // Parse parses the Go package in the given directory and returns a PackageDoc.
-func Parse(dir string) (*PackageDoc, error) {
+func Parse(dir, repoURL, version, importPath, vcs string) (*PackageDoc, error) {
    fset := token.NewFileSet()
    files, err := parseGoFiles(fset, dir)
    if err != nil {
@@ -36,8 +36,12 @@ func Parse(dir string) (*PackageDoc, error) {
    }
 
    pkgDoc := &PackageDoc{
-      Name: p.Name,
-      Doc:  p.Doc,
+      Name:          p.Name,
+      RepositoryURL: repoURL,
+      Version:       version,
+      ImportPath:    importPath,
+      VCS:           vcs,
+      Doc:           p.Doc,
    }
 
    process := func(decl ast.Decl) (template.HTML, error) {
@@ -89,8 +93,7 @@ func Parse(dir string) (*PackageDoc, error) {
 }
 
 // collectFromExpr recursively walks a type expression AST node and collects the offsets
-// of any identifiers that are known package types. This is the core of the fix, as it
-// precisely navigates the AST instead of doing a broad search.
+// of any identifiers that are known package types.
 func collectFromExpr(expr ast.Expr, fset *token.FileSet, typeNames map[string]struct{}, offsets map[int]struct{}) {
    if expr == nil {
       return
@@ -135,6 +138,16 @@ func collectFromExpr(expr ast.Expr, fset *token.FileSet, typeNames map[string]st
             collectFromExpr(field.Type, fset, typeNames, offsets)
          }
       }
+   case *ast.SelectorExpr:
+      collectFromExpr(x.X, fset, typeNames, offsets)
+   case *ast.IndexExpr:
+      collectFromExpr(x.X, fset, typeNames, offsets)
+      collectFromExpr(x.Index, fset, typeNames, offsets)
+   case *ast.IndexListExpr:
+      collectFromExpr(x.X, fset, typeNames, offsets)
+      for _, index := range x.Indices {
+         collectFromExpr(index, fset, typeNames, offsets)
+      }
    }
 }
 
@@ -147,11 +160,11 @@ func collectTypeUsageOffsets(rootNode ast.Node, fset *token.FileSet, typeNames m
          return false
       }
       switch x := n.(type) {
-      case *ast.ValueSpec: // Handles: var name MyType
+      case *ast.ValueSpec:
          collectFromExpr(x.Type, fset, typeNames, offsets)
-      case *ast.TypeSpec: // Handles: type Name MyType
+      case *ast.TypeSpec:
          collectFromExpr(x.Type, fset, typeNames, offsets)
-      case *ast.Field: // Handles fields in structs, interfaces, and function signatures
+      case *ast.Field:
          collectFromExpr(x.Type, fset, typeNames, offsets)
       }
       return true

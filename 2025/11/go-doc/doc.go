@@ -6,9 +6,10 @@ import (
 )
 
 // Generate creates HTML documentation and a corresponding CSS file for the Go
-// package in sourceDir and writes them to outputDir.
-func Generate(sourceDir, outputDir string) error {
-   pkgDoc, err := Parse(sourceDir)
+// package in sourceDir and writes them to outputDir. It includes metadata for
+// the repository, version, and go-import path.
+func Generate(sourceDir, outputDir, repoURL, version, importPath, vcs string) error {
+   pkgDoc, err := Parse(sourceDir, repoURL, version, importPath, vcs)
    if err != nil {
       return err
    }
