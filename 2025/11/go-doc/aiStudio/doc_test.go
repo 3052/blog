@@ -22,8 +22,12 @@ func TestGenerate(t *testing.T) {
       t.Fatalf("Generate() failed: %v", err)
    }
 
-   outputFile := filepath.Join(outputDir, "doc.html")
-   if _, err := os.Stat(outputFile); os.IsNotExist(err) {
-      t.Errorf("expected output file %s was not created", outputFile)
+   // Check that both the HTML and CSS files were created.
+   filesToCheck := []string{"doc.html", "style.css"}
+   for _, f := range filesToCheck {
+      outputFile := filepath.Join(outputDir, f)
+      if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+         t.Errorf("expected output file %s was not created", outputFile)
+      }
    }
 }

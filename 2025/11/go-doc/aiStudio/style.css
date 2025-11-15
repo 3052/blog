@@ -1,0 +1,33 @@
+body {
+    font-family: sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: #333;
+}
+
+pre {
+    background-color: #f4f4f4;
+    padding: 1em;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+}
+
+.doc {
+    margin-left: 2em;
+}
+
+.comment {
+    color: #008000;
+}
+
+.keyword {
+    color: #0000ff;
+}
+
+.string {
+    color: #a31515;
+}
