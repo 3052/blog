@@ -2,6 +2,7 @@ package main
 
 import (
    "encoding/json"
+   "errors"
    "flag"
    "fmt"
    "os"
@@ -9,8 +10,6 @@ import (
    "strings"
    "time"
 )
-
-type userinfo map[string]string
 
 func get_users() ([]userinfo, error) {
    data, err := os.ReadFile(name)
@@ -22,6 +21,30 @@ func get_users() ([]userinfo, error) {
    if err != nil {
       return nil, err
    }
+   passwords := map[string]bool{}
+   for _, user := range users {
+      trial := user["trial"]
+      password := user["password"]
+      if trial == "true" {
+         trial2, ok := passwords[password]
+         if ok {
+            if !trial2 {
+               return nil, errors.New(password)
+            }
+         } else {
+            passwords[password] = true
+         }
+      } else if trial == "false" {
+         _, ok := passwords[password]
+         if ok {
+            return nil, errors.New(password)
+         } else {
+            passwords[password] = false
+         }
+      } else if password != "" {
+         return nil, fmt.Errorf("%v", user)
+      }
+   }
    year_ago := time.Now().AddDate(-1, 0, 0).String()
    for _, user := range users {
       if user["date"] < year_ago {
@@ -30,6 +53,8 @@ func get_users() ([]userinfo, error) {
    }
    return users, nil
 }
+
+type userinfo map[string]string
 
 const name = `D:\backblaze\largest\credential.json`
 
