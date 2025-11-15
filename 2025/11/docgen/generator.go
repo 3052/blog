@@ -1,63 +1,53 @@
 package docgen
 
 import (
-   "embed"
-   "fmt"
-   "html/template"
-   "log"
-   "os"
-   "path/filepath"
+	"fmt"
+	"html/template"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
-//go:embed templates/*.tmpl
-var templateFS embed.FS
+var funcMap = template.FuncMap{
+	"nl2br": func(text string) template.HTML {
+		return template.HTML(strings.ReplaceAll(strings.TrimSpace(text), "\n", "<br>"))
+	},
+	"cleantag": func(tag string) string {
+		return strings.Trim(tag, "`")
+	},
+	// RESTORED: This function creates an HTML link for the receiver type.
+	"linkifyRecv": func(signature, recvType string) template.HTML {
+		// Create the hyperlink HTML
+		link := fmt.Sprintf(`<a href="#%s">%s</a>`, recvType, recvType)
 
-// GenerateDocs is an exported function that generates the HTML files.
-func GenerateDocs(pkg *PackageInfo, outDir string) error {
-   // Create the output directory if it doesn't exist.
-   if err := os.MkdirAll(outDir, 0755); err != nil {
-      return fmt.Errorf("failed to create output directory: %w", err)
-   }
+		// Replace the first occurrence of the receiver type name in the signature.
+		// We use strings.Replace with a count of 1 to avoid mangling return types.
+		// This trusts that the receiver is the first instance of the type name.
+		linkedSignature := strings.Replace(signature, recvType, link, 1)
 
-   // Parse all templates from the embedded filesystem.
-   tmpl, err := template.ParseFS(templateFS, "templates/*.tmpl")
-   if err != nil {
-      return fmt.Errorf("failed to parse templates: %w", err)
-   }
+		return template.HTML(linkedSignature)
+	},
+}
 
-   // --- Generate index.html ---
-   indexPath := filepath.Join(outDir, "index.html")
-   indexFile, err := os.Create(indexPath)
-   if err != nil {
-      return fmt.Errorf("failed to create index.html: %w", err)
-   }
-   defer indexFile.Close()
+// Generate function is unchanged from the last working version.
+func Generate(info *DocInfo, outputPath string) error {
+	tmpl, err := template.New("").Funcs(funcMap).ParseFiles("template.html")
+	if err != nil {
+		return fmt.Errorf("FATAL: failed to parse template.html: %w", err)
+	}
 
-   // Execute the index template with the package data.
-   err = tmpl.ExecuteTemplate(indexFile, "index.html.tmpl", pkg)
-   if err != nil {
-      return fmt.Errorf("failed to execute index template: %w", err)
-   }
-   log.Printf("Generated: %s", indexPath)
+	fileName := fmt.Sprintf("%s.html", info.PackageName)
+	filePath := filepath.Join(outputPath, fileName)
 
-   // --- Generate a file for each type ---
-   for _, t := range pkg.Types {
-      // Create a file named `type_TypeName.html`.
-      typeFilename := fmt.Sprintf("type_%s.html", t.Name)
-      typePath := filepath.Join(outDir, typeFilename)
-      typeFile, err := os.Create(typePath)
-      if err != nil {
-         return fmt.Errorf("failed to create file for type %s: %w", t.Name, err)
-      }
-      defer typeFile.Close()
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create output file %s: %w", filePath, err)
+	}
+	defer file.Close()
 
-      // Execute the type template with the specific type's data.
-      err = tmpl.ExecuteTemplate(typeFile, "type.html.tmpl", t)
-      if err != nil {
-         return fmt.Errorf("failed to execute template for type %s: %w", t.Name, err)
-      }
-      log.Printf("Generated: %s", typePath)
-   }
+	if err := tmpl.ExecuteTemplate(file, "template.html", info); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
+	}
 
-   return nil
+	return nil
 }
