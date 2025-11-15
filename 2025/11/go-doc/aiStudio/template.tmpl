@@ -15,7 +15,15 @@
         {{if .Constants}}<li><a href="#constants">Constants</a></li>{{end}}
         {{if .Variables}}<li><a href="#variables">Variables</a></li>{{end}}
         {{if .Functions}}<li><a href="#functions">Functions</a></li>{{end}}
-        {{if .Types}}<li><a href="#types">Types</a></li>{{end}}
+        {{if .Types}}
+        <li><a href="#types">Types</a>
+            <ul>
+                {{range .Types}}
+                <li><a href="#{{.Name}}">{{.Name}}</a></li>
+                {{end}}
+            </ul>
+        </li>
+        {{end}}
     </ul>
 
     {{if .Constants}}
@@ -45,7 +53,7 @@
     {{if .Types}}
     <h2 id="types">Types</h2>
     {{range .Types}}
-        <h3>type {{.Name}}</h3>
+        <h3 id="{{.Name}}">type {{.Name}}</h3>
         <div class="doc"><p>{{.Doc}}</p></div>
         <pre>{{.Definition}}</pre>
 

@@ -30,84 +30,164 @@ func Parse(dir string) (*PackageDoc, error) {
       return nil, fmt.Errorf("failed to create doc package: %w", err)
    }
 
+   typeNames := make(map[string]struct{})
+   for _, t := range p.Types {
+      typeNames[t.Name] = struct{}{}
+   }
+
    pkgDoc := &PackageDoc{
       Name: p.Name,
       Doc:  p.Doc,
    }
 
+   process := func(decl ast.Decl) (template.HTML, error) {
+      return formatAndHighlight(decl, fset, typeNames)
+   }
+
    for _, f := range p.Funcs {
       if f.Recv == "" {
-         sig, err := formatAndHighlight(f.Decl, fset)
+         sig, err := process(f.Decl)
          if err != nil {
             return nil, err
          }
-         pkgDoc.Functions = append(pkgDoc.Functions, FuncDoc{
-            Name:      f.Name,
-            Doc:       f.Doc,
-            Signature: sig,
-         })
+         pkgDoc.Functions = append(pkgDoc.Functions, FuncDoc{Name: f.Name, Doc: f.Doc, Signature: sig})
       }
    }
 
    for _, t := range p.Types {
-      def, err := formatAndHighlight(t.Decl, fset)
+      def, err := process(t.Decl)
       if err != nil {
          return nil, err
       }
-      typeDoc := TypeDoc{
-         Name:       t.Name,
-         Doc:        t.Doc,
-         Definition: def,
-      }
+      typeDoc := TypeDoc{Name: t.Name, Doc: t.Doc, Definition: def}
       for _, m := range t.Methods {
-         sig, err := formatAndHighlight(m.Decl, fset)
+         sig, err := process(m.Decl)
          if err != nil {
             return nil, err
          }
-         typeDoc.Methods = append(typeDoc.Methods, FuncDoc{
-            Name:      m.Name,
-            Doc:       m.Doc,
-            Signature: sig,
-         })
+         typeDoc.Methods = append(typeDoc.Methods, FuncDoc{Name: m.Name, Doc: m.Doc, Signature: sig})
       }
       pkgDoc.Types = append(pkgDoc.Types, typeDoc)
    }
 
    for _, v := range p.Consts {
-      def, err := formatAndHighlight(v.Decl, fset)
+      def, err := process(v.Decl)
       if err != nil {
          return nil, err
       }
-      pkgDoc.Constants = append(pkgDoc.Constants, VarDoc{
-         Doc:        v.Doc,
-         Definition: def,
-      })
+      pkgDoc.Constants = append(pkgDoc.Constants, VarDoc{Doc: v.Doc, Definition: def})
    }
 
    for _, v := range p.Vars {
-      def, err := formatAndHighlight(v.Decl, fset)
+      def, err := process(v.Decl)
       if err != nil {
          return nil, err
       }
-      pkgDoc.Variables = append(pkgDoc.Variables, VarDoc{
-         Doc:        v.Doc,
-         Definition: def,
-      })
+      pkgDoc.Variables = append(pkgDoc.Variables, VarDoc{Doc: v.Doc, Definition: def})
    }
    return pkgDoc, nil
 }
 
-// formatAndHighlight formats an AST node to a string and then applies syntax highlighting.
-func formatAndHighlight(node any, fset *token.FileSet) (template.HTML, error) {
+// collectFromExpr recursively walks a type expression AST node and collects the offsets
+// of any identifiers that are known package types. This is the core of the fix, as it
+// precisely navigates the AST instead of doing a broad search.
+func collectFromExpr(expr ast.Expr, fset *token.FileSet, typeNames map[string]struct{}, offsets map[int]struct{}) {
+   if expr == nil {
+      return
+   }
+   switch x := expr.(type) {
+   case *ast.Ident:
+      if _, isType := typeNames[x.Name]; isType {
+         file := fset.File(x.Pos())
+         if file != nil {
+            offsets[file.Offset(x.Pos())] = struct{}{}
+         }
+      }
+   case *ast.StarExpr:
+      collectFromExpr(x.X, fset, typeNames, offsets)
+   case *ast.ArrayType:
+      collectFromExpr(x.Elt, fset, typeNames, offsets)
+   case *ast.MapType:
+      collectFromExpr(x.Key, fset, typeNames, offsets)
+      collectFromExpr(x.Value, fset, typeNames, offsets)
+   case *ast.ChanType:
+      collectFromExpr(x.Value, fset, typeNames, offsets)
+   case *ast.FuncType:
+      if x.Params != nil {
+         for _, field := range x.Params.List {
+            collectFromExpr(field.Type, fset, typeNames, offsets)
+         }
+      }
+      if x.Results != nil {
+         for _, field := range x.Results.List {
+            collectFromExpr(field.Type, fset, typeNames, offsets)
+         }
+      }
+   case *ast.StructType:
+      if x.Fields != nil {
+         for _, field := range x.Fields.List {
+            collectFromExpr(field.Type, fset, typeNames, offsets)
+         }
+      }
+   case *ast.InterfaceType:
+      if x.Methods != nil {
+         for _, field := range x.Methods.List {
+            collectFromExpr(field.Type, fset, typeNames, offsets)
+         }
+      }
+   }
+}
+
+// collectTypeUsageOffsets uses a top-level AST inspection to find all nodes
+// that contain type expressions, and then hands them off to the precise recursive walker.
+func collectTypeUsageOffsets(rootNode ast.Node, fset *token.FileSet, typeNames map[string]struct{}) map[int]struct{} {
+   offsets := make(map[int]struct{})
+   ast.Inspect(rootNode, func(n ast.Node) bool {
+      if n == nil {
+         return false
+      }
+      switch x := n.(type) {
+      case *ast.ValueSpec: // Handles: var name MyType
+         collectFromExpr(x.Type, fset, typeNames, offsets)
+      case *ast.TypeSpec: // Handles: type Name MyType
+         collectFromExpr(x.Type, fset, typeNames, offsets)
+      case *ast.Field: // Handles fields in structs, interfaces, and function signatures
+         collectFromExpr(x.Type, fset, typeNames, offsets)
+      }
+      return true
+   })
+   return offsets
+}
+
+func formatAndHighlight(node ast.Node, fset *token.FileSet, typeNames map[string]struct{}) (template.HTML, error) {
    var buf bytes.Buffer
    if err := format.Node(&buf, fset, node); err != nil {
       return "", fmt.Errorf("failed to format node: %w", err)
    }
-   return syntaxHighlight(buf.String())
+   sourceString := buf.String()
+
+   const prefix = "package p\n\n"
+   wrappedSource := prefix + sourceString
+
+   fsetForHighlighting := token.NewFileSet()
+   astFile, err := parser.ParseFile(fsetForHighlighting, "snippet.go", wrappedSource, 0)
+   if err != nil || len(astFile.Decls) == 0 {
+      return syntaxHighlight(sourceString, token.NewFileSet(), nil)
+   }
+   newRootNode := astFile.Decls[0]
+
+   rawOffsets := collectTypeUsageOffsets(newRootNode, fsetForHighlighting, typeNames)
+
+   adjustedOffsets := make(map[int]struct{})
+   for offset := range rawOffsets {
+      adjustedOffset := offset - len(prefix)
+      if adjustedOffset >= 0 {
+         adjustedOffsets[adjustedOffset] = struct{}{}
+      }
+   }
+   return syntaxHighlight(sourceString, fsetForHighlighting, adjustedOffsets)
 }
 
-// parseGoFiles reads a directory, parses all non-test .go files,
-// and returns them as a slice of *ast.File.
 func parseGoFiles(fset *token.FileSet, dir string) ([]*ast.File, error) {
    entries, err := os.ReadDir(dir)
    if err != nil {

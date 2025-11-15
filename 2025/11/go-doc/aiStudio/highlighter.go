@@ -6,22 +6,23 @@ import (
    "go/token"
    "html"
    "html/template"
+   "log"
    "strings"
 )
 
-// syntaxHighlight takes a string of Go source code and returns it as
-// syntax-highlighted HTML. It preserves all whitespace, operators, and braces.
-func syntaxHighlight(source string) (template.HTML, error) {
-   fset := token.NewFileSet()
-   // Add the source code as a new file to the fileset.
-   // Using a base of 1 is standard.
-   file := fset.AddFile("", 1, len(source))
+// syntaxHighlight takes Go source code, a fileset, and a map of type offsets,
+// returning syntax-highlighted HTML with only the correct types linked.
+func syntaxHighlight(source string, fset *token.FileSet, typeOffsets map[int]struct{}) (template.HTML, error) {
+   if fset == nil {
+      fset = token.NewFileSet()
+   }
+   file := fset.AddFile("", fset.Base(), len(source))
 
    var s scanner.Scanner
    s.Init(file, []byte(source), nil, scanner.ScanComments)
 
    var buf strings.Builder
-   lastOffset := 0 // Tracks the 0-based offset of the end of the last token
+   lastOffset := 0
 
    for {
       pos, tok, lit := s.Scan()
@@ -29,40 +30,40 @@ func syntaxHighlight(source string) (template.HTML, error) {
          break
       }
 
-      // Use file.Offset to get the correct 0-based offset for the token.
-      // This is the robust way to prevent panics.
       offset := file.Offset(pos)
-
-      // Append any text (whitespace, operators) between the end of the last
-      // token and the beginning of the current one.
       if lastOffset < offset {
          buf.WriteString(html.EscapeString(source[lastOffset:offset]))
       }
 
-      // The scanner doesn't provide a literal for operators (like braces),
-      // so we use tok.String() as a fallback.
       tokenText := lit
       if tokenText == "" {
          tokenText = tok.String()
       }
-
       escapedToken := html.EscapeString(tokenText)
-      switch {
-      case tok.IsKeyword():
-         fmt.Fprintf(&buf, `<span class="keyword">%s</span>`, escapedToken)
-      case tok == token.COMMENT:
-         fmt.Fprintf(&buf, `<span class="comment">%s</span>`, escapedToken)
-      case tok == token.STRING:
-         fmt.Fprintf(&buf, `<span class="string">%s</span>`, escapedToken)
-      default:
-         buf.WriteString(escapedToken)
-      }
+      var tokenHTML string
 
-      // Update the last offset to be the position right after the current token.
+      if tok == token.IDENT {
+         _, isTypeOffset := typeOffsets[offset]
+         log.Printf("[HIGHLIGHTER] Token: '%s', Offset: %d, IsType: %v", lit, offset, isTypeOffset)
+         if isTypeOffset {
+            tokenHTML = fmt.Sprintf(`<a href="#%s">%s</a>`, escapedToken, escapedToken)
+         } else {
+            tokenHTML = escapedToken
+         }
+      } else if tok.IsKeyword() {
+         tokenHTML = fmt.Sprintf(`<span class="keyword">%s</span>`, escapedToken)
+      } else if tok == token.COMMENT {
+         tokenHTML = fmt.Sprintf(`<span class="comment">%s</span>`, escapedToken)
+      } else if tok == token.STRING {
+         tokenHTML = fmt.Sprintf(`<span class="string">%s</span>`, escapedToken)
+      } else {
+         tokenHTML = escapedToken
+      }
+      buf.WriteString(tokenHTML)
+
       lastOffset = offset + len(tokenText)
    }
 
-   // Append any trailing text (like a final newline) after the very last token.
    if lastOffset < len(source) {
       buf.WriteString(html.EscapeString(source[lastOffset:]))
    }
