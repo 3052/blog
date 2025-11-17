@@ -100,7 +100,8 @@ https://justwatch.com/us/movie/burton-and-taylor
 
 ## 2012
 
-https://justwatch.com/us/tv-show/veep
+- https://justwatch.com/us/tv-show/the-newsroom
+- https://justwatch.com/us/tv-show/veep
 
 ## 2011
 
