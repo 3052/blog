@@ -29,6 +29,10 @@
 21. I expressly agree to the execution of the contract
 22. ordering the payment
 
+## hexacard
+
+https://hexacard.me/faq
+
 ## amazon pay
 
 ~~~json
