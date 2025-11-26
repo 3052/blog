@@ -28,7 +28,7 @@
 - https://justwatch.com/us/movie/the-smashing-machine
 - https://justwatch.com/us/movie/together-2025
 - https://justwatch.com/us/movie/youre-cordially-invited
-- https://justwatch.com/us/tv-show/pluribus
+- https://justwatch.com/us/tv-show/alien-earth
 
 ## 2024
 
@@ -96,7 +96,8 @@ https://justwatch.com/us/tv-show/fargo
 
 ## 2013
 
-https://justwatch.com/us/movie/burton-and-taylor
+- https://justwatch.com/us/movie/burton-and-taylor
+- https://justwatch.com/us/tv-show/masters-of-sex
 
 ## 2012
 
@@ -119,7 +120,8 @@ https://justwatch.com/us/movie/chloe-2009
 
 ## 2006
 
-https://justwatch.com/us/movie/the-good-shepherd-2006
+- https://justwatch.com/us/movie/children-of-men
+- https://justwatch.com/us/movie/the-good-shepherd-2006
 
 ## 2005
 

@@ -1,0 +1,88 @@
+https://play.hbomax.com/show/8430f2aa-da2c-4069-ac01-4c8c9bedc55d?utm_source=universal_search
+country = MX
+name = Mexico
+monetization = FLATRATE
+
+country = AR
+name = Argentina
+monetization = FLATRATE
+
+country = BO
+name = Bolivia
+monetization = FLATRATE
+
+country = BR
+name = Brazil
+monetization = FLATRATE
+
+country = CL
+name = Chile
+monetization = FLATRATE
+
+country = CO
+name = Colombia
+monetization = FLATRATE
+
+country = CR
+name = Costa Rica
+monetization = FLATRATE
+
+country = EC
+name = Ecuador
+monetization = FLATRATE
+
+country = GT
+name = Guatemala
+monetization = FLATRATE
+
+country = PE
+name = Peru
+monetization = FLATRATE
+
+country = PT
+name = Portugal
+monetization = FLATRATE
+
+country = VE
+name = Venezuela
+monetization = FLATRATE
+
+hboMax -a https://play.hbomax.com/show/8430f2aa-da2c-4069-ac01-4c8c9bedc55d
+
+hboMax -e 2e9f4ab3-67e2-4467-87fd-2b6f91e8fbf6
+
+bandwidth = 258384
+codecs = ec-3
+mimeType = audio/mp4
+lang = en-US
+period = 0
+id = a2
+
+bandwidth = 4786170
+width = 1280
+height = 692
+codecs = hvc1.2.4.L93.90
+mimeType = video/mp4
+role = main
+period = 0
+id = v13
+
+bandwidth = 5324092
+width = 1280
+height = 692
+codecs = avc1.64001f
+mimeType = video/mp4
+role = main
+period = 0
+id = v2
+21:04:27 done 104 | left 2129 | ETA 2m38s | 3091300 bps
+
+bandwidth = 8274410
+width = 1600
+height = 866
+codecs = hvc1.2.4.L123.90
+mimeType = video/mp4
+role = main
+period = 0
+id = v16
+21:03:45 done 107 | left 2126 | ETA 4m30s | 4988629 bps
