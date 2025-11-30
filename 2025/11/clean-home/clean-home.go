@@ -19,6 +19,7 @@ var patterns = []string{
    `C:\Users\Steven\AppData\Local\Android\Sdk\system-images\android-*`,
    `C:\Users\Steven\AppData\Local\Genymobile`,
    `C:\Users\Steven\AppData\Local\Google`,
+   `C:\Users\Steven\AppData\Local\Microsoft\Edge`,
    `C:\Users\Steven\AppData\Local\Mozilla\Firefox\Profiles\*.*\cache2`,
    `C:\Users\Steven\AppData\Local\go-build`,
    `C:\Users\Steven\AppData\Local\pip`,

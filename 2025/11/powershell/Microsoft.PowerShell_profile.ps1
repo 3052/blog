@@ -1,5 +1,7 @@
+# 2025-11-29
+$env:path = 'D:\Bento4\bin'
+
 # 2025-11-04
-$env:path = 'D:\node'
 $env:RIPGREP_CONFIG_PATH = "C:\Users\Steven\AppData\Local\ripgrep\ripgrep.txt"
 
 # disable auto complete

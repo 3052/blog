@@ -24,6 +24,7 @@
 - https://justwatch.com/us/movie/sovereign-2025
 - https://justwatch.com/us/movie/the-assessment
 - https://justwatch.com/us/movie/the-battle-of-baktan-cross
+- https://justwatch.com/us/movie/the-phoenician-scheme
 - https://justwatch.com/us/movie/the-roses
 - https://justwatch.com/us/movie/the-smashing-machine
 - https://justwatch.com/us/movie/together-2025
