@@ -102,6 +102,7 @@ https://justwatch.com/us/tv-show/fargo
 
 ## 2012
 
+- https://justwatch.com/us/tv-show/magic-city
 - https://justwatch.com/us/tv-show/the-newsroom
 - https://justwatch.com/us/tv-show/veep
 
