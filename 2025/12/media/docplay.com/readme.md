@@ -15,7 +15,14 @@ count = 1
 
 1. Australia VPN
 2. start your 14 day free trial
-
-
-
-
+3. disable VPN
+4. email
+   - mail.tm
+5. password
+6. continue
+7. card number
+8. MM
+9. YY
+10. card security code
+11. start my subscription
+12. start subscription (again)
