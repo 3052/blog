@@ -46,7 +46,7 @@ func main() {
    if *name != "" {
       err := do_check(*name)
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
    } else {
       flag.Usage()
