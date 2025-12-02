@@ -5,6 +5,7 @@ import (
    "errors"
    "flag"
    "fmt"
+   "log"
    "os"
    "slices"
    "strings"
@@ -74,7 +75,7 @@ func main() {
    }
    users, err := get_users()
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    var line bool
    for _, user2 := range users {
@@ -113,14 +114,14 @@ func (u userinfo) String() string {
       keys = append(keys, key)
    }
    slices.Sort(keys)
-   var b strings.Builder
+   var data strings.Builder
    for i, key := range keys {
       if i >= 1 {
-         b.WriteByte('\n')
+         data.WriteByte('\n')
       }
-      b.WriteString(key)
-      b.WriteString(" = ")
-      b.WriteString(u[key])
+      data.WriteString(key)
+      data.WriteString(" = ")
+      data.WriteString(u[key])
    }
-   return b.String()
+   return data.String()
 }

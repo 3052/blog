@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "log"
    "os"
    "path/filepath"
 )
@@ -30,13 +31,13 @@ func main() {
    for _, pattern := range patterns {
       matches, err := filepath.Glob(pattern)
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
       for _, match := range matches {
          fmt.Println(match)
          err := os.RemoveAll(match)
          if err != nil {
-            panic(err)
+            log.Fatal(err)
          }
       }
    }

@@ -7,6 +7,7 @@ import (
    "encoding/pem"
    "flag"
    "fmt"
+   "log"
    "os"
    "os/exec"
    "path/filepath"
@@ -33,18 +34,18 @@ func main() {
    flag.BoolVar(&info, "i", false, "information")
    cert, err := os.UserHomeDir()
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    cert = filepath.ToSlash(cert) + "/.mitmproxy/mitmproxy-ca-cert.pem"
    flag.StringVar(&cert, "c", cert, "certificate")
    flag.Parse()
    data, err := os.ReadFile(cert)
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    data, err = subject_hash(data)
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    push := hex.EncodeToString(data) + ".0"
    commands := [][]string{
@@ -66,7 +67,7 @@ func main() {
       if !info {
          err := cmd.Run()
          if err != nil {
-            panic(err)
+            log.Fatal(err)
          }
       }
    }

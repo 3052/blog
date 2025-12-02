@@ -5,6 +5,7 @@ import (
    "encoding/json"
    "flag"
    "fmt"
+   "log"
    "net/http"
    "strings"
    "time"
@@ -85,7 +86,7 @@ func main() {
    if tube.VideoId != "" {
       err := tube.do()
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
    } else {
       flag.Usage()

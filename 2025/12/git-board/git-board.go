@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "log"
    "os"
    "os/exec"
    "strings"
@@ -83,14 +84,14 @@ func main() {
    var board git_board
    err := board.New()
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    temp, err := new(template.Template).Parse(format)
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    if err := temp.Execute(os.Stdout, board); err != nil {
-      panic(err)
+      log.Fatal(err)
    }
 }
 
