@@ -37,10 +37,10 @@ func main() {
    log.SetFlags(log.Ltime)
    err := run("gofmt", "-w", ".")
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    err = filepath.WalkDir(".", walk_dir)
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
 }

@@ -7,6 +7,7 @@ import (
    "flag"
    "fmt"
    "io"
+   "log"
    "net/http"
    "net/textproto"
    "net/url"
@@ -65,17 +66,17 @@ func main() {
       var err error
       set.out.file, err = new_file(set.out.name)
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
       defer set.out.file.Close()
       set.in.file, err = os.Open(set.in.name)
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
       defer set.in.file.Close()
       req, err := read_request(bufio.NewReader(set.in.file))
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
       if req.URL.Scheme == "" {
          if set.https {
@@ -90,7 +91,7 @@ func main() {
          err = set.write(req)
       }
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
    }
 }
