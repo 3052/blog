@@ -3,6 +3,7 @@ package main
 import (
    "flag"
    "fmt"
+   "log"
    "os"
    "os/exec"
    "strconv"
@@ -34,7 +35,7 @@ func main() {
       fmt.Println("Run", cmd)
       err := cmd.Run()
       if err != nil {
-         panic(err)
+         log.Fatal(err)
       }
    } else {
       flag.Usage()

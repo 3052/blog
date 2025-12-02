@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "log"
    "os"
    "os/exec"
 )
@@ -14,7 +15,7 @@ const (
 func main() {
    dirs, err := os.ReadDir(".")
    if err != nil {
-      panic(err)
+      log.Fatal(err)
    }
    for _, dir := range dirs {
       _, err := os.Stat(dir.Name() + "/.git")
@@ -26,7 +27,7 @@ func main() {
          fmt.Printf("%v Dir %v %v\n", invert, reset, cmd.Dir)
          err := cmd.Run()
          if err != nil {
-            panic(err)
+            log.Fatal(err)
          }
       }
    }

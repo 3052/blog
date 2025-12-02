@@ -45,15 +45,15 @@
 - https://justwatch.com/us/movie/finalmente-lalba
 - https://justwatch.com/us/movie/somebody-i-used-to-know
 - https://justwatch.com/us/movie/the-killer-2023-0
+- https://justwatch.com/us/tv-show/the-last-of-us
 
 ## 2022
 
-- https://justwatch.com/us/tv-show/irma-vep
-- https://justwatch.com/us/tv-show/the-bear
 - https://justwatch.com/us/movie/blonde-2022
 - https://justwatch.com/us/movie/emily-the-criminal
 - https://justwatch.com/us/movie/fresh-2022
 - https://justwatch.com/us/movie/knives-out-2
+- https://justwatch.com/us/tv-show/the-bear
 
 ## 2021
 
@@ -93,7 +93,8 @@ https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
 
 ## 2014
 
-https://justwatch.com/us/tv-show/fargo
+- https://justwatch.com/us/tv-show/fargo
+- https://justwatch.com/us/tv-show/true-detective
 
 ## 2013
 
