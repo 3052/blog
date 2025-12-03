@@ -170,4 +170,5 @@ https://justwatch.com/us/movie/jurassic-park-i
 
 ## 1992
 
-https://justwatch.com/us/movie/sneakers
+- https://justwatch.com/us/movie/patriot-games
+- https://justwatch.com/us/movie/sneakers
