@@ -30,6 +30,7 @@
 - https://justwatch.com/us/movie/together-2025
 - https://justwatch.com/us/movie/youre-cordially-invited
 - https://justwatch.com/us/tv-show/alien-earth
+- https://justwatch.com/us/tv-show/the-chair-company
 
 ## 2024
 
