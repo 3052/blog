@@ -46,6 +46,7 @@
 - https://justwatch.com/us/movie/finalmente-lalba
 - https://justwatch.com/us/movie/somebody-i-used-to-know
 - https://justwatch.com/us/movie/the-killer-2023-0
+- https://justwatch.com/us/tv-show/love-and-death
 - https://justwatch.com/us/tv-show/the-last-of-us
 
 ## 2022
@@ -63,6 +64,7 @@
 - https://justwatch.com/us/movie/dont-look-up-2021
 - https://justwatch.com/us/movie/free-guy
 - https://justwatch.com/us/movie/red-notice
+- https://justwatch.com/us/tv-show/the-white-lotus
 
 ## 2020
 
@@ -71,7 +73,8 @@
 
 ## 2019
 
-https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
+- https://justwatch.com/us/movie/cold-pursuit
+- https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
 
 ## 2018
 
@@ -88,10 +91,15 @@ https://justwatch.com/us/movie/portrait-of-a-lady-on-fire
 - https://justwatch.com/us/movie/columbus
 - https://justwatch.com/us/movie/i-love-you-daddy
 
+## 2016
+
+https://justwatch.com/us/tv-show/westworld
+
 ## 2015
 
 - https://justwatch.com/us/movie/steve-jobs
 - https://justwatch.com/us/movie/welcome-to-me
+- https://justwatch.com/us/tv-show/mr-robot
 
 ## 2014
 
@@ -126,6 +134,7 @@ https://justwatch.com/us/movie/chloe-2009
 ## 2006
 
 - https://justwatch.com/us/movie/children-of-men
+- https://justwatch.com/us/movie/paprika
 - https://justwatch.com/us/movie/the-good-shepherd-2006
 
 ## 2005
