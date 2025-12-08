@@ -12,6 +12,7 @@
 - https://justwatch.com/us/movie/heldin
 - https://justwatch.com/us/movie/honey-dont
 - https://justwatch.com/us/movie/if-i-had-legs-id-kick-you
+- https://justwatch.com/us/movie/jurassic-world-4
 - https://justwatch.com/us/movie/marty-supreme
 - https://justwatch.com/us/movie/mission-impossible-8
 - https://justwatch.com/us/movie/oh-hi
@@ -114,6 +115,7 @@ https://justwatch.com/us/tv-show/westworld
 ## 2012
 
 - https://justwatch.com/us/tv-show/magic-city
+- https://justwatch.com/us/tv-show/the-client-list
 - https://justwatch.com/us/tv-show/the-newsroom
 - https://justwatch.com/us/tv-show/veep
 
@@ -170,6 +172,7 @@ https://justwatch.com/us/movie/unbreakable
 
 - https://justwatch.com/us/movie/starship-troopers
 - https://justwatch.com/us/movie/princess-mononoke
+- https://justwatch.com/us/movie/the-game
 
 ## 1996
 

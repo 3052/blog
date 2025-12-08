@@ -14,7 +14,7 @@ var events = []jog{
    {
       days_before: 8,
       day_of: date(2025, 12, 7),
-      ok: nil,
+      ok: some(false),
    },
    {
       days_before: 7,
