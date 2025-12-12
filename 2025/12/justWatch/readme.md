@@ -33,6 +33,7 @@
 - https://justwatch.com/us/movie/youre-cordially-invited
 - https://justwatch.com/us/tv-show/alien-earth
 - https://justwatch.com/us/tv-show/the-chair-company
+- https://justwatch.com/us/tv-show/your-friends-and-neighbors
 
 ## 2024
 
