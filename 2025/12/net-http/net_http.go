@@ -58,7 +58,7 @@ func read_request(r *bufio.Reader) (*http.Request, error) {
 }
 
 func main() {
-   var set flag_set
+   var set command
    set.New()
    if set.in.name == "" {
       flag.Usage()
@@ -96,7 +96,7 @@ func main() {
    }
 }
 
-func (f *flag_set) write(req *http.Request) error {
+func (f *command) write(req *http.Request) error {
    resp, err := http.DefaultClient.Do(req)
    if err != nil {
       return err
@@ -113,7 +113,7 @@ func (f *flag_set) write(req *http.Request) error {
    return resp.Write(os.Stdout)
 }
 
-func (f *flag_set) write_go(req *http.Request) error {
+func (f *command) write_go(req *http.Request) error {
    var value request
    value.Method = req.Method
    value.URL = req.URL
@@ -144,11 +144,11 @@ func (f *flag_set) write_go(req *http.Request) error {
    return temp.Execute(f.out.file, value)
 }
 
-type flag_set struct {
+type command struct {
    golang bool
-   https bool
-   form bool
-   in struct {
+   https  bool
+   form   bool
+   in     struct {
       name string
       file *os.File
    }
@@ -158,7 +158,7 @@ type flag_set struct {
    }
 }
 
-func (f *flag_set) New() {
+func (f *command) New() {
    flag.BoolVar(&f.form, "f", false, "form")
    flag.BoolVar(&f.golang, "g", false, "request as Go code")
    flag.BoolVar(&f.https, "s", false, "HTTPS")
@@ -168,10 +168,10 @@ func (f *flag_set) New() {
 }
 
 type request struct {
-   Method string
-   URL *url.URL
-   Header http.Header
-   Body string
+   Method  string
+   URL     *url.URL
+   Header  http.Header
+   Body    string
    RawBody string
 }
 
