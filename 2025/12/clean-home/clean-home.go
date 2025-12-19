@@ -7,10 +7,6 @@ import (
    "path/filepath"
 )
 
-/*
-C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\b5ohm1qd.2024-11-28
-C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\uuivvd0h.2024-11-29 
-*/
 var patterns = []string{
    `C:\ProgramData\Mozilla-*`,
    `C:\ProgramData\Mozilla`,
@@ -20,7 +16,6 @@ var patterns = []string{
    `C:\Users\Steven\AppData\Local\Android\Sdk\system-images\android-*`,
    `C:\Users\Steven\AppData\Local\Genymobile`,
    `C:\Users\Steven\AppData\Local\Google`,
-   `C:\Users\Steven\AppData\Local\Microsoft\Edge`,
    `C:\Users\Steven\AppData\Local\Mozilla\Firefox\Profiles\*.*\cache2`,
    `C:\Users\Steven\AppData\Local\go-build`,
    `C:\Users\Steven\AppData\Local\pip`,
@@ -41,4 +36,9 @@ func main() {
          }
       }
    }
+   log.Print("disk cleanup")
+   log.Print("recycle bin")
+   log.Print(`C:\Users\Steven\AppData\Local\Microsoft\Edge`)
+   log.Print(`C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\b5ohm1qd.2024-11-28`)
+   log.Print(`C:\Users\Steven\AppData\Roaming\Mozilla\Firefox\Profiles\uuivvd0h.2024-11-29`)
 }
