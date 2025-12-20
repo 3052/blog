@@ -12,7 +12,7 @@
 - https://justwatch.com/us/movie/bonjour-tristesse-2025-0
 - https://justwatch.com/us/movie/bugonia
 - https://justwatch.com/us/movie/die-my-love
-- https://justwatch.com/us/movie/eddington
+- https://justwatch.com/us/movie/dreams-2025
 - https://justwatch.com/us/movie/eenie-meanie
 - https://justwatch.com/us/movie/ennemi
 - https://justwatch.com/us/movie/heldin
