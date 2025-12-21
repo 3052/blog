@@ -2,8 +2,21 @@ package main
 
 import (
    "fmt"
+   "strings"
    "time"
 )
+
+func (j *jog) String() string {
+   data := &strings.Builder{}
+   fmt.Fprintln(data, "days before =", j.days_before)
+   fmt.Fprintln(data, "day of =", j.day_of.Format(time.DateOnly))
+   if j.ok != nil {
+      fmt.Fprint(data, "ok = ", *j.ok)
+   } else {
+      data.WriteString("ok = nil")
+   }
+   return data.String()
+}
 
 var events = []jog{
    {
@@ -14,7 +27,7 @@ var events = []jog{
    {
       days_before: 9,
       day_of: date(2025, 12, 16),
-      ok: some(false,)
+      ok: some(false),
    },
    {
       days_before: 8,
@@ -35,18 +48,6 @@ func main() {
       }
       fmt.Println(&event)
    }
-}
-
-func (j *jog) String() string {
-   var data []byte
-   data = fmt.Appendln(data, "days before =", j.days_before)
-   data = fmt.Appendln(data, "day of =", j.day_of.Format(time.DateOnly))
-   if j.ok != nil {
-      data = fmt.Append(data, "ok = ", *j.ok)
-   } else {
-      data = append(data, "ok = nil"...)
-   }
-   return string(data)
 }
 
 type jog struct {
