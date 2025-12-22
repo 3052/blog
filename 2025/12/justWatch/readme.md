@@ -8,7 +8,6 @@
 ## 2025
 
 - https://justwatch.com/us/movie/alpha-2025-1
-- https://justwatch.com/us/movie/black-bag
 - https://justwatch.com/us/movie/bonjour-tristesse-2025-0
 - https://justwatch.com/us/movie/bugonia
 - https://justwatch.com/us/movie/die-my-love

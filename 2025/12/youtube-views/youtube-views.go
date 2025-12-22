@@ -4,31 +4,13 @@ import (
    "bytes"
    "encoding/json"
    "flag"
-   "fmt"
    "log"
    "net/http"
+   "net/url"
+   "strconv"
    "strings"
    "time"
 )
-
-func format_integer(number int) string {
-   numberString := fmt.Sprint(number)
-   lengthOfString := len(numberString)
-   if lengthOfString <= 3 {
-      return numberString
-   }
-   digits := lengthOfString % 3
-   if digits == 0 {
-      digits = 3
-   }
-   var data strings.Builder
-   data.WriteString(numberString[:digits])
-   for i := digits; i < lengthOfString; i += 3 {
-      data.WriteByte(',')
-      data.WriteString(numberString[i : i+3])
-   }
-   return data.String()
-}
 
 func (i *InnerTube) do() error {
    play, err := i.Player()
@@ -39,22 +21,58 @@ func (i *InnerTube) do() error {
       play.VideoDetails.ViewCount,
       play.Microformat.PlayerMicroformatRenderer.PublishDate,
    )
-   if views >= 10_000_000 {
-      fmt.Print(red, " FAIL ", reset)
-   } else {
-      fmt.Print(green, " PASS ", reset)
-   }
-   fmt.Print("   ")
-   fmt.Print(format_integer(views))
-   fmt.Print("   ")
-   fmt.Println(play.VideoDetails.VideoId)
+   const limit = 10_000_000
+   log.Println("video ID", play.VideoDetails.VideoId)
+   log.Println("limit", format_integer(limit))
+   log.Println("views", format_integer(views))
    return nil
 }
 
+func main() {
+   http.DefaultTransport = &http.Transport{
+      Proxy: func(req *http.Request) (*url.URL, error) {
+         log.Println(req.Method, req.URL)
+         return nil, nil
+      },
+   }
+   log.SetFlags(log.Ltime)
+   var tube InnerTube
+   tube.Context.Client.ClientName = web
+   flag.StringVar(&tube.VideoId, "v", "", "video ID")
+   flag.Parse()
+   if tube.VideoId != "" {
+      err := tube.do()
+      if err != nil {
+         log.Fatal(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
+
 func views_per_year(views int, publish date) int {
-   fmt.Println(publish[0])
+   log.Println("publish", publish[0])
    years := time.Since(publish[0]).Hours() / 24 / 365
    return int(float64(views) / years)
+}
+
+func format_integer(number int) string {
+   number_string := strconv.Itoa(number)
+   lengthOfString := len(number_string)
+   if lengthOfString <= 3 {
+      return number_string
+   }
+   digits := lengthOfString % 3
+   if digits == 0 {
+      digits = 3
+   }
+   var data strings.Builder
+   data.WriteString(number_string[:digits])
+   for i := digits; i < lengthOfString; i += 3 {
+      data.WriteByte(',')
+      data.WriteString(number_string[i : i+3])
+   }
+   return data.String()
 }
 
 // need `osVersion` this to get the correct:
@@ -78,30 +96,9 @@ type InnerTube struct {
 
 const user_agent = "com.google.android.youtube/"
 
-func main() {
-   var tube InnerTube
-   tube.Context.Client.ClientName = web
-   flag.StringVar(&tube.VideoId, "v", "", "video ID")
-   flag.Parse()
-   if tube.VideoId != "" {
-      err := tube.do()
-      if err != nil {
-         log.Fatal(err)
-      }
-   } else {
-      flag.Usage()
-   }
-}
-
 const (
    web                     = "WEB"
    web_version             = "2.20231219.04.00"
-)
-
-const (
-   reset = "\x1b[m"
-   green = "\x1b[30;102m"
-   red   = "\x1b[30;101m"
 )
 
 func (i *InnerTube) Player() (*Player, error) {
