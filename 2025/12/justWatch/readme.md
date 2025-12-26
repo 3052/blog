@@ -18,9 +18,11 @@
 - https://justwatch.com/us/movie/heldin
 - https://justwatch.com/us/movie/honey-dont
 - https://justwatch.com/us/movie/if-i-had-legs-id-kick-you
+- https://justwatch.com/us/movie/it-was-just-an-accident
 - https://justwatch.com/us/movie/jurassic-world-4
 - https://justwatch.com/us/movie/marty-supreme
 - https://justwatch.com/us/movie/mission-impossible-8
+- https://justwatch.com/us/movie/no-other-choice
 - https://justwatch.com/us/movie/oh-hi
 - https://justwatch.com/us/movie/panne-fatale
 - https://justwatch.com/us/movie/predator-badlands-2025
@@ -201,3 +203,7 @@ https://justwatch.com/us/movie/jurassic-park-i
 
 - https://justwatch.com/us/movie/patriot-games
 - https://justwatch.com/us/movie/sneakers
+
+## 1986
+
+https://justwatch.com/us/movie/the-color-of-money
