@@ -2,6 +2,7 @@
 
 ## 2026
 
+- https://justwatch.com/us/movie/huntington
 - https://justwatch.com/us/movie/the-odyssey-2026
 - https://justwatch.com/us/tv-show/his-and-hers
 - https://justwatch.com/us/tv-show/ponies
@@ -64,6 +65,7 @@
 
 - https://justwatch.com/us/movie/blonde-2022
 - https://justwatch.com/us/movie/emily-the-criminal
+- https://justwatch.com/us/movie/everything-everywhere-all-at-once
 - https://justwatch.com/us/movie/fresh-2022
 - https://justwatch.com/us/movie/knives-out-2
 - https://justwatch.com/us/tv-show/the-bear
@@ -207,3 +209,7 @@ https://justwatch.com/us/movie/jurassic-park-i
 ## 1986
 
 https://justwatch.com/us/movie/the-color-of-money
+
+## 1974
+
+https://justwatch.com/us/movie/badlands
