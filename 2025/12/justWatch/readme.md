@@ -64,6 +64,7 @@
 ## 2022
 
 - https://justwatch.com/us/movie/blonde-2022
+- https://justwatch.com/us/movie/causeway
 - https://justwatch.com/us/movie/emily-the-criminal
 - https://justwatch.com/us/movie/everything-everywhere-all-at-once
 - https://justwatch.com/us/movie/fresh-2022
