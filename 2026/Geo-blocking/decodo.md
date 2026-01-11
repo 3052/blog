@@ -1,6 +1,6 @@
-# Smart proxy
+# decodo
 
-https://dashboard.smartproxy.com/register
+https://decodo.com
 
 ~~~
 Residential Proxies
@@ -24,4 +24,4 @@ your use case with this target:
 our service adds value to your project.
 ~~~
 
-https://smartproxy.com/faq/general/do-you-have-any-blocked-sites
+https://decodo.com/faq/general/do-you-have-any-blocked-sites
