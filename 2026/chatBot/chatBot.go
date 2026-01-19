@@ -2,6 +2,7 @@ package main
 
 import (
    "encoding/json"
+   "flag"
    "log"
    "os"
    "path/filepath"
@@ -15,61 +16,62 @@ type FileData struct {
 }
 
 func main() {
-   // 1. Get the target folder path from the command-line arguments.
-   if len(os.Args) < 2 {
-      log.Println("Error: You must provide a folder path.")
-      log.Println("Usage: go run combine.go <path_to_folder>")
+   // 1. Define and parse the required -dir flag.
+   inputDir := flag.String("dir", "", "The path to the input directory (required).")
+   flag.Parse()
+
+   if *inputDir == "" {
+      log.Println("Error: The -dir flag is a required argument.")
+      flag.Usage()
       os.Exit(1)
    }
-   inputDir := os.Args[1]
+
+   log.Printf("Target directory is: %s", *inputDir)
 
    // Validate that the provided path is a valid directory.
-   info, err := os.Stat(inputDir)
+   info, err := os.Stat(*inputDir)
    if os.IsNotExist(err) {
-      log.Fatalf("Error: The folder '%s' does not exist.", inputDir)
+      log.Fatalf("Error: The folder '%s' does not exist.", *inputDir)
    }
    if !info.IsDir() {
-      log.Fatalf("Error: The path '%s' is not a directory.", inputDir)
+      log.Fatalf("Error: The path '%s' is not a directory.", *inputDir)
    }
 
    // 2. Find all processable files in that directory.
-   sourceFiles, err := findSourceFiles(inputDir)
+   sourceFiles, err := findSourceFiles(*inputDir)
    if err != nil {
-      log.Fatalf("Error finding files in '%s': %v", inputDir, err)
+      log.Fatalf("Error finding files in '%s': %v", *inputDir, err)
    }
    if len(sourceFiles) == 0 {
-      log.Printf("Warning: No processable files were found in '%s'.", inputDir)
+      log.Printf("Warning: No files were found in '%s'.", *inputDir)
       return
    }
 
-   log.Printf("Found %d files in '%s' to process...", len(sourceFiles), inputDir)
+   log.Printf("Found %d files in '%s' to process...", len(sourceFiles), *inputDir)
 
    // 3. Read the content of each file.
    var fileDataList []FileData
    for _, filename := range sourceFiles {
-      // Construct the full path for each file before reading.
-      fullPath := filepath.Join(inputDir, filename)
+      fullPath := filepath.Join(*inputDir, filename)
       content, err := os.ReadFile(fullPath)
       if err != nil {
          log.Fatalf("Error reading file %s: %v", fullPath, err)
       }
 
-      // Convert bytes to string and remove carriage returns.
       contentString := string(content)
       cleanedContent := strings.ReplaceAll(contentString, "\r", "")
-
-      // Append the struct using the clean field names.
       fileDataList = append(fileDataList, FileData{Name: filename, Data: cleanedContent})
    }
 
-   // 4. Generate the JSON output.
+   // 4. Generate the compact JSON output.
    output, err := generateJSON(fileDataList)
    if err != nil {
       log.Fatalf("Error generating JSON output: %v", err)
    }
 
-   // 5. Write the output file inside the target directory.
-   outputFilename := filepath.Join(inputDir, "combined.json")
+   // 5. --- THIS IS THE CORRECTED LINE ---
+   // Write the output file to the CURRENT WORKING DIRECTORY, not the input directory.
+   outputFilename := "combined.json"
    err = os.WriteFile(outputFilename, []byte(output), 0644)
    if err != nil {
       log.Fatalf("Error writing to file %s: %v", outputFilename, err)
@@ -78,29 +80,24 @@ func main() {
    log.Printf("Success! Output has been saved to %s", outputFilename)
 }
 
-// findSourceFiles searches a directory for all files, excluding itself and its output.
+// findSourceFiles now correctly uses os.ReadDir.
 func findSourceFiles(targetDir string) ([]string, error) {
+   entries, err := os.ReadDir(targetDir)
+   if err != nil {
+      return nil, err
+   }
+
    var files []string
-   err := filepath.WalkDir(targetDir, func(path string, d os.DirEntry, err error) error {
-      if err != nil {
-         return err
+   for _, entry := range entries {
+      if !entry.IsDir() {
+         files = append(files, entry.Name())
       }
-      // Only process files in the top-level of the target directory (no subdirectories).
-      if !d.IsDir() && filepath.Dir(path) == targetDir {
-         // Exclude the script itself and its potential output file.
-         if d.Name() != "combine.go" && d.Name() != "combined.json" {
-            files = append(files, d.Name())
-         }
-      }
-      return nil
-   })
-   return files, err
+   }
+   return files, nil
 }
 
-// --- MODIFICATION IS HERE ---
 // generateJSON converts the file data into a compact, single-line JSON string.
 func generateJSON(data []FileData) (string, error) {
-   // Use json.Marshal for compact output without indentation.
    bytes, err := json.Marshal(data)
    if err != nil {
       return "", err
