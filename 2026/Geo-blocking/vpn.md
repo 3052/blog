@@ -38,6 +38,10 @@ https://proxy-seller.com
 7 USD/GB
 ~~~
 
+## riseup
+
+https://riseup.net/vpn
+
 ## urban-vpn
 
 https://urban-vpn.com

@@ -1,9 +1,43 @@
-package manifest
+package main
 
 import (
+   "encoding/xml"
+   "flag"
+   "fmt"
    "iter"
+   "log"
+   "os"
    "strings"
 )
+
+func do(name string) error {
+   data, err := os.ReadFile(name)
+   if err != nil {
+      return err
+   }
+   var manifestVar manifest
+   err = xml.Unmarshal(data, &manifestVar)
+   if err != nil {
+      return err
+   }
+   for intent := range manifestVar.intent_filter() {
+      fmt.Print(&intent, "\n\n")
+   }
+   return nil
+}
+
+func main() {
+   name := flag.String("n", "", "name")
+   flag.Parse()
+   if *name != "" {
+      err := do(*name)
+      if err != nil {
+         log.Fatal(err)
+      }
+   } else {
+      flag.Usage()
+   }
+}
 
 func (i *intent_filter) String() string {
    var b strings.Builder
